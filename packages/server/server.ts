@@ -1,11 +1,24 @@
-import express from 'express';
-const app = express();
-const port = 3001;
+import express from 'express'
+import cors from 'cors'
+import http from 'http'
+import { Server } from 'socket.io'
 
-app.get("/data", (req, res) => {
-  res.json({ foo: "bar" });
-});
+const PORT = process.env.PORT || 3001
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+const app = express()
+const server = http.createServer(app)
+const io = new Server(server)
+
+app.use(cors())
+
+app.get('/data', (req, res) => {
+  res.json({ foo: 'bar' })
+})
+
+io.on('connection', (socket) => {
+  console.log('socket connected')
+})
+
+app.listen(PORT, () => {
+  console.log(`Example app listening at http://localhost:${PORT}`)
+})
