@@ -1,0 +1,18 @@
+{
+  "name": "jungle-board",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Tuan Anh Nguyen <nttanh6299@gmail.com> (https://github.com/nttanh6299)",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^4.0.0",
+    "typescript": "4.0"
+  },
+  "scripts": {
+    "dev": "lerna run --parallel dev"
+  }
+}
