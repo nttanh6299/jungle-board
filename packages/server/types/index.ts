@@ -2,10 +2,14 @@ export interface IReqCreateRoom {
   name: string
 }
 
-export interface IResCreateRoom {
+export interface ResCreateRoom {
   roomId: string
 }
 
-export interface IResGetRoom {
+export interface ResGetRoom {
   id: string
+  name: string
+  quantity: number
+  max: number
+  status: string
 }

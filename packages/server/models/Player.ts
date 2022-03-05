@@ -1,10 +1,12 @@
 class Player {
-  roomId: string
+  id: string
   name: string
+  roomId: string
 
-  constructor(roomId: string, name: string) {
-    this.roomId = roomId
+  constructor(id: string, name: string, roomId: string) {
+    this.id = id
     this.name = name
+    this.roomId = roomId
   }
 }
 
