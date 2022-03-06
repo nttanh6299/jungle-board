@@ -1,0 +1,47 @@
+@import '../../styles/mixins';
+
+.board {
+  position: relative;
+
+  &_item {
+    position: absolute;
+    @include makeBorder(var(--square-border), 2px);
+  }
+
+  &_square {
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    @include copyParentSize();
+
+    .animal {
+      color: var(--white);
+      background-color: var(--black);
+
+      &.opponent {
+        color: var(--black);
+        background-color: var(--white);
+      }
+    }
+  }
+
+  .land {
+    background: var(--land);
+  }
+
+  .river {
+    background: var(--river);
+  }
+
+  .den {
+    background: var(--den);
+  }
+
+  .trap {
+    background: var(--trap);
+  }
+
+  .selected {
+    @include makeBorder(var(--square-selected), 2px);
+  }
+}

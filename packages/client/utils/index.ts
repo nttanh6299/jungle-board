@@ -7,3 +7,10 @@ export const isWaiting = (status: string) => {
 export const canJoin = (quantity: number, max: number, status: string) => {
   return quantity < max && isWaiting(status)
 }
+
+export const stringify = (param: string | string[]) => {
+  if (!param) return ''
+  if (typeof param === 'string') return param
+  if (Array.isArray(param)) return param[0] ?? ''
+  return ''
+}

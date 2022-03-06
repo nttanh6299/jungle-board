@@ -1,3 +1,15 @@
 :root {
   --gutter: 8;
+  --border-width: 1px;
+  --border-style: solid;
+  --square-border: rgb(252, 221, 121);
+  --land: rgb(255, 232, 183);
+  --river: rgb(5, 155, 255);
+  --den: rgb(151, 151, 151);
+  --trap: rgb(197, 197, 197);
+  --square-selected: rgb(255, 0, 0);
+  --square-can-move: rgb(0, 255, 0);
+  --white: #fff;
+  --black: #222;
+  --overlay: rgba(0, 0, 0, 0.75);
 }

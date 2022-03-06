@@ -1,8 +1,10 @@
-import axios from 'axios'
-import { API_ENDPOINT } from 'constants/common'
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ResGetRoom } from 'server/types'
 import { getRoom as getRoomApi } from 'apis/room'
+
+type IHookArgs = {
+  id: string
+}
 
 type IHookReturn = {
   fetching: boolean
@@ -10,13 +12,13 @@ type IHookReturn = {
   getRoom: (roomId: string) => Promise<void>
 }
 
-type IHook = () => IHookReturn
+type IHook = (args: IHookArgs) => IHookReturn
 
-const useRoom: IHook = () => {
+const useRoom: IHook = ({ id }) => {
   const [room, setRoom] = useState<ResGetRoom>(null)
   const [fetching, setFetching] = useState(false)
 
-  const getRoom = async (roomId: string) => {
+  const getRoom = useCallback(async (roomId: string) => {
     try {
       setFetching(true)
       const { data } = await getRoomApi(roomId)
@@ -28,7 +30,12 @@ const useRoom: IHook = () => {
       console.error('Get room error: ', error)
       setFetching(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (!id) return
+    getRoom(id)
+  }, [id, getRoom])
 
   return {
     room,

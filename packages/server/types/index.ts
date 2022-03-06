@@ -12,4 +12,5 @@ export interface ResGetRoom {
   quantity: number
   max: number
   status: string
+  type: string
 }

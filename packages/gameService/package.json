@@ -1,0 +1,15 @@
+{
+  "name": "gameservice",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Tuan Anh Nguyen <nttanh6299@gmail.com> (https://github.com/nttanh6299)",
+  "homepage": "https://github.com/nttanh6299/jungle-board#readme",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "4.0"
+  },
+  "dependencies": {
+    "dequal": "^2.0.2",
+    "klona": "^2.0.5"
+  }
+}
