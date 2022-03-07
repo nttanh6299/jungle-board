@@ -32,7 +32,7 @@ interface IBoardProps {
 
 const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquare, possibleMoves }) => {
   return (
-    <div style={{ paddingTop: 16, paddingBottom: 16 }}>
+    <div>
       <div
         className={styles.board}
         style={{

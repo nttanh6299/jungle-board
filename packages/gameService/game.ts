@@ -75,7 +75,6 @@ class Game {
   move(
     deltaFrom: gameLogic.BoardDelta,
     deltaTo: gameLogic.BoardDelta,
-    setCanMakeMove?: (canMove: boolean) => void,
     shouldRotateBoard?: boolean,
   ): void {
     if (this.state.board) {
@@ -100,11 +99,6 @@ class Game {
           this.gameStatus = GameStatus.TIE
         }
         return
-      }
-
-      if (this.isSinglePlay) {
-        setCanMakeMove && setCanMakeMove(false)
-        this.computerMove(setCanMakeMove)
       }
     }
   }

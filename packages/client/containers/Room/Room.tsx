@@ -14,6 +14,8 @@ const Room: React.FC = () => {
   const { query } = router
 
   const initialBoard = useRef<Board>(null)
+  const playerId = useRef<string>('')
+  const [playerTurn, setPlayerTurn] = useState('')
   const [board, setBoard] = useState<Board>(null)
   const [possibleMoves, setPossibleMoves] = useState<AllPossibleMoves>(null)
   const [selectedSquare, setSelectedSquare] = useState<number[]>([])
@@ -26,8 +28,21 @@ const Room: React.FC = () => {
   const { room } = useRoom({ id: stringify(query?.id) })
 
   const handleSelectSquare = (row: number, col: number) => {
+    // move to possible square
+    // row and col must be a new position
+    const isSameSquare = dequal(selectedSquare, [row, col])
+    if (selectedSquare?.length && !isSameSquare) {
+      const pieceMoves = getPossibleMoves(board, possibleMoves, selectedSquare[0], selectedSquare[1])
+      const moveTo = pieceMoves?.find((move) => dequal(move, { row, col }))
+      if (moveTo) {
+        const moveFrom = { row: selectedSquare[0], col: selectedSquare[1] }
+        socket?.emit('move', playerId.current, moveFrom, moveTo)
+        return setSelectedSquare([])
+      }
+    }
+
     // deselect square
-    if (dequal(selectedSquare, [row, col])) {
+    if (isSameSquare) {
       return setSelectedSquare([])
     }
 
@@ -54,32 +69,42 @@ const Room: React.FC = () => {
     // join the room by roomId
     socket.emit('join', stringify(query?.id))
 
-    // player join in the room
     socket.on('playerJoin', (data) => {
-      if (data.bothConnected) {
+      playerId.current = data
+    })
+
+    // player join in the room
+    socket.on('checkRoom', (board, bothConnected) => {
+      if (bothConnected) {
         setBothConnected(true)
       }
 
       // initial board
-      if (data.board) {
+      if (board) {
         if (!initialBoard.current) {
-          initialBoard.current = data.board
+          initialBoard.current = board
         }
-        setBoard(data.board)
+        setBoard(board)
       }
     })
 
-    socket.on('readyToPlay', (data) => {
-      setCooldown(data.cooldown)
+    socket.on('readyToPlay', (cooldown) => {
+      setCooldown(cooldown)
       setMenuVisible(true)
-      if (data.cooldown <= 0) {
+      if (cooldown <= 0) {
         setMenuVisible(false)
       }
     })
 
-    socket.on('startGame', (data) => {
-      setBoard(data.board)
-      setPossibleMoves(data.allMoves)
+    socket.on('startGame', (board, allMoves) => {
+      setBoard(board)
+      setPossibleMoves(allMoves)
+    })
+
+    socket.on('turn', (playerTurn, board, allMoves) => {
+      setPlayerTurn(playerTurn)
+      setBoard(board)
+      setPossibleMoves(allMoves)
     })
 
     // player disconnect
@@ -93,18 +118,22 @@ const Room: React.FC = () => {
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
-        <GameBoard
-          board={board}
-          selectedSquare={selectedSquare}
-          onSelectSquare={handleSelectSquare}
-          possibleMoves={
-            selectedSquare?.length
-              ? getPossibleMoves(board, possibleMoves, selectedSquare?.[0] ?? -1, selectedSquare?.[1] ?? -1)
-              : []
-          }
-        />
-        <strong>You</strong>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
+          <strong style={{ marginTop: 8 }}>{ }</strong>
+        </div>
+        <div style={{ paddingTop: 8, paddingBottom: 8 }}>
+          <GameBoard
+            board={board}
+            selectedSquare={selectedSquare}
+            onSelectSquare={handleSelectSquare}
+            possibleMoves={getPossibleMoves(board, possibleMoves, selectedSquare?.[0] ?? -1, selectedSquare?.[1] ?? -1)}
+          />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <strong style={{ marginBottom: 8 }}>{ }</strong>
+          <strong>You</strong>
+        </div>
       </div>
 
       <div>

@@ -73,7 +73,7 @@ io.on('connection', (socket) => {
 
     if (!room) return
 
-    const playerId = room.players.size.toString()
+    const playerId = `p-${generateId()}`
     const player = room.join(playerId)
     const bothConnected = room.players.size === room.maxPlayer
     if (player) {
@@ -84,36 +84,39 @@ io.on('connection', (socket) => {
         playerId: playerId,
       }
 
+      // send playerId to the joined player
+      socket.emit('playerJoin', playerId)
+
       // to all clients in roomId
-      const data = {
-        bothConnected,
-        board: room.board.state.board,
-      }
-      io.in(roomId).emit('playerJoin', data)
+      io.in(roomId).emit('checkRoom', room.board.state.board, bothConnected)
     }
 
     if (bothConnected) {
       let cooldown = 5
-      io.in(roomId).emit('readyToPlay', { cooldown })
+      io.in(roomId).emit('readyToPlay', cooldown)
 
       cooldownTimer = setInterval(() => {
         if (cooldown > 0) {
           cooldown -= 1
         }
 
-        io.in(roomId).emit('readyToPlay', { cooldown })
+        io.in(roomId).emit('readyToPlay', cooldown)
 
         if (cooldown <= 0) {
           clearInterval(cooldownTimer)
-
           room.board.startGame()
-          const data = {
-            board: room.board.state.board,
-            allMoves: room.board.getAllMoves(),
-          }
-          io.in(roomId).emit('startGame', data)
+          io.in(roomId).emit('startGame', room.board.state.board, room.board.getAllMoves())
         }
       }, 1000)
+    }
+  })
+
+  socket.on('move', (playerTurn, moveFrom, moveTo) => {
+    const { roomId = '', playerId = '' } = socket.data ?? {}
+    const room = roomMap.get(roomId)
+    if (room) {
+      room.board.move(moveFrom, moveTo, playerId !== playerTurn)
+      io.in(roomId).emit('turn', playerId, room.board.state.board, room.board.getAllMoves())
     }
   })
 

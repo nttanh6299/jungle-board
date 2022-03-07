@@ -1,26 +1,12 @@
-import { Board, BoardDelta } from '../../gameService/gameLogic'
-
-type PlayerJoinEventType = {
-  bothConnected: boolean
-  board: Board
-}
-
-type ReadyToPlayEventType = {
-  cooldown: number
-}
-
-type StartGameEventType = {
-  board: Board
-  allMoves: { [key: string]: BoardDelta[] }
-}
-
-type JoinEventType = string
+import { AllPossibleMoves, Board, BoardDelta } from '../../gameService/gameLogic'
 
 export interface ServerToClientEvents {
-  playerJoin: (data: PlayerJoinEventType) => void
-  readyToPlay: (data: ReadyToPlayEventType) => void
-  startGame: (data: StartGameEventType) => void
+  checkRoom: (board: Board, bothConnected: boolean) => void
+  readyToPlay: (cooldown: number) => void
+  startGame: (board: Board, allMoves: AllPossibleMoves) => void
   playerDisconnect: () => void
+  playerJoin: (playerId: string) => void
+  turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
 }
 
 export interface InterServerEvents {
@@ -28,7 +14,8 @@ export interface InterServerEvents {
 }
 
 export interface ClientToServerEvents {
-  join: (data: JoinEventType) => void
+  join: (roomId: string) => void
+  move: (playerTurn: string, moveFrom: BoardDelta, moveTo: BoardDelta) => void
   disconnect: () => void
 }
 
