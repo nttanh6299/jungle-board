@@ -3,6 +3,8 @@ import { klona } from 'klona'
 
 export type Board = string[][]
 
+export type AllPossibleMoves = { [key: string]: BoardDelta[] }
+
 export interface BoardDelta {
   row: number
   col: number
@@ -627,7 +629,7 @@ export function makeMove(board: Board, deltaFrom: BoardDelta, deltaTo: BoardDelt
  *  BCat: [{ row: 1, col: 1 }, { row: 1, col: 2 }],
  * }
  */
-export function getAllMoves(board: Board, playerTurn: string): { [key: string]: BoardDelta[] } {
+export function getAllMoves(board: Board, playerTurn: string): AllPossibleMoves {
   const allMoves: { [key: string]: BoardDelta[] } = {}
 
   for (let row = 0; row < ROWS; row++) {

@@ -35,6 +35,10 @@ class Room {
   leave(playerId: string) {
     this.players.delete(playerId)
   }
+
+  reset() {
+    this.board.initBoard()
+  }
 }
 
 export default Room

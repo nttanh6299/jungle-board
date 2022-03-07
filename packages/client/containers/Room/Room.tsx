@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import useSocket from 'hooks/useSocket'
 import useRoom from './hooks/useRoom'
-import { stringify } from 'utils'
-import { Board } from 'gameService/gameLogic'
+import { getPossibleMoves, stringify } from 'utils'
+import { Board, AllPossibleMoves } from 'gameService/gameLogic'
 import GameBoard from 'components/Board'
 import GameMenu from 'components/BoardMenu'
 import { dequal } from 'dequal'
+import { isEmpty } from 'utils/lodash/isEmpty'
 
 const Room: React.FC = () => {
   const router = useRouter()
@@ -14,6 +15,7 @@ const Room: React.FC = () => {
 
   const initialBoard = useRef<Board>(null)
   const [board, setBoard] = useState<Board>(null)
+  const [possibleMoves, setPossibleMoves] = useState<AllPossibleMoves>(null)
   const [selectedSquare, setSelectedSquare] = useState<number[]>([])
   const [canConnect, setCanConnect] = useState(false)
   const [bothConnected, setBothConnected] = useState(false)
@@ -29,8 +31,10 @@ const Room: React.FC = () => {
       return setSelectedSquare([])
     }
 
-    console.log(board[row][col])
-    setSelectedSquare([row, col])
+    const piece = board[row][col]
+    if (!isEmpty(possibleMoves) && possibleMoves[piece]) {
+      setSelectedSquare([row, col])
+    }
   }
 
   useEffect(() => {
@@ -58,7 +62,9 @@ const Room: React.FC = () => {
 
       // initial board
       if (data.board) {
-        initialBoard.current = data.board
+        if (!initialBoard.current) {
+          initialBoard.current = data.board
+        }
         setBoard(data.board)
       }
     })
@@ -73,7 +79,7 @@ const Room: React.FC = () => {
 
     socket.on('startGame', (data) => {
       setBoard(data.board)
-      console.log(data)
+      setPossibleMoves(data.allMoves)
     })
 
     // player disconnect
@@ -92,12 +98,17 @@ const Room: React.FC = () => {
           board={board}
           selectedSquare={selectedSquare}
           onSelectSquare={handleSelectSquare}
+          possibleMoves={
+            selectedSquare?.length
+              ? getPossibleMoves(board, possibleMoves, selectedSquare?.[0] ?? -1, selectedSquare?.[1] ?? -1)
+              : []
+          }
         />
         <strong>You</strong>
       </div>
 
       <div>
-        <GameMenu menuType='cooldown' cooldown={cooldown} visible={menuVisible} />
+        <GameMenu menuType="cooldown" cooldown={cooldown} visible={menuVisible} />
       </div>
     </div>
   )

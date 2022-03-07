@@ -12,15 +12,12 @@ interface IBoardMenuProps {
 }
 
 const BoardMenu: React.FC<IBoardMenuProps> = ({ menuType, cooldown, visible }) => {
-
   if (!visible) return null
 
   return (
     <div className={styles.container}>
       <Show when={menuType === 'cooldown'}>
-        <div className={styles.cooldown}>
-          {cooldown}
-        </div>
+        <div className={styles.cooldown}>{cooldown}</div>
       </Show>
     </div>
   )

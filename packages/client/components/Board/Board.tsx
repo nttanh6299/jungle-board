@@ -13,6 +13,7 @@ import {
   isWDen,
   getPieceKind,
   isOpponent,
+  BoardDelta,
 } from 'gameService/gameLogic'
 import styles from './board.module.scss'
 
@@ -26,9 +27,10 @@ interface IBoardProps {
   board: Board
   selectedSquare: number[]
   onSelectSquare: (row: number, col: number) => void
+  possibleMoves: BoardDelta[]
 }
 
-const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquare }) => {
+const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquare, possibleMoves }) => {
   return (
     <div style={{ paddingTop: 16, paddingBottom: 16 }}>
       <div
@@ -51,9 +53,9 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
               className={clsx(
                 styles['board_item'],
                 { [styles.selected]: dequal(selectedSquare, [row, col]) },
-                // {
-                //   canMove: !!possibleMoves.find((move) => dequal(move, { row, col })),
-                // },
+                {
+                  [styles.canMove]: !!possibleMoves?.find((move) => dequal(move, { row, col })),
+                },
               )}
             >
               <div

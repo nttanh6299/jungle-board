@@ -109,7 +109,7 @@ io.on('connection', (socket) => {
           room.board.startGame()
           const data = {
             board: room.board.state.board,
-            allMoves: room.board.getAllMoves()
+            allMoves: room.board.getAllMoves(),
           }
           io.in(roomId).emit('startGame', data)
         }
@@ -126,6 +126,7 @@ io.on('connection', (socket) => {
       socket.to(roomId).emit('playerDisconnect')
       socket.leave(roomId)
       room.leave(playerId)
+      room.reset()
       clearInterval(cooldownTimer)
 
       if (room.players.size === 0 && room.type === 'custom') {

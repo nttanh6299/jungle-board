@@ -24,6 +24,10 @@ class Game {
   history: History = { moves: [] }
 
   constructor() {
+    this.initBoard()
+  }
+
+  initBoard() {
     this.state.board = gameLogic.getEmptyBoard()
   }
 
@@ -64,7 +68,7 @@ class Game {
     return possibleMoves
   }
 
-  getAllMoves() {
+  getAllMoves(): gameLogic.AllPossibleMoves {
     return gameLogic.getAllMoves(this.state.board, this.playerTurn)
   }
 
