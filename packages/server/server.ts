@@ -105,7 +105,11 @@ io.on('connection', (socket) => {
         if (cooldown <= 0) {
           clearInterval(cooldownTimer)
           room.board.startGame()
-          io.in(roomId).emit('startGame', room.board.state.board, room.board.getAllMoves())
+
+          // [0] go first
+          const playerId = room.players.keys().next().value
+
+          io.in(roomId).emit('turn', playerId, room.board.state.board, room.board.getAllMoves())
         }
       }, 1000)
     }

@@ -15,7 +15,7 @@ const Room: React.FC = () => {
 
   const initialBoard = useRef<Board>(null)
   const playerId = useRef<string>('')
-  const [playerTurn, setPlayerTurn] = useState('')
+  const playerTurn = useRef<string>('')
   const [board, setBoard] = useState<Board>(null)
   const [possibleMoves, setPossibleMoves] = useState<AllPossibleMoves>(null)
   const [selectedSquare, setSelectedSquare] = useState<number[]>([])
@@ -28,6 +28,8 @@ const Room: React.FC = () => {
   const { room } = useRoom({ id: stringify(query?.id) })
 
   const handleSelectSquare = (row: number, col: number) => {
+    if (playerTurn.current !== playerId.current) return
+
     // move to possible square
     // row and col must be a new position
     const isSameSquare = dequal(selectedSquare, [row, col])
@@ -96,13 +98,8 @@ const Room: React.FC = () => {
       }
     })
 
-    socket.on('startGame', (board, allMoves) => {
-      setBoard(board)
-      setPossibleMoves(allMoves)
-    })
-
-    socket.on('turn', (playerTurn, board, allMoves) => {
-      setPlayerTurn(playerTurn)
+    socket.on('turn', (playerIdTurn, board, allMoves) => {
+      playerTurn.current = playerIdTurn
       setBoard(board)
       setPossibleMoves(allMoves)
     })

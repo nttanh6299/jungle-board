@@ -113,21 +113,7 @@ export function getEmptyBoard(): Board {
   ]
 }
 
-export function getInitialBoard(shouldRotate?: boolean): Board {
-  if (shouldRotate) {
-    return [
-      [BLion, L, BTrap, BDen, BTrap, L, BTiger],
-      [L, BDog, L, BTrap, L, BCat, L],
-      [WMouse, L, WLeopard, L, WWolf, L, BElephant],
-      [L, R, R, L, R, R, L],
-      [L, R, R, L, R, R, L],
-      [L, R, R, L, R, R, L],
-      [WElephant, L, WWolf, L, WLeopard, L, WMouse],
-      [L, WCat, L, WTrap, L, WDog, L],
-      [WTiger, L, WTrap, WDen, WTrap, L, WLion],
-    ]
-  }
-
+export function getInitialBoard(): Board {
   return [
     [WLion, L, WTrap, WDen, WTrap, L, WTiger],
     [L, WDog, L, WTrap, L, WCat, L],

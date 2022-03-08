@@ -38,34 +38,8 @@ class Game {
     this.isSinglePlay = Boolean(isSinglePlay)
   }
 
-  canSelect(row: number, col: number): boolean {
-    if (this.gameStatus !== GameStatus.PLAYING) return false
-
-    const piece = this.state.board[row][col]
-
-    if (
-      this.playerTurn === piece.charAt(0) &&
-      piece.substring(1) !== gameLogic.Structure.Den &&
-      piece.substring(1) !== gameLogic.Structure.Trap
-    ) {
-      const deltaFrom = { row, col }
-      const possibleMoves = gameLogic.getPiecePossibleMoves(this.state.board, this.playerTurn, deltaFrom)
-      return possibleMoves.length > 0
-    }
-
-    return false
-  }
-
   getWinner(): string {
     return gameLogic.getWinner(this.state.board)
-  }
-
-  getMoves(row: number, col: number): gameLogic.BoardDelta[] {
-    if (!this.canSelect(row, col)) return []
-
-    const deltaFrom = { row, col }
-    const possibleMoves = gameLogic.getPiecePossibleMoves(this.state.board, this.playerTurn, deltaFrom)
-    return possibleMoves
   }
 
   getAllMoves(): gameLogic.AllPossibleMoves {
