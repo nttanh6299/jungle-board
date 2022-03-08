@@ -38,7 +38,7 @@ const Room: React.FC = () => {
       const moveTo = pieceMoves?.find((move) => dequal(move, { row, col }))
       if (moveTo) {
         const moveFrom = { row: selectedSquare[0], col: selectedSquare[1] }
-        socket?.emit('move', playerId.current, moveFrom, moveTo)
+        socket?.emit('move', moveFrom, moveTo)
         return setSelectedSquare([])
       }
     }
@@ -109,6 +109,7 @@ const Room: React.FC = () => {
       setBothConnected(false)
       setMenuVisible(false)
       setBoard(initialBoard.current)
+      setSelectedSquare([])
     })
   }, [socket, canConnect, query?.id])
 

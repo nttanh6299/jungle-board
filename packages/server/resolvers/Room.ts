@@ -12,6 +12,7 @@ class Room {
   players: Map<string, Player> = new Map()
   type: RoomType
   board: Game
+  playerIdsCanPlay: string[] = []
 
   constructor(id: string, name: string, status?: string, type?: RoomType) {
     this.id = id
@@ -24,7 +25,22 @@ class Room {
   addPlayer(playerId: string, name: string): Player {
     const player = new Player(playerId, name, this.id)
     this.players.set(playerId, player)
+
+    if (this.players.size <= 2) {
+      this.playerIdsCanPlay.push(playerId)
+    }
+
     return player
+  }
+
+  getNextTurn(currentTurn?: string): string {
+    const currentTurnIndex = this.playerIdsCanPlay.findIndex(id => id === currentTurn)
+    return this.playerIdsCanPlay[(currentTurnIndex + 1) % 2]
+  }
+
+  getHost(): string {
+    // the host will be first player join in the room
+    return this.playerIdsCanPlay[0]
   }
 
   join(playerId: string): Player | undefined {
@@ -33,6 +49,7 @@ class Room {
   }
 
   leave(playerId: string) {
+    this.playerIdsCanPlay = this.playerIdsCanPlay.filter(id => id !== playerId)
     this.players.delete(playerId)
   }
 

@@ -1,5 +1,6 @@
 import * as gameLogic from './gameLogic'
 import * as ai from './ai'
+import { klona } from 'klona'
 
 export enum GameStatus {
   READY = 'Ready',
@@ -42,8 +43,36 @@ class Game {
     return gameLogic.getWinner(this.state.board)
   }
 
-  getAllMoves(): gameLogic.AllPossibleMoves {
-    return gameLogic.getAllMoves(this.state.board, this.playerTurn)
+  getAllMoves(board: gameLogic.Board): gameLogic.AllPossibleMoves {
+    return gameLogic.getAllMoves(board, this.playerTurn)
+  }
+
+  getRotatedBoard(): gameLogic.Board {
+    const rotatedBoard = klona(this.state.board).reverse()
+    for (let row = 0; row < gameLogic.ROWS; row++) {
+      for (let col = 0; col < gameLogic.COLS / 2; col++) {
+        const oppositeCol = gameLogic.COLS - col - 1
+        const piece = rotatedBoard[row][col]
+        const oppositePiece = rotatedBoard[row][oppositeCol]
+
+        if (piece.includes(gameLogic.PlayerSymbol.B)) {
+          rotatedBoard[row][col] = gameLogic.PlayerSymbol.W + piece.substring(1)
+        } else if (piece.includes(gameLogic.PlayerSymbol.W)) {
+          rotatedBoard[row][col] = gameLogic.PlayerSymbol.B + piece.substring(1)
+        }
+
+        if (oppositePiece.includes(gameLogic.PlayerSymbol.B)) {
+          rotatedBoard[row][oppositeCol] = gameLogic.PlayerSymbol.W + oppositePiece.substring(1)
+        } else if (oppositePiece.includes(gameLogic.PlayerSymbol.W)) {
+          rotatedBoard[row][oppositeCol] = gameLogic.PlayerSymbol.B + oppositePiece.substring(1)
+        }
+
+        const temp = rotatedBoard[row][col]
+        rotatedBoard[row][col] = rotatedBoard[row][oppositeCol]
+        rotatedBoard[row][oppositeCol] = temp
+      }
+    }
+    return rotatedBoard
   }
 
   move(

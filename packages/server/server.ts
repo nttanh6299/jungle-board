@@ -104,23 +104,30 @@ io.on('connection', (socket) => {
 
         if (cooldown <= 0) {
           clearInterval(cooldownTimer)
+
           room.board.startGame()
-
-          // [0] go first
-          const playerId = room.players.keys().next().value
-
-          io.in(roomId).emit('turn', playerId, room.board.state.board, room.board.getAllMoves())
+          io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
         }
       }, 1000)
     }
   })
 
-  socket.on('move', (playerTurn, moveFrom, moveTo) => {
+  socket.on('move', (moveFrom, moveTo) => {
     const { roomId = '', playerId = '' } = socket.data ?? {}
     const room = roomMap.get(roomId)
     if (room) {
-      room.board.move(moveFrom, moveTo, playerId !== playerTurn)
-      io.in(roomId).emit('turn', playerId, room.board.state.board, room.board.getAllMoves())
+      const shouldRotateBoard = playerId !== room.getHost()
+      room.board.move(moveFrom, moveTo, shouldRotateBoard)
+
+      const nextTurn = room.getNextTurn(playerId)
+      const currentBoard = room.board.state.board
+      const rotatedBoard = room.board.getRotatedBoard()
+
+      const playerSelfBoard = shouldRotateBoard ? rotatedBoard : currentBoard
+      const otherPlayersBoard = shouldRotateBoard ? currentBoard : rotatedBoard
+
+      socket.emit('turn', nextTurn, playerSelfBoard, room.board.getAllMoves(playerSelfBoard))
+      socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, room.board.getAllMoves(otherPlayersBoard))
     }
   })
 

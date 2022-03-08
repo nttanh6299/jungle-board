@@ -15,7 +15,7 @@ export interface InterServerEvents {
 
 export interface ClientToServerEvents {
   join: (roomId: string) => void
-  move: (playerTurn: string, moveFrom: BoardDelta, moveTo: BoardDelta) => void
+  move: (moveFrom: BoardDelta, moveTo: BoardDelta) => void
   disconnect: () => void
 }
 
