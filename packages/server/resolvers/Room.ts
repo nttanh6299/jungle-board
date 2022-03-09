@@ -12,13 +12,16 @@ class Room {
   players: Map<string, Player> = new Map()
   type: RoomType
   board: Game
+  playerTurn: string = ''
   playerIdsCanPlay: string[] = []
+  cooldownTimer: NodeJS.Timer | null
 
   constructor(id: string, name: string, status?: string, type?: RoomType) {
     this.id = id
     this.name = name
     this.status = status || ROOM_STATUS.waiting.value
     this.type = type || 'reserved'
+    this.cooldownTimer = null
     this.board = new Game()
   }
 
@@ -33,9 +36,10 @@ class Room {
     return player
   }
 
-  getNextTurn(currentTurn?: string): string {
-    const currentTurnIndex = this.playerIdsCanPlay.findIndex(id => id === currentTurn)
-    return this.playerIdsCanPlay[(currentTurnIndex + 1) % 2]
+  getNextTurn(): string {
+    const currentTurnIndex = this.playerIdsCanPlay.findIndex(id => id === this.playerTurn)
+    this.playerTurn = this.playerIdsCanPlay[(currentTurnIndex + 1) % 2]
+    return this.playerTurn
   }
 
   getHost(): string {

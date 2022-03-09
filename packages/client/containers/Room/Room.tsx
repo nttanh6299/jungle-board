@@ -14,21 +14,22 @@ const Room: React.FC = () => {
   const { query } = router
 
   const initialBoard = useRef<Board>(null)
-  const playerId = useRef<string>('')
-  const playerTurn = useRef<string>('')
+  const [playerId, setPlayerId] = useState('')
+  const [playerTurn, setPlayerTurn] = useState('')
   const [board, setBoard] = useState<Board>(null)
   const [possibleMoves, setPossibleMoves] = useState<AllPossibleMoves>(null)
   const [selectedSquare, setSelectedSquare] = useState<number[]>([])
   const [canConnect, setCanConnect] = useState(false)
   const [bothConnected, setBothConnected] = useState(false)
   const [cooldown, setCooldown] = useState(0)
+  const [playCooldown, setPlayCooldown] = useState(0)
   const [menuVisible, setMenuVisible] = useState(false)
 
   const { socket } = useSocket()
   const { room } = useRoom({ id: stringify(query?.id) })
 
   const handleSelectSquare = (row: number, col: number) => {
-    if (playerTurn.current !== playerId.current) return
+    if (playerTurn !== playerId) return
 
     // move to possible square
     // row and col must be a new position
@@ -72,7 +73,7 @@ const Room: React.FC = () => {
     socket.emit('join', stringify(query?.id))
 
     socket.on('playerJoin', (data) => {
-      playerId.current = data
+      setPlayerId(data)
     })
 
     // player join in the room
@@ -98,8 +99,13 @@ const Room: React.FC = () => {
       }
     })
 
+    socket.on('playCooldown', (cooldown) => {
+      setPlayCooldown(cooldown)
+    })
+
     socket.on('turn', (playerIdTurn, board, allMoves) => {
-      playerTurn.current = playerIdTurn
+      setSelectedSquare([])
+      setPlayerTurn(playerIdTurn)
       setBoard(board)
       setPossibleMoves(allMoves)
     })
@@ -110,6 +116,7 @@ const Room: React.FC = () => {
       setMenuVisible(false)
       setBoard(initialBoard.current)
       setSelectedSquare([])
+      setPlayerTurn('')
     })
   }, [socket, canConnect, query?.id])
 
@@ -118,7 +125,9 @@ const Room: React.FC = () => {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
-          <strong style={{ marginTop: 8 }}>{ }</strong>
+          <div style={{ height: 20 }}>
+            <strong style={{ marginTop: 8 }}>{playerTurn && playerId !== playerTurn ? playCooldown : null}</strong>
+          </div>
         </div>
         <div style={{ paddingTop: 8, paddingBottom: 8 }}>
           <GameBoard
@@ -129,7 +138,9 @@ const Room: React.FC = () => {
           />
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <strong style={{ marginBottom: 8 }}>{ }</strong>
+          <div style={{ height: 20 }}>
+            <strong style={{ marginBottom: 8 }}>{playerTurn && playerId === playerTurn ? playCooldown : null}</strong>
+          </div>
           <strong>You</strong>
         </div>
       </div>

@@ -3,10 +3,10 @@ import { AllPossibleMoves, Board, BoardDelta } from '../../gameService/gameLogic
 export interface ServerToClientEvents {
   checkRoom: (board: Board, bothConnected: boolean) => void
   readyToPlay: (cooldown: number) => void
-  startGame: (board: Board, allMoves: AllPossibleMoves) => void
   playerDisconnect: () => void
   playerJoin: (playerId: string) => void
   turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
+  playCooldown: (cooldown: number) => void
 }
 
 export interface InterServerEvents {

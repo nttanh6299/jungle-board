@@ -18,6 +18,7 @@ type History = {
 class Game {
   state: gameLogic.IState = { board: [] }
   playerTurn: string = ''
+  moveCount: number = 0
 
   gameStatus: GameStatus = GameStatus.READY
   isSinglePlay: boolean = false
@@ -37,6 +38,7 @@ class Game {
     this.state.board = gameLogic.getInitialBoard()
     this.playerTurn = gameLogic.PlayerSymbol.B
     this.isSinglePlay = Boolean(isSinglePlay)
+    this.moveCount = 0
   }
 
   getWinner(): string {
@@ -92,6 +94,7 @@ class Game {
 
       this.history.moves.push(prevBoard)
       this.state.board = nextBoard
+      this.moveCount += 1
 
       if (winner !== '') {
         if (winner === this.playerTurn) {

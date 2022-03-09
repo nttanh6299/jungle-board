@@ -94,8 +94,7 @@ io.on('connection', (socket) => {
     if (bothConnected) {
       let cooldown = 5
       io.in(roomId).emit('readyToPlay', cooldown)
-
-      cooldownTimer = setInterval(() => {
+      room.cooldownTimer = setInterval(() => {
         if (cooldown > 0) {
           cooldown -= 1
         }
@@ -103,10 +102,42 @@ io.on('connection', (socket) => {
         io.in(roomId).emit('readyToPlay', cooldown)
 
         if (cooldown <= 0) {
-          clearInterval(cooldownTimer)
+          if (room.cooldownTimer) {
+            clearInterval(room.cooldownTimer)
+          }
 
           room.board.startGame()
           io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
+
+          const play = () => {
+            if (room.cooldownTimer) {
+              clearInterval(room.cooldownTimer)
+            }
+
+            let playCooldown = 10
+            io.in(roomId).emit('playCooldown', playCooldown)
+            room.cooldownTimer = setInterval(() => {
+              if (playCooldown > 0) {
+                playCooldown -= 1
+              }
+
+              if (room.board.moveCount === 0) {
+                io.in(roomId).emit('playCooldown', playCooldown)
+              }
+
+              if (playCooldown <= 0) {
+                if (room.cooldownTimer) {
+                  clearInterval(room.cooldownTimer)
+                }
+                if (room.board.moveCount === 0) {
+                  io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
+                  play()
+                }
+              }
+            }, 1000)
+          }
+
+          play()
         }
       }, 1000)
     }
@@ -119,15 +150,50 @@ io.on('connection', (socket) => {
       const shouldRotateBoard = playerId !== room.getHost()
       room.board.move(moveFrom, moveTo, shouldRotateBoard)
 
-      const nextTurn = room.getNextTurn(playerId)
+      const nextTurn = room.getNextTurn()
       const currentBoard = room.board.state.board
       const rotatedBoard = room.board.getRotatedBoard()
 
       const playerSelfBoard = shouldRotateBoard ? rotatedBoard : currentBoard
       const otherPlayersBoard = shouldRotateBoard ? currentBoard : rotatedBoard
 
-      socket.emit('turn', nextTurn, playerSelfBoard, room.board.getAllMoves(playerSelfBoard))
-      socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, room.board.getAllMoves(otherPlayersBoard))
+      const playerSelfPossibleMoves = room.board.getAllMoves(playerSelfBoard)
+      const otherPlayersPossibleMoves = room.board.getAllMoves(otherPlayersBoard)
+      socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves)
+      socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, otherPlayersPossibleMoves)
+      if (room.cooldownTimer) {
+        clearInterval(room.cooldownTimer)
+      }
+
+      const play = () => {
+        if (room.cooldownTimer) {
+          clearInterval(room.cooldownTimer)
+        }
+
+        let playCooldown = 10
+        io.in(roomId).emit('playCooldown', playCooldown)
+        room.cooldownTimer = setInterval(() => {
+          if (playCooldown > 0) {
+            playCooldown -= 1
+          }
+
+          io.in(roomId).emit('playCooldown', playCooldown)
+
+          if (playCooldown <= 0) {
+            if (room.cooldownTimer) {
+              clearInterval(room.cooldownTimer)
+            }
+
+            const nextTurn = room.getNextTurn()
+
+            socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves)
+            socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, otherPlayersPossibleMoves)
+            play()
+          }
+        }, 1000)
+      }
+
+      play()
     }
   })
 
@@ -141,7 +207,9 @@ io.on('connection', (socket) => {
       socket.leave(roomId)
       room.leave(playerId)
       room.reset()
-      clearInterval(cooldownTimer)
+      if (room.cooldownTimer) {
+        clearInterval(room.cooldownTimer)
+      }
 
       if (room.players.size === 0 && room.type === 'custom') {
         roomMap.delete(roomId)
