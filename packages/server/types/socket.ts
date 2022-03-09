@@ -7,6 +7,7 @@ export interface ServerToClientEvents {
   playerJoin: (playerId: string) => void
   turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
   playCooldown: (cooldown: number) => void
+  end: (playerTurn: string, status: string) => void
 }
 
 export interface InterServerEvents {

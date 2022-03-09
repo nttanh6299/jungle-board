@@ -7,6 +7,7 @@ import { ResGetRoom } from './types'
 import Room from './resolvers/Room'
 import { ROOM_STATUS } from './constants/common'
 import { ServerToClientEvents, ClientToServerEvents, InterServerEvents, SocketData } from './types/socket'
+import { GameStatus } from '../gameService/game'
 
 const roomMap: Map<string, Room> = new Map()
 
@@ -106,7 +107,7 @@ io.on('connection', (socket) => {
             clearInterval(room.cooldownTimer)
           }
 
-          room.board.startGame()
+          room.start()
           io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
 
           const play = () => {
@@ -114,7 +115,7 @@ io.on('connection', (socket) => {
               clearInterval(room.cooldownTimer)
             }
 
-            let playCooldown = 10
+            let playCooldown = 20
             io.in(roomId).emit('playCooldown', playCooldown)
             room.cooldownTimer = setInterval(() => {
               if (playCooldown > 0) {
@@ -153,10 +154,8 @@ io.on('connection', (socket) => {
       const nextTurn = room.getNextTurn()
       const currentBoard = room.board.state.board
       const rotatedBoard = room.board.getRotatedBoard()
-
       const playerSelfBoard = shouldRotateBoard ? rotatedBoard : currentBoard
       const otherPlayersBoard = shouldRotateBoard ? currentBoard : rotatedBoard
-
       const playerSelfPossibleMoves = room.board.getAllMoves(playerSelfBoard)
       const otherPlayersPossibleMoves = room.board.getAllMoves(otherPlayersBoard)
       socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves)
@@ -170,7 +169,7 @@ io.on('connection', (socket) => {
           clearInterval(room.cooldownTimer)
         }
 
-        let playCooldown = 10
+        let playCooldown = 20
         io.in(roomId).emit('playCooldown', playCooldown)
         room.cooldownTimer = setInterval(() => {
           if (playCooldown > 0) {
@@ -193,7 +192,15 @@ io.on('connection', (socket) => {
         }, 1000)
       }
 
-      play()
+      if (room.board.gameStatus === GameStatus.END || room.board.gameStatus === GameStatus.TIE) {
+        if (room.cooldownTimer) {
+          clearInterval(room.cooldownTimer)
+        }
+        room.board.gameStatus === GameStatus.END ? room.end() : room.tie()
+        io.in(roomId).emit('end', playerId, room.status)
+      } else if (room.board.gameStatus === GameStatus.PLAYING) {
+        play()
+      }
     }
   })
 

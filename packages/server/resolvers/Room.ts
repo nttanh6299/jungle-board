@@ -60,6 +60,19 @@ class Room {
   reset() {
     this.board.initBoard()
   }
+
+  start() {
+    this.status = ROOM_STATUS.playing.value
+    this.board.startGame()
+  }
+
+  end() {
+    this.status = ROOM_STATUS.ending.value
+  }
+
+  tie() {
+    this.status = ROOM_STATUS.tie.value
+  }
 }
 
 export default Room

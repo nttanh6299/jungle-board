@@ -11,4 +11,8 @@ export const ROOM_STATUS = {
     label: 'Ending',
     value: 'ending',
   },
+  tie: {
+    label: 'Tie',
+    value: 'tie',
+  },
 }

@@ -6,8 +6,7 @@ export enum GameStatus {
   READY = 'Ready',
   PLAYING = 'Playing',
   PAUSE = 'Pause',
-  WIN = 'Win',
-  LOSE = 'Lose',
+  END = 'End',
   TIE = 'Tie',
 }
 
@@ -97,10 +96,8 @@ class Game {
       this.moveCount += 1
 
       if (winner !== '') {
-        if (winner === this.playerTurn) {
-          this.gameStatus = GameStatus.WIN
-        } else if (winner === gameLogic.getOpponentTurn(this.playerTurn)) {
-          this.gameStatus = GameStatus.LOSE
+        if (winner === this.playerTurn || winner === gameLogic.getOpponentTurn(this.playerTurn)) {
+          this.gameStatus = GameStatus.END
         } else {
           this.gameStatus = GameStatus.TIE
         }
@@ -119,10 +116,8 @@ class Game {
         this.state.board = nextBoard
 
         if (winner !== '') {
-          if (winner === this.playerTurn) {
-            this.gameStatus = GameStatus.WIN
-          } else if (winner === gameLogic.getOpponentTurn(this.playerTurn)) {
-            this.gameStatus = GameStatus.LOSE
+          if (winner === this.playerTurn || winner === gameLogic.getOpponentTurn(this.playerTurn)) {
+            this.gameStatus = GameStatus.END
           } else {
             this.gameStatus = GameStatus.TIE
           }

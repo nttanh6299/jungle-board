@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import useSocket from 'hooks/useSocket'
 import useRoom from './hooks/useRoom'
@@ -8,6 +8,7 @@ import GameBoard from 'components/Board'
 import GameMenu from 'components/BoardMenu'
 import { dequal } from 'dequal'
 import { isEmpty } from 'utils/lodash/isEmpty'
+import { ROOM_STATUS } from 'server/constants/common'
 
 const Room: React.FC = () => {
   const router = useRouter()
@@ -16,6 +17,7 @@ const Room: React.FC = () => {
   const initialBoard = useRef<Board>(null)
   const [playerId, setPlayerId] = useState('')
   const [playerTurn, setPlayerTurn] = useState('')
+  const [lastTurn, setLastTurn] = useState('')
   const [board, setBoard] = useState<Board>(null)
   const [possibleMoves, setPossibleMoves] = useState<AllPossibleMoves>(null)
   const [selectedSquare, setSelectedSquare] = useState<number[]>([])
@@ -23,10 +25,20 @@ const Room: React.FC = () => {
   const [bothConnected, setBothConnected] = useState(false)
   const [cooldown, setCooldown] = useState(0)
   const [playCooldown, setPlayCooldown] = useState(0)
-  const [menuVisible, setMenuVisible] = useState(false)
+  const [cooldownMenuVisible, setCooldownMenuVisible] = useState(false)
+  const [endVisible, setEndVisible] = useState(false)
+  const [gameStatus, setGameStatus] = useState<'ending' | 'playing' | 'tie' | 'waiting'>('waiting')
 
   const { socket } = useSocket()
   const { room } = useRoom({ id: stringify(query?.id) })
+
+  const gameStatusLabel = useMemo(() => {
+    if (gameStatus === 'tie') return 'TIE'
+    if (gameStatus === 'ending') {
+      return lastTurn === playerId ? 'YOU WIN' : 'YOU LOSE'
+    }
+    return ''
+  }, [gameStatus, lastTurn, playerId])
 
   const handleSelectSquare = (row: number, col: number) => {
     if (playerTurn !== playerId) return
@@ -53,6 +65,13 @@ const Room: React.FC = () => {
     if (!isEmpty(possibleMoves) && possibleMoves[piece]) {
       setSelectedSquare([row, col])
     }
+  }
+
+  const handleEndGame = () => {
+    setEndVisible(false)
+    setBoard(initialBoard.current)
+    setGameStatus('waiting')
+    setLastTurn('')
   }
 
   useEffect(() => {
@@ -93,9 +112,9 @@ const Room: React.FC = () => {
 
     socket.on('readyToPlay', (cooldown) => {
       setCooldown(cooldown)
-      setMenuVisible(true)
+      setCooldownMenuVisible(true)
       if (cooldown <= 0) {
-        setMenuVisible(false)
+        setCooldownMenuVisible(false)
       }
     })
 
@@ -110,13 +129,29 @@ const Room: React.FC = () => {
       setPossibleMoves(allMoves)
     })
 
+    socket.on('end', (lastTurn, status) => {
+      setPlayerTurn('')
+      setSelectedSquare([])
+      setEndVisible(true)
+      setLastTurn(lastTurn)
+
+      if (status === ROOM_STATUS.ending.value) {
+        setGameStatus('ending')
+      }
+      if (status === ROOM_STATUS.tie.value) {
+        setGameStatus('tie')
+      }
+    })
+
     // player disconnect
     socket.on('playerDisconnect', () => {
       setBothConnected(false)
-      setMenuVisible(false)
+      setCooldownMenuVisible(false)
       setBoard(initialBoard.current)
       setSelectedSquare([])
       setPlayerTurn('')
+      setGameStatus('waiting')
+      setLastTurn('')
     })
   }, [socket, canConnect, query?.id])
 
@@ -146,7 +181,13 @@ const Room: React.FC = () => {
       </div>
 
       <div>
-        <GameMenu menuType="cooldown" cooldown={cooldown} visible={menuVisible} />
+        <GameMenu menuType="cooldown" visible={cooldownMenuVisible}>
+          {cooldown}
+        </GameMenu>
+        <GameMenu menuType="end" visible={endVisible}>
+          <div style={{ fontSize: 40 }}>{gameStatusLabel}</div>
+          <div style={{ fontSize: 24, marginTop: 8, cursor: 'pointer' }} onClick={handleEndGame}>OK</div>
+        </GameMenu>
       </div>
     </div>
   )
