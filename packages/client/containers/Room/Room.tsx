@@ -9,6 +9,7 @@ import GameMenu from 'components/BoardMenu'
 import { dequal } from 'dequal'
 import { isEmpty } from 'utils/lodash/isEmpty'
 import { ROOM_STATUS } from 'server/constants/common'
+import Show from 'components/Show'
 
 const Room: React.FC = () => {
   const router = useRouter()
@@ -28,6 +29,7 @@ const Room: React.FC = () => {
   const [cooldownMenuVisible, setCooldownMenuVisible] = useState(false)
   const [endVisible, setEndVisible] = useState(false)
   const [gameStatus, setGameStatus] = useState<'ending' | 'playing' | 'tie' | 'waiting'>('waiting')
+  const [isHost, setIsHost] = useState(false)
 
   const { socket } = useSocket()
   const { room } = useRoom({ id: stringify(query?.id) })
@@ -74,6 +76,13 @@ const Room: React.FC = () => {
     setLastTurn('')
   }
 
+  const handleStartGame = () => {
+    setGameStatus('playing')
+    if (gameStatus === 'waiting') {
+      socket?.emit('start')
+    }
+  }
+
   useEffect(() => {
     if (room) {
       if (room?.quantity >= room?.max) {
@@ -91,8 +100,9 @@ const Room: React.FC = () => {
     // join the room by roomId
     socket.emit('join', stringify(query?.id))
 
-    socket.on('playerJoin', (data) => {
-      setPlayerId(data)
+    socket.on('playerJoin', (playerId, isHost) => {
+      setPlayerId(playerId)
+      setIsHost(isHost)
     })
 
     // player join in the room
@@ -144,14 +154,17 @@ const Room: React.FC = () => {
     })
 
     // player disconnect
-    socket.on('playerDisconnect', () => {
-      setBothConnected(false)
-      setCooldownMenuVisible(false)
-      setBoard(initialBoard.current)
-      setSelectedSquare([])
-      setPlayerTurn('')
-      setGameStatus('waiting')
-      setLastTurn('')
+    socket.on('playerDisconnect', (isPlayerDisconnected) => {
+      if (isPlayerDisconnected) {
+        setBothConnected(false)
+        setCooldownMenuVisible(false)
+        setBoard(initialBoard.current)
+        setSelectedSquare([])
+        setPlayerTurn('')
+        setGameStatus('waiting')
+        setLastTurn('')
+        setIsHost(true)
+      }
     })
   }, [socket, canConnect, query?.id])
 
@@ -177,6 +190,9 @@ const Room: React.FC = () => {
             <strong style={{ marginBottom: 8 }}>{playerTurn && playerId === playerTurn ? playCooldown : null}</strong>
           </div>
           <strong>You</strong>
+          <Show when={bothConnected && isHost && gameStatus === 'waiting'}>
+            <button onClick={handleStartGame}>Start</button>
+          </Show>
         </div>
       </div>
 

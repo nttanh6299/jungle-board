@@ -67,8 +67,6 @@ app.post('/create-room', (_, res) => {
 })
 
 io.on('connection', (socket) => {
-  let cooldownTimer: NodeJS.Timer
-
   socket.on('join', (roomId) => {
     const room = roomMap.get(roomId)
 
@@ -86,61 +84,68 @@ io.on('connection', (socket) => {
       }
 
       // send playerId to the joined player
-      socket.emit('playerJoin', playerId)
+      socket.emit('playerJoin', playerId, room.playerIdsCanPlay.length === 1)
 
       // to all clients in roomId
       io.in(roomId).emit('checkRoom', room.board.state.board, bothConnected)
     }
+  })
 
-    if (bothConnected) {
-      let cooldown = 5
-      io.in(roomId).emit('readyToPlay', cooldown)
-      room.cooldownTimer = setInterval(() => {
-        if (cooldown > 0) {
-          cooldown -= 1
-        }
-
+  socket.on('start', () => {
+    const { roomId = '' } = socket.data ?? {}
+    const room = roomMap.get(roomId)
+    if (room) {
+      const bothConnected = room.players.size === room.maxPlayer
+      if (bothConnected) {
+        let cooldown = 5
         io.in(roomId).emit('readyToPlay', cooldown)
-
-        if (cooldown <= 0) {
-          if (room.cooldownTimer) {
-            clearInterval(room.cooldownTimer)
+        room.cooldownTimer = setInterval(() => {
+          if (cooldown > 0) {
+            cooldown -= 1
           }
 
-          room.start()
-          io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
+          io.in(roomId).emit('readyToPlay', cooldown)
 
-          const play = () => {
+          if (cooldown <= 0) {
             if (room.cooldownTimer) {
               clearInterval(room.cooldownTimer)
             }
 
-            let playCooldown = 20
-            io.in(roomId).emit('playCooldown', playCooldown)
-            room.cooldownTimer = setInterval(() => {
-              if (playCooldown > 0) {
-                playCooldown -= 1
+            room.start()
+            io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
+
+            const play = () => {
+              if (room.cooldownTimer) {
+                clearInterval(room.cooldownTimer)
               }
 
-              if (room.board.moveCount === 0) {
-                io.in(roomId).emit('playCooldown', playCooldown)
-              }
-
-              if (playCooldown <= 0) {
-                if (room.cooldownTimer) {
-                  clearInterval(room.cooldownTimer)
+              let playCooldown = 20
+              io.in(roomId).emit('playCooldown', playCooldown)
+              room.cooldownTimer = setInterval(() => {
+                if (playCooldown > 0) {
+                  playCooldown -= 1
                 }
+
                 if (room.board.moveCount === 0) {
-                  io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
-                  play()
+                  io.in(roomId).emit('playCooldown', playCooldown)
                 }
-              }
-            }, 1000)
-          }
 
-          play()
-        }
-      }, 1000)
+                if (playCooldown <= 0) {
+                  if (room.cooldownTimer) {
+                    clearInterval(room.cooldownTimer)
+                  }
+                  if (room.board.moveCount === 0) {
+                    io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
+                    play()
+                  }
+                }
+              }, 1000)
+            }
+
+            play()
+          }
+        }, 1000)
+      }
     }
   })
 
@@ -210,7 +215,7 @@ io.on('connection', (socket) => {
     const room = roomMap.get(roomId)
     if (room) {
       // emit to another player that we leave the room
-      socket.to(roomId).emit('playerDisconnect')
+      socket.to(roomId).emit('playerDisconnect', !room.players.get(playerId)?.isGuest)
       socket.leave(roomId)
       room.leave(playerId)
       room.reset()

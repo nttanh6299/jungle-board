@@ -30,6 +30,7 @@ class Room {
     this.players.set(playerId, player)
 
     if (this.players.size <= 2) {
+      this.players.set(playerId, { ...player, isGuest: false })
       this.playerIdsCanPlay.push(playerId)
     }
 
@@ -58,6 +59,8 @@ class Room {
   }
 
   reset() {
+    this.status = ROOM_STATUS.waiting.value
+    this.playerTurn = ''
     this.board.initBoard()
   }
 
