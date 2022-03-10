@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import useSocket from 'hooks/useSocket'
 import useRoom from './hooks/useRoom'
@@ -69,12 +69,12 @@ const Room: React.FC = () => {
     }
   }
 
-  const handleEndGame = () => {
+  const handleEndGame = useCallback(() => {
     setEndVisible(false)
     setBoard(initialBoard.current)
     setGameStatus('waiting')
     setLastTurn('')
-  }
+  }, [])
 
   const handleStartGame = () => {
     setGameStatus('playing')
@@ -92,6 +92,21 @@ const Room: React.FC = () => {
       }
     }
   }, [room, router])
+
+  useEffect(() => {
+    let timeout
+    if (endVisible) {
+      timeout = setTimeout(() => {
+        handleEndGame()
+      }, 10000);
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    }
+  }, [endVisible, handleEndGame])
 
   useEffect(() => {
     if (!query?.id) return
@@ -123,6 +138,7 @@ const Room: React.FC = () => {
     socket.on('readyToPlay', (cooldown) => {
       setCooldown(cooldown)
       setCooldownMenuVisible(true)
+      setEndVisible(false)
       if (cooldown <= 0) {
         setCooldownMenuVisible(false)
       }
