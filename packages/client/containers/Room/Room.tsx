@@ -98,7 +98,7 @@ const Room: React.FC = () => {
     if (endVisible) {
       timeout = setTimeout(() => {
         handleEndGame()
-      }, 10000);
+      }, 10000)
     }
 
     return () => {
@@ -218,7 +218,9 @@ const Room: React.FC = () => {
         </GameMenu>
         <GameMenu menuType="end" visible={endVisible}>
           <div style={{ fontSize: 40 }}>{gameStatusLabel}</div>
-          <div style={{ fontSize: 24, marginTop: 8, cursor: 'pointer' }} onClick={handleEndGame}>OK</div>
+          <div style={{ fontSize: 24, marginTop: 8, cursor: 'pointer' }} onClick={handleEndGame}>
+            OK
+          </div>
         </GameMenu>
       </div>
     </div>

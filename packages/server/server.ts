@@ -112,7 +112,12 @@ io.on('connection', (socket) => {
             }
 
             room.start()
-            io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
+            io.in(roomId).emit(
+              'turn',
+              room.getNextTurn(),
+              room.board.state.board,
+              room.board.getAllMoves(room.board.state.board),
+            )
 
             const play = () => {
               if (room.cooldownTimer) {
@@ -135,7 +140,12 @@ io.on('connection', (socket) => {
                     clearInterval(room.cooldownTimer)
                   }
                   if (room.board.moveCount === 0) {
-                    io.in(roomId).emit('turn', room.getNextTurn(), room.board.state.board, room.board.getAllMoves(room.board.state.board))
+                    io.in(roomId).emit(
+                      'turn',
+                      room.getNextTurn(),
+                      room.board.state.board,
+                      room.board.getAllMoves(room.board.state.board),
+                    )
                     play()
                   }
                 }

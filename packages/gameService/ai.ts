@@ -35,7 +35,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getElephantPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap
@@ -57,7 +57,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getLionPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap
@@ -79,7 +79,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getTigerPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap
@@ -101,7 +101,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getLeopardPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap
@@ -123,7 +123,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getDogPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap
@@ -145,7 +145,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getWolfPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap
@@ -167,7 +167,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getCatPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap
@@ -189,7 +189,7 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           possibleMoves = gameLogic.getMousePossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
-            for (let deltaTo of possibleMoves) {
+            for (const deltaTo of possibleMoves) {
               const pieceTo = board[deltaTo.row][deltaTo.col]
               const opponentDen = opponentTurn + gameLogic.Structure.Den
               const opponentTrap = opponentTurn + gameLogic.Structure.Trap

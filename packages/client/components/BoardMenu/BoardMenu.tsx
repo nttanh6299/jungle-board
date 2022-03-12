@@ -19,9 +19,7 @@ const BoardMenu: React.FC<IBoardMenuProps> = ({ menuType, visible, children }) =
       <Show when={menuType === 'cooldown'}>
         <div className={styles.cooldown}>{children}</div>
       </Show>
-      <Show when={menuType === 'end'}>
-        {children}
-      </Show>
+      <Show when={menuType === 'end'}>{children}</Show>
     </div>
   )
 }

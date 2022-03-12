@@ -7,12 +7,12 @@ type RoomType = 'reserved' | 'custom'
 class Room {
   id: string
   name: string
-  maxPlayer: number = 2
+  maxPlayer = 2
   status: string
   players: Map<string, Player> = new Map()
   type: RoomType
   board: Game
-  playerTurn: string = ''
+  playerTurn = ''
   playerIdsCanPlay: string[] = []
   cooldownTimer: NodeJS.Timer | null
 
@@ -38,7 +38,7 @@ class Room {
   }
 
   getNextTurn(): string {
-    const currentTurnIndex = this.playerIdsCanPlay.findIndex(id => id === this.playerTurn)
+    const currentTurnIndex = this.playerIdsCanPlay.findIndex((id) => id === this.playerTurn)
     this.playerTurn = this.playerIdsCanPlay[(currentTurnIndex + 1) % 2]
     return this.playerTurn
   }
@@ -54,7 +54,7 @@ class Room {
   }
 
   leave(playerId: string) {
-    this.playerIdsCanPlay = this.playerIdsCanPlay.filter(id => id !== playerId)
+    this.playerIdsCanPlay = this.playerIdsCanPlay.filter((id) => id !== playerId)
     this.players.delete(playerId)
   }
 

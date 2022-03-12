@@ -16,11 +16,11 @@ type History = {
 
 class Game {
   state: gameLogic.IState = { board: [] }
-  playerTurn: string = ''
-  moveCount: number = 0
+  playerTurn = ''
+  moveCount = 0
 
   gameStatus: GameStatus = GameStatus.READY
-  isSinglePlay: boolean = false
+  isSinglePlay = false
 
   history: History = { moves: [] }
 
@@ -76,11 +76,7 @@ class Game {
     return rotatedBoard
   }
 
-  move(
-    deltaFrom: gameLogic.BoardDelta,
-    deltaTo: gameLogic.BoardDelta,
-    shouldRotateBoard?: boolean,
-  ): void {
+  move(deltaFrom: gameLogic.BoardDelta, deltaTo: gameLogic.BoardDelta, shouldRotateBoard?: boolean): void {
     if (this.state.board) {
       if (shouldRotateBoard) {
         deltaFrom.row = gameLogic.ROWS - deltaFrom.row - 1

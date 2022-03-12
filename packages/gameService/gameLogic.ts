@@ -220,13 +220,7 @@ export function isBDen(delta: BoardDelta): boolean {
 }
 
 export function isLand(delta: BoardDelta): boolean {
-  return (
-    !isInRiver(delta) &&
-    !isInWTrap(delta) &&
-    !isInBTrap(delta) &&
-    !isWDen(delta) &&
-    !isBDen(delta)
-  )
+  return !isInRiver(delta) && !isInWTrap(delta) && !isInBTrap(delta) && !isWDen(delta) && !isBDen(delta)
 }
 
 export function isOwnDen(playerTurn: string, delta: BoardDelta): boolean {
