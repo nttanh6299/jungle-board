@@ -1,3 +1,4 @@
+import { Server, Socket } from 'socket.io'
 import { AllPossibleMoves, Board, BoardDelta } from '../../gameService/gameLogic'
 
 export interface ServerToClientEvents {
@@ -25,3 +26,6 @@ export interface SocketData {
   roomId: string
   playerId: string
 }
+
+export type SocketServerType = Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>
+export type SocketType = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>

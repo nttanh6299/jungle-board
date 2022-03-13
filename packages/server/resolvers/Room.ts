@@ -76,6 +76,16 @@ class Room {
   tie() {
     this.status = ROOM_STATUS.tie.value
   }
+
+  setTimer(timer: NodeJS.Timer) {
+    this.cooldownTimer = timer
+  }
+
+  clearTimer() {
+    if (this.cooldownTimer) {
+      clearInterval(this.cooldownTimer)
+    }
+  }
 }
 
 export default Room

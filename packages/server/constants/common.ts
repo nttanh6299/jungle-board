@@ -16,3 +16,6 @@ export const ROOM_STATUS = {
     value: 'tie',
   },
 }
+
+export const START_COOLDOWN = 5
+export const PLAY_COOLDOWN = 20

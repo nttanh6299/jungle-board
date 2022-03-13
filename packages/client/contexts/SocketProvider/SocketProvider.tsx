@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, createContext } from 'react'
 import { API_ENDPOINT } from 'constants/common'
 import socketIOClient, { Socket } from 'socket.io-client'
 import { ServerToClientEvents, ClientToServerEvents } from 'server/types/socket'
@@ -9,14 +9,14 @@ export type SocketStateContextType = {
   socket: SocketType
 }
 
-export const SocketStateContext = React.createContext<SocketStateContextType>({
+export const SocketStateContext = createContext<SocketStateContextType>({
   socket: null,
 })
 
 const SocketProvider: React.FC = ({ children }) => {
-  const [socket, setSocket] = React.useState<SocketType>()
+  const [socket, setSocket] = useState<SocketType>()
 
-  React.useEffect(() => {
+  useEffect(() => {
     const socket = socketIOClient(API_ENDPOINT, { transports: ['websocket'] })
     setSocket(socket)
 

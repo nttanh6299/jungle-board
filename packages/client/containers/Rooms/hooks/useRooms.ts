@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react'
-import axios from 'axios'
 import { ResGetRoom } from 'server/types'
-import { API_ENDPOINT } from 'constants/common'
 import useIsomorphicLayoutEffect from 'hooks/useIsomorphicLayoutEffect'
 import { getRooms } from 'apis/room'
 

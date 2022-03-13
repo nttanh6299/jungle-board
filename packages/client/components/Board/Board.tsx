@@ -20,8 +20,8 @@ import styles from './board.module.scss'
 const BOARD_ROWS = Array.from(Array(ROWS).keys())
 const BOARD_COLS = Array.from(Array(COLS).keys())
 
-const SQUARE_WIDTH = 80
-const SQUARE_HEIGHT = 80
+const SQUARE_WIDTH = 70
+const SQUARE_HEIGHT = 70
 
 interface IBoardProps {
   board: Board
@@ -47,8 +47,8 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
               style={{
                 width: SQUARE_WIDTH,
                 height: SQUARE_HEIGHT,
-                top: row * 80,
-                left: col * 80,
+                top: row * SQUARE_WIDTH,
+                left: col * SQUARE_HEIGHT,
               }}
               className={clsx(
                 styles['board_item'],

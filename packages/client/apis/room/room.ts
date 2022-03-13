@@ -1,11 +1,10 @@
-import axios from 'axios'
+import { fetchApi } from 'apis/apiCaller'
 import { ResGetRoom } from 'server/types'
-import { API_ENDPOINT } from 'constants/common'
 
 export const getRoom = async (roomId: string) => {
-  return axios.get<ResGetRoom>(`${API_ENDPOINT}/room/${roomId}`)
+  return fetchApi<ResGetRoom>(`/rooms/${roomId}`)
 }
 
 export const getRooms = async () => {
-  return axios.get<ResGetRoom[]>(`${API_ENDPOINT}/rooms`)
+  return fetchApi<ResGetRoom[]>(`/rooms`)
 }

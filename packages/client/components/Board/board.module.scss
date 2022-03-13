@@ -11,6 +11,7 @@
     cursor: pointer;
     @include copyParentSize();
     .animal {
+      font-size: 12px;
       color: var(--white);
       background-color: var(--black);
       &.opponent {
