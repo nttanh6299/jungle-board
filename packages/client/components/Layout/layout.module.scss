@@ -51,3 +51,11 @@
     opacity: 0;
   }
 }
+
+.setting_button {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  display: block;
+  padding: calc(var(--gutter) * 1px);
+}

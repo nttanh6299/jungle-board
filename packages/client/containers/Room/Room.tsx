@@ -7,7 +7,7 @@ import GameBoard from 'components/Board'
 import { dequal } from 'dequal'
 import { isEmpty } from 'utils/lodash/isEmpty'
 import Show from 'components/Show'
-import { useStore } from 'store/game'
+import { useGameStore } from 'store/game'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 
@@ -31,7 +31,7 @@ const Room: React.FC = () => {
     onConnect,
     onSelectSquare,
     onStartGame,
-  } = useStore((state) => ({
+  } = useGameStore((state) => ({
     board: state.board,
     possibleMoves: state.possibleMoves,
     canConnect: state.canConnect,

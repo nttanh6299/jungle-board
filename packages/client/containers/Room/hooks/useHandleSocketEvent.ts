@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useStore } from 'store/game'
+import { useGameStore } from 'store/game'
 import useSocket from 'hooks/useSocket'
 
 type IHookArgs = {
@@ -23,7 +23,7 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
     onNewTurn,
     onEndGame,
     onDisconnect,
-  } = useStore((state) => ({
+  } = useGameStore((state) => ({
     canConnect: state.canConnect,
     endVisible: state.endVisible,
     onAfterEndGame: state.actions.onAfterEndGame,
@@ -40,7 +40,7 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
   useEffect(() => {
     if (!canConnect || !roomId) return
     // join the room by roomId
-    socket.emit('join', roomId)
+    socket?.emit('join', roomId)
   }, [socket, canConnect, roomId])
 
   // Before start game

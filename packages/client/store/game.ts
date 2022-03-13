@@ -134,8 +134,8 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
   }
 })
 
-const useStore = <T>(sel: StateSelector<State, T>) => useStoreImpl(sel, shallow)
-Object.assign(useStore, useStoreImpl)
+const useGameStore = <T>(sel: StateSelector<State, T>) => useStoreImpl(sel, shallow)
+Object.assign(useGameStore, useStoreImpl)
 
 const { getState, setState } = useStoreImpl
-export { getState, setState, useStore }
+export { getState, setState, useGameStore }

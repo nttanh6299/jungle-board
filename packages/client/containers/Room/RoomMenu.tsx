@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
 import GameMenu from 'components/BoardMenu'
-import { useStore } from 'store/game'
+import { useGameStore } from 'store/game'
 
 const RoomMenu: React.FC = () => {
-  const { cooldown, cooldownMenuVisible, endVisible, gameStatus, lastTurn, playerId, onAfterEndGame } = useStore(
+  const { cooldown, cooldownMenuVisible, endVisible, gameStatus, lastTurn, playerId, onAfterEndGame } = useGameStore(
     (state) => ({
       cooldownMenuVisible: state.cooldownMenuVisible,
       endVisible: state.endVisible,
