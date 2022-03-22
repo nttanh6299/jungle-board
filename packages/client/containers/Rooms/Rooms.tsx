@@ -5,12 +5,32 @@ import { ROOM_STATUS } from 'server/constants/common'
 import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
 import useAppState from 'hooks/useAppState'
-import { getRoom } from 'apis/room'
+import { getRoom, createRoom } from 'apis/room'
 
 const RoomsPage = () => {
   const router = useRouter()
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
+
+  const onCreateRoom = async () => {
+    try {
+      dispatch({ type: 'displayLoader', payload: { value: true } })
+      const { data } = await createRoom()
+
+      let errorLabel = ''
+      if (!data) errorLabel = 'Something went wrong!'
+      dispatch({ type: 'displayLoader', payload: { value: false } })
+
+      if (errorLabel) {
+        alert(errorLabel)
+        router.reload()
+      } else {
+        router.push('/room/' + data.id)
+      }
+    } catch (error) {
+      console.log('Create room error: ', error)
+    }
+  }
 
   const onJoinRoom = async (roomId: string, quantity: number, max: number, status: string) => {
     try {
@@ -43,7 +63,12 @@ const RoomsPage = () => {
 
   return (
     <div>
-      <h1>Rooms</h1>
+      <div style={{ display: 'flex' }}>
+        <h1>Rooms</h1>
+        <button onClick={onCreateRoom} style={{ marginLeft: 16, padding: 4 }}>
+          Create
+        </button>
+      </div>
       <div style={{ paddingTop: 16 }}>
         <Show when={fetching}>fetching..</Show>
         <Show when={!fetching}>
