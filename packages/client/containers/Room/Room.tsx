@@ -10,6 +10,7 @@ import Show from 'components/Show'
 import { useGameStore } from 'store/game'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
+import PlayerCooldown from './PlayerCooldown'
 
 const Room: React.FC = () => {
   const router = useRouter()
@@ -27,7 +28,6 @@ const Room: React.FC = () => {
     playerTurn,
     selectedSquare,
     bothConnected,
-    playCooldown,
     onConnect,
     onSelectSquare,
     onStartGame,
@@ -41,7 +41,6 @@ const Room: React.FC = () => {
     playerTurn: state.playerTurn,
     selectedSquare: state.selectedSquare,
     bothConnected: state.bothConnected,
-    playCooldown: state.playCooldown,
     onConnect: state.actions.onConnect,
     onSelectSquare: state.actions.onSelectSquare,
     onStartGame: state.actions.onStartGame,
@@ -100,9 +99,7 @@ const Room: React.FC = () => {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
-            <div style={{ height: 20 }}>
-              <strong style={{ marginTop: 8 }}>{playerTurn && playerId !== playerTurn ? playCooldown : null}</strong>
-            </div>
+            <PlayerCooldown isOpponent />
           </div>
           <div style={{ paddingTop: 8, paddingBottom: 8 }}>
             <GameBoard
@@ -118,9 +115,7 @@ const Room: React.FC = () => {
             />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ height: 20 }}>
-              <strong style={{ marginBottom: 8 }}>{playerTurn && playerId === playerTurn ? playCooldown : null}</strong>
-            </div>
+            <PlayerCooldown />
             <strong>You</strong>
             <Show when={bothConnected && isHost && gameStatus === 'waiting'}>
               <button onClick={handleStartGame}>Start</button>
