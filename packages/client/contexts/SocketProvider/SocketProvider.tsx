@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext } from 'react'
 import { API_ENDPOINT } from 'constants/common'
 import socketIOClient, { Socket } from 'socket.io-client'
-import { ServerToClientEvents, ClientToServerEvents } from 'server/types/socket'
+import { ServerToClientEvents, ClientToServerEvents } from '@jungle-board/server/lib/types/socket'
 
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents>
 

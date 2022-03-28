@@ -1,8 +1,5 @@
-import dotenv from 'dotenv'
-import path from 'path'
+import 'dotenv/config'
 import Joi from 'joi'
-
-dotenv.config({ path: path.join(__dirname, '../.env') })
 
 const envVarsSchema = Joi.object()
   .keys({

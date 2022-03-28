@@ -1,5 +1,5 @@
 import eventHandler from '../utils/eventHandler'
-import { GameStatus } from 'gameService/game'
+import { GameStatus } from '@jungle-board/service/lib/game'
 import roomMap from '../db'
 import { PLAY_COOLDOWN } from '../constants/common'
 

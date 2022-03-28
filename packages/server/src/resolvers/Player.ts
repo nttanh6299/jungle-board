@@ -2,7 +2,7 @@ class Player {
   id: string
   name: string
   roomId: string
-  isGuest: boolean = true
+  isGuest = true
 
   constructor(id: string, name: string, roomId: string) {
     this.id = id

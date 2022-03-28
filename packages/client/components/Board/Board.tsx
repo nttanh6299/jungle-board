@@ -14,7 +14,7 @@ import {
   getPieceKind,
   isOpponent,
   BoardDelta,
-} from 'gameService/gameLogic'
+} from '@jungle-board/service/lib/gameLogic'
 import styles from './board.module.scss'
 
 const BOARD_ROWS = Array.from(Array(ROWS).keys())

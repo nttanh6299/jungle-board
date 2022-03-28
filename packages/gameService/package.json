@@ -1,7 +1,17 @@
 {
-  "name": "gameservice",
+  "name": "@jungle-board/service",
   "version": "0.0.0",
-  "description": "> TODO: description",
+  "main": "lib/gameLogic.js",
+  "typings": "lib/gameLogic.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Tuan Anh Nguyen <nttanh6299@gmail.com> (https://github.com/nttanh6299)",
   "homepage": "https://github.com/nttanh6299/jungle-board#readme",
   "license": "MIT",

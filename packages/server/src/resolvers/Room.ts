@@ -1,6 +1,6 @@
 import { ROOM_STATUS } from '../constants/common'
 import Player from './Player'
-import Game from 'gameService/game'
+import Game from '@jungle-board/service/lib/game'
 
 type RoomType = 'reserved' | 'custom'
 

@@ -2,8 +2,8 @@ import { createRef, MutableRefObject } from 'react'
 import create, { SetState, GetState, StateSelector } from 'zustand'
 import shallow from 'zustand/shallow'
 import produce from 'immer'
-import { AllPossibleMoves, Board } from 'gameService/gameLogic'
-import { ROOM_STATUS } from 'server/constants/common'
+import { AllPossibleMoves, Board } from '@jungle-board/service/lib/gameLogic'
+import { ROOM_STATUS } from '@jungle-board/server/lib/constants/common'
 
 const actionNames = [
   'onSelectSquare',

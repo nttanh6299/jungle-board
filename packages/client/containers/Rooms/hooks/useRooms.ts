@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { ResGetRoom } from 'server/types'
+import { ResGetRoom } from '@jungle-board/server/lib/types'
 import useIsomorphicLayoutEffect from 'hooks/useIsomorphicLayoutEffect'
 import { getRooms } from 'apis/room'
 
