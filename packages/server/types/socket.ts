@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import { AllPossibleMoves, Board, BoardDelta } from '../../gameService/gameLogic'
+import { AllPossibleMoves, Board, BoardDelta } from 'gameService/gameLogic'
 
 export interface ServerToClientEvents {
   checkRoom: (board: Board, bothConnected: boolean) => void

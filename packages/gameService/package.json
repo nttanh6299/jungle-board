@@ -11,5 +11,8 @@
   "dependencies": {
     "dequal": "^2.0.2",
     "klona": "^2.0.5"
+  },
+  "scripts": {
+    "build": "tsc"
   }
 }
