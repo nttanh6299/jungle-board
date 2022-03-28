@@ -7,15 +7,17 @@ import { ResGetRoom } from '../types'
 import Room from '../resolvers/Room'
 import { ROOM_STATUS } from '../constants/common'
 
+const toRoom = ({ id, name, status, type, maxPlayer, players }: Room) => ({
+  id,
+  name,
+  status,
+  type,
+  max: maxPlayer,
+  quantity: players.size,
+})
+
 const getRooms = catchAsync((_, res) => {
-  const mapToArray: ResGetRoom[] = Array.from(roomMap).map(([, { id, name, maxPlayer, status, players, type }]) => ({
-    id,
-    name,
-    status,
-    type,
-    max: maxPlayer,
-    quantity: players.size,
-  }))
+  const mapToArray: ResGetRoom[] = Array.from(roomMap).map(([, room]) => toRoom(room))
   return res.status(httpStatus.OK).send(mapToArray)
 })
 
@@ -27,21 +29,15 @@ const getRoom = catchAsync((req, res) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
   }
 
-  const { id, name, status, maxPlayer, players, type } = room
-  return res.status(httpStatus.OK).send({
-    id,
-    name,
-    status,
-    type,
-    max: maxPlayer,
-    quantity: players.size,
-  })
+  return res.status(httpStatus.OK).send(toRoom(room))
 })
 
 const createRoom = catchAsync((_, res) => {
   const roomId = generateId()
-  roomMap.set(roomId, new Room(roomId, roomId, ROOM_STATUS.waiting.value, 'custom'))
-  return res.status(httpStatus.OK).send({ id: roomId, name: roomId })
+  const newRoom = new Room(roomId, roomId, ROOM_STATUS.waiting.value, 'custom')
+  roomMap.set(roomId, newRoom)
+
+  return res.status(httpStatus.OK).send(toRoom(newRoom))
 })
 
 const roomController = {

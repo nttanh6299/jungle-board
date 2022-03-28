@@ -8,3 +8,7 @@ export const getRoom = async (roomId: string) => {
 export const getRooms = async () => {
   return fetchApi<ResGetRoom[]>(`/rooms`)
 }
+
+export const createRoom = async () => {
+  return fetchApi<ResGetRoom>('/rooms', 'POST')
+}
