@@ -1,5 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import './variables';
-
 * {
   margin: 0;
   padding: 0;
