@@ -63,26 +63,29 @@ const RoomsPage = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex' }}>
-        <h1>Rooms</h1>
-        <button onClick={onCreateRoom} style={{ marginLeft: 16, padding: 4 }}>
+      <div className="flex">
+        <h1 className="text-5xl font-semibold">Rooms</h1>
+        <button
+          onClick={onCreateRoom}
+          className="ml-4 px-6 py-3 text-2xl border rounded-lg bg-slate-900 hover:bg-slate-800 text-white"
+        >
           Create
         </button>
       </div>
-      <div style={{ paddingTop: 16 }}>
+      <div className="pt-6">
         <Show when={fetching}>fetching..</Show>
         <Show when={!fetching}>
-          <div style={{ display: 'flex' }}>
+          <div className="flex">
             {rooms?.map(({ id, name, quantity, max, status }) => (
-              <div key={id} style={{ border: '1px solid black', marginRight: '8px', padding: 8 }}>
-                <strong>{name}</strong>
-                <div style={{ paddingTop: 8, paddingBottom: 8 }}>
+              <div key={id} className="border border-slate-900 mr-4 p-4">
+                <strong className="text-3xl">{name}</strong>
+                <div className="py-4 text-2xl">
                   {quantity}/{max}
                 </div>
-                <div>{ROOM_STATUS[status]?.label}</div>
-                <div style={{ marginTop: 12, display: 'flex', justifyContent: 'flex-end' }}>
+                <div className="text-2xl">{ROOM_STATUS[status]?.label}</div>
+                <div className="mt-3 flex justify-end">
                   <button
-                    style={{ padding: 4 }}
+                    className="mt-4 px-6 py-3 text-2xl border rounded-lg bg-slate-900 hover:bg-slate-800 text-white"
                     disabled={!canJoin(quantity, max, status)}
                     onClick={() => onJoinRoom(id, quantity, max, status)}
                   >

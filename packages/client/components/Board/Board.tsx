@@ -15,7 +15,6 @@ import {
   isOpponent,
   BoardDelta,
 } from '@jungle-board/service/lib/gameLogic'
-import styles from './board.module.scss'
 
 const BOARD_ROWS = Array.from(Array(ROWS).keys())
 const BOARD_COLS = Array.from(Array(COLS).keys())
@@ -34,7 +33,7 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
   return (
     <div>
       <div
-        className={styles.board}
+        className="relative"
         style={{
           width: SQUARE_WIDTH * BOARD_COLS.length,
           height: SQUARE_HEIGHT * BOARD_ROWS.length,
@@ -51,27 +50,29 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
                 left: col * SQUARE_HEIGHT,
               }}
               className={clsx(
-                styles['board_item'],
-                { [styles.selected]: dequal(selectedSquare, [row, col]) },
+                'absolute border-2 border-solid',
+                { 'border-red-400': dequal(selectedSquare, [row, col]) },
                 {
-                  [styles.canMove]: !!possibleMoves?.find((move) => dequal(move, { row, col })),
+                  'border-green-400': !!possibleMoves?.find((move) => dequal(move, { row, col })),
                 },
+                'border-yellow-300',
               )}
             >
               <div
                 className={clsx(
-                  styles['board_square'],
-                  { [styles.land]: isLand({ row, col }) },
-                  { [styles.river]: isInRiver({ row, col }) },
-                  { [styles.trap]: isInWTrap({ row, col }) || isInBTrap({ row, col }) },
-                  { [styles.den]: isWDen({ row, col }) || isBDen({ row, col }) },
+                  'grid place-items-center cursor-pointer w-full h-full',
+                  { 'bg-land': isLand({ row, col }) },
+                  { 'bg-river': isInRiver({ row, col }) },
+                  { 'bg-trap': isInWTrap({ row, col }) || isInBTrap({ row, col }) },
+                  { 'bg-den': isWDen({ row, col }) || isBDen({ row, col }) },
                 )}
                 onClick={() => onSelectSquare(row, col)}
               >
                 <span
                   className={clsx(
-                    { [styles.animal]: board && !!getPieceKind(board[row][col]) },
-                    { [styles.opponent]: board && isOpponent(board, { row, col }) },
+                    { 'text-xl text-white': board && !!getPieceKind(board[row][col]) },
+                    { 'text-black bg-white': board && isOpponent(board, { row, col }) },
+                    { 'bg-black': board && !isOpponent(board, { row, col }) },
                   )}
                 >
                   {board ? getPieceKind(board[row][col]) : ''}

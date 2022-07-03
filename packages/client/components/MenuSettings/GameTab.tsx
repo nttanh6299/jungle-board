@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSettingsStore } from 'store/settings'
 import Toggle from './components/Toggle'
-import styles from './menuSettings.module.scss'
 
 const GameTab: React.FC = () => {
   const { game, onSetTutorials } = useSettingsStore((state) => ({
@@ -11,9 +10,9 @@ const GameTab: React.FC = () => {
 
   return (
     <div>
-      <div className={styles.item_row}>
-        <div className={styles.left}>Tutorials</div>
-        <div className={styles.right}>
+      <div className="flex items-center">
+        <div className="mr-6">Tutorials</div>
+        <div className="flex">
           <Toggle value={game.tutorials} change={onSetTutorials} />
         </div>
       </div>

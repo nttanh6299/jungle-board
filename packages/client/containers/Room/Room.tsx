@@ -96,12 +96,12 @@ const Room: React.FC = () => {
   return (
     <div>
       <Show when={canConnect}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
             <PlayerCooldown isOpponent />
           </div>
-          <div style={{ paddingTop: 8, paddingBottom: 8 }}>
+          <div className="pt-2 mt-2">
             <GameBoard
               board={board}
               selectedSquare={selectedSquare}
@@ -114,7 +114,7 @@ const Room: React.FC = () => {
               )}
             />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div className="flex flex-col items-center">
             <PlayerCooldown />
             <strong>You</strong>
             <Show when={bothConnected && isHost && gameStatus === 'waiting'}>

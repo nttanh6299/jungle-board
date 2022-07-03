@@ -3,7 +3,6 @@ import clsx from 'clsx'
 import useTabs from 'hooks/useTabs'
 import Show from 'components/Show'
 import { useSettingsStore } from 'store/settings'
-import styles from './menuSettings.module.scss'
 import AudioTab from './AudioTab'
 import GameTab from './GameTab'
 import VideoTab from './VideoTab'
@@ -42,23 +41,28 @@ const MenuSettings: React.FC = () => {
   const { selected, onChange } = useTabs(Tab.GAME)
 
   return (
-    <div className={styles.container}>
-      <h2>Settings</h2>
-      <div onClick={onToggleMenu} className={styles.close}>
+    <div className="p-4 fixed top-0 left-0 right-0 bottom-0 bg-black/[.75] text-white uppercase z-[1]">
+      <h2 className="text-3xl font-semibold">Settings</h2>
+      <div
+        onClick={onToggleMenu}
+        className="absolute top-[10px] right-[10px] py-2 px-3 cursor-pointer border border-white"
+      >
         x
       </div>
-      <ul className={styles.tabs}>
+      <ul className="flex mt-4 list-none">
         {tabs.map((tab) => (
           <li
             key={tab.value}
-            className={clsx([styles.tab], { [styles.selected]: tab.value === selected })}
+            className={clsx('cursor-pointer text-xl block p-4 border border-white sibling:ml-4', {
+              'border border-yellow-400': tab.value === selected,
+            })}
             onClick={() => onChange(tab.value)}
           >
             {tab.label}
           </li>
         ))}
       </ul>
-      <div className={styles.menu}>
+      <div className="mt-4">
         <Show when={selected === Tab.GAME}>
           <GameTab />
         </Show>

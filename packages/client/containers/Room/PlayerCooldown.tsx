@@ -13,8 +13,8 @@ const PlayerCooldown: React.FC<IPlayerCooldownProps> = ({ isOpponent }) => {
   }))
 
   return (
-    <div style={{ height: 20 }}>
-      <strong style={{ marginTop: 8 }}>
+    <div className="h-5">
+      <strong className="mt-2">
         {isOpponent && playerTurn && playerId !== playerTurn ? playCooldown : null}
         {!isOpponent && playerTurn && playerId === playerTurn ? playCooldown : null}
       </strong>

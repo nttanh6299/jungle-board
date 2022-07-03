@@ -1,6 +1,5 @@
 import React from 'react'
 import clsx from 'clsx'
-import styles from '../menuSettings.module.scss'
 
 interface ISoundSliderProps {
   muted: boolean
@@ -11,8 +10,8 @@ interface ISoundSliderProps {
 
 const SoundSlider: React.FC<ISoundSliderProps> = ({ muted, volume, toggleMute, changeVolume }) => {
   return (
-    <div className={styles.slider}>
-      <button onClick={toggleMute} className={clsx(styles.mute, { [styles.muted]: muted })}>
+    <div className="flex">
+      <button onClick={toggleMute} className={clsx('mr-4', { 'bg-yellow-400': muted })}>
         {muted ? 'Unmute' : 'Mute'}
       </button>
       <input

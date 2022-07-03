@@ -2,7 +2,6 @@ import React from 'react'
 import { useSettingsStore } from 'store/settings'
 import Toggle from './components/Toggle'
 import LevelGroup from './components/LevelGroup'
-import styles from './menuSettings.module.scss'
 
 const VideoTab: React.FC = () => {
   const { video, onSetShowFps, onSetGraphicLevel } = useSettingsStore((state) => ({
@@ -13,15 +12,15 @@ const VideoTab: React.FC = () => {
 
   return (
     <div>
-      <div className={styles.item_row}>
-        <div className={styles.left}>Show FPS</div>
-        <div className={styles.right}>
+      <div className="flex items-center">
+        <div className="mr-6">Show FPS</div>
+        <div className="flex">
           <Toggle value={video.showFps} change={onSetShowFps} />
         </div>
       </div>
-      <div className={styles.item_row}>
-        <div className={styles.left}>Graphics</div>
-        <div className={styles.right}>
+      <div className="flex items-center sibling:mt-4">
+        <div className="mr-6">Graphics</div>
+        <div className="flex">
           <LevelGroup value={video.graphics} change={onSetGraphicLevel} />
         </div>
       </div>

@@ -1,6 +1,5 @@
 import Show from 'components/Show'
 import React from 'react'
-import styles from './boardMenu.module.scss'
 
 export type MenuType = 'cooldown' | 'menu' | 'end'
 
@@ -15,9 +14,9 @@ const BoardMenu: React.FC<IBoardMenuProps> = ({ menuType, visible, children }) =
   if (!visible) return null
 
   return (
-    <div className={styles.container}>
+    <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[700px] max-h-[500px] bg-black/[.75] text-white flex flex-col justify-center items-center">
       <Show when={menuType === 'cooldown'}>
-        <div className={styles.cooldown}>{children}</div>
+        <div className="text-7xl">{children}</div>
       </Show>
       <Show when={menuType === 'end'}>{children}</Show>
     </div>

@@ -29,8 +29,8 @@ const RoomMenu: React.FC = () => {
         {cooldown}
       </GameMenu>
       <GameMenu menuType="end" visible={endVisible}>
-        <div style={{ fontSize: 40 }}>{gameStatusLabel}</div>
-        <div style={{ fontSize: 24, marginTop: 8, cursor: 'pointer' }} onClick={onAfterEndGame}>
+        <div className="text-4xl">{gameStatusLabel}</div>
+        <div className="text-2xl mt-4 cursor-pointer" onClick={onAfterEndGame}>
           OK
         </div>
       </GameMenu>

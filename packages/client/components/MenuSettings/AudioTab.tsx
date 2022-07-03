@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSettingsStore } from 'store/settings'
 import SoundSlider from './components/SoundSlider'
-import styles from './menuSettings.module.scss'
 
 const AudioTab: React.FC = () => {
   const { audio, onToggleMute, onSetVolume } = useSettingsStore((state) => ({
@@ -12,9 +11,9 @@ const AudioTab: React.FC = () => {
 
   return (
     <div>
-      <div className={styles.item_row}>
-        <div className={styles.left}>Music</div>
-        <div className={styles.right}>
+      <div className="flex items-center">
+        <div className="mr-6">Music</div>
+        <div className="flex">
           <SoundSlider
             muted={audio.musicMuted}
             volume={audio.musicVolume}
@@ -23,9 +22,9 @@ const AudioTab: React.FC = () => {
           />
         </div>
       </div>
-      <div className={styles.item_row}>
-        <div className={styles.left}>SFX</div>
-        <div className={styles.right}>
+      <div className="flex items-center sibling:mt-4">
+        <div className="mr-6">SFX</div>
+        <div className="flex">
           <SoundSlider
             muted={audio.sfxMuted}
             volume={audio.sfxVolume}

@@ -1,8 +1,0 @@
-@mixin makeBorder($color: white, $borderWidth: var(--border-width)) {
-  border: $borderWidth var(--border-style) $color;
-}
-
-@mixin copyParentSize() {
-  width: 100%;
-  height: 100%;
-}
