@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import useSocket from 'hooks/useSocket'
-import useRoom from './hooks/useRoom'
 import { getPossibleMoves, stringify } from 'utils'
 import GameBoard from 'components/Board'
 import { dequal } from 'dequal'
@@ -11,8 +10,9 @@ import { useGameStore } from 'store/game'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
+import { ResGetRoom } from '@jungle-board/server/lib/types'
 
-const Room: React.FC = () => {
+const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
   const router = useRouter()
   const { query } = router
 
@@ -47,7 +47,6 @@ const Room: React.FC = () => {
   }))
 
   const { socket } = useSocket()
-  const { room } = useRoom({ id: stringify(query?.id) })
 
   const handleSelectSquare = (row: number, col: number) => {
     if (playerTurn !== playerId) return
