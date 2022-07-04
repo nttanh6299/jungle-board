@@ -50,12 +50,11 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
                 left: col * SQUARE_HEIGHT,
               }}
               className={clsx(
-                'absolute border-2 border-solid',
-                { 'border-red-400': dequal(selectedSquare, [row, col]) },
+                'absolute border-2 border-solid border-yellow-300',
+                { '!border-red-400': dequal(selectedSquare, [row, col]) },
                 {
-                  'border-green-400': !!possibleMoves?.find((move) => dequal(move, { row, col })),
+                  '!border-green-400': !!possibleMoves?.find((move) => dequal(move, { row, col })),
                 },
-                'border-yellow-300',
               )}
             >
               <div
@@ -70,9 +69,8 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
               >
                 <span
                   className={clsx(
-                    { 'text-xl text-white': board && !!getPieceKind(board[row][col]) },
-                    { 'text-black bg-white': board && isOpponent(board, { row, col }) },
-                    { 'bg-black': board && !isOpponent(board, { row, col }) },
+                    { 'text-xl text-white bg-black': board && !!getPieceKind(board[row][col]) },
+                    { 'text-black !bg-white': board && isOpponent(board, { row, col }) },
                   )}
                 >
                   {board ? getPieceKind(board[row][col]) : ''}
