@@ -24,6 +24,7 @@
   },
   "scripts": {
     "dev": "lerna run --parallel dev",
+    "start": "lerna run --parallel start",
     "prepare": "husky install",
     "format": "prettier --write ."
   },

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "./lib",
+    "rootDir": "./src",
     "target": "es2016",
     "module": "commonjs",
     "esModuleInterop": true,
@@ -14,7 +15,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "sourceMap": false,
-    "lib": ["es6"]
+    "lib": ["es6", "dom", "es2017"]
   },
   "include": ["./src"],
   "exclude": ["node_modules"]
