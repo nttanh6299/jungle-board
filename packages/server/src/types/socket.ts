@@ -4,6 +4,7 @@ import { AllPossibleMoves, Board, BoardDelta } from '@jungle-board/service/lib/g
 export interface ServerToClientEvents {
   checkRoom: (board: Board, bothConnected: boolean) => void
   readyToPlay: (cooldown: number) => void
+  play: () => void
   playerDisconnect: (isPlayerDisconnected: boolean) => void
   playerJoin: (playerId: string, isHost: boolean) => void
   turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void

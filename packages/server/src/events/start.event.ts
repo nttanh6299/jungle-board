@@ -64,7 +64,7 @@ const start = eventHandler((io, socket) => {
             room.board.state.board,
             room.board.getAllMoves(room.board.state.board),
           )
-
+          io.in(roomId).emit('play')
           play()
         }
       }, 1000)

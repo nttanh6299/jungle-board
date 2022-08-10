@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import useSocket from 'hooks/useSocket'
 import { getPossibleMoves, stringify } from 'utils'
@@ -29,8 +29,8 @@ const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
     selectedSquare,
     bothConnected,
     onConnect,
+    onDisconnect,
     onSelectSquare,
-    onStartGame,
   } = useGameStore((state) => ({
     board: state.board,
     possibleMoves: state.possibleMoves,
@@ -42,8 +42,8 @@ const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
     selectedSquare: state.selectedSquare,
     bothConnected: state.bothConnected,
     onConnect: state.actions.onConnect,
+    onDisconnect: state.actions.onDisconnect,
     onSelectSquare: state.actions.onSelectSquare,
-    onStartGame: state.actions.onStartGame,
   }))
 
   const { socket } = useSocket()
@@ -76,11 +76,30 @@ const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
   }
 
   const handleStartGame = () => {
-    onStartGame()
     if (gameStatus === 'waiting') {
       socket?.emit('start')
     }
   }
+
+  const goBack = useCallback(() => {
+    if (gameStatus === 'playing') {
+      if (window.confirm('Do you want to go back ?')) {
+        // note: error when room has guests
+        onDisconnect(true)
+        return router.push('/')
+      }
+    } else {
+      onDisconnect(true)
+      router.push('/')
+    }
+  }, [gameStatus, router, onDisconnect])
+
+  useEffect(() => {
+    window.addEventListener('popstate', goBack)
+    return () => {
+      window.removeEventListener('popstate', goBack)
+    }
+  }, [goBack])
 
   useEffect(() => {
     if (room) {
@@ -93,7 +112,10 @@ const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
   }, [room, router, onConnect])
 
   return (
-    <div>
+    <div className="relative">
+      <button onClick={goBack} className="fixed top-[10px] left-[10px] block p-2">
+        Back
+      </button>
       <Show when={canConnect}>
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center">

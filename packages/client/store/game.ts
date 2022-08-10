@@ -102,6 +102,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
         const { initialBoard } = get()
         set({
           bothConnected: false,
+          cooldown: 0,
           cooldownMenuVisible: false,
           isHost: true,
           board: initialBoard.current,

@@ -22,6 +22,7 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
     onPlayCooldown,
     onNewTurn,
     onEndGame,
+    onStartGame,
     onDisconnect,
   } = useGameStore((state) => ({
     canConnect: state.canConnect,
@@ -33,6 +34,7 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
     onPlayCooldown: state.actions.onPlayCooldown,
     onNewTurn: state.actions.onNewTurn,
     onEndGame: state.actions.onEndGame,
+    onStartGame: state.actions.onStartGame,
     onDisconnect: state.actions.onDisconnect,
   }))
 
@@ -58,7 +60,11 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
     socket.on('readyToPlay', (cooldown) => {
       onReadyToPlay(cooldown)
     })
-  }, [socket, canConnect, onPlayerJoin, onCheckRoom, onReadyToPlay])
+
+    socket.on('play', () => {
+      onStartGame()
+    })
+  }, [socket, canConnect, onPlayerJoin, onCheckRoom, onReadyToPlay, onStartGame])
 
   // On playing
   useEffect(() => {
