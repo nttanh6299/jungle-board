@@ -1,5 +1,6 @@
 import express, { Router } from 'express'
 import roomRoute from './room.route'
+import authRoute from './auth.route'
 
 interface Route {
   path: string
@@ -12,6 +13,10 @@ const routes: Route[] = [
   {
     path: '/rooms',
     route: roomRoute,
+  },
+  {
+    path: '/auth',
+    route: authRoute,
   },
 ]
 

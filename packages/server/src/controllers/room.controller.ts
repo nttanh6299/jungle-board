@@ -16,28 +16,25 @@ const toRoom = ({ id, name, status, type, maxPlayer, players }: Room) => ({
   quantity: players.size,
 })
 
-const getRooms = catchAsync((_, res) => {
+const getRooms = catchAsync((req, res) => {
   const mapToArray: ResGetRoom[] = Array.from(roomMap).map(([, room]) => toRoom(room))
-  return res.status(httpStatus.OK).send(mapToArray)
+  return res.status(httpStatus.OK).send({ data: mapToArray })
 })
 
 const getRoom = catchAsync((req, res) => {
   const { roomId } = req.params
   const room = roomMap.get(roomId + '')
-
   if (!room) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
   }
-
-  return res.status(httpStatus.OK).send(toRoom(room))
+  return res.status(httpStatus.OK).send({ data: toRoom(room) })
 })
 
 const createRoom = catchAsync((_, res) => {
   const roomId = generateId()
   const newRoom = new Room(roomId, roomId, ROOM_STATUS.waiting.value, 'custom')
   roomMap.set(roomId, newRoom)
-
-  return res.status(httpStatus.OK).send(toRoom(newRoom))
+  return res.status(httpStatus.OK).send({ data: toRoom(newRoom) })
 })
 
 const roomController = {

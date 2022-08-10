@@ -1,4 +1,4 @@
-export interface IReqCreateRoom {
+export interface ReqCreateRoom {
   name: string
 }
 
