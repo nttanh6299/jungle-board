@@ -3,7 +3,7 @@ import type { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import FacebookProvider from 'next-auth/providers/facebook'
 import GitHubProvider from 'next-auth/providers/github'
-import { AUTH_COOKIE_EXPIRE_DEFAULT, AUTH_PROVIDER } from 'constants/auth'
+import { AUTH_COOKIE_EXPIRE_DEFAULT } from 'constants/auth'
 import { ReqUser, signIn } from 'apis/auth'
 
 export const nextAuthOptions: NextAuthOptions = {
@@ -29,22 +29,22 @@ export const nextAuthOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (account.provider === AUTH_PROVIDER.GOOGLE) {
-        const googleUser: ReqUser = {
+      try {
+        const loggedUser: ReqUser = {
           name: user.name,
-          email: user.email,
+          email: user.email || '',
           image: user.image,
           provider: account.provider,
           providerAccountId: account.providerAccountId,
         }
-        const { data } = await signIn(googleUser)
-
+        const { data } = await signIn(loggedUser)
         if (data?.accessToken) {
           user.accessToken = data.accessToken
         }
         return true
+      } catch (_) {
+        return false
       }
-      return false
     },
     async jwt({ token, user }) {
       if (user) {

@@ -2,7 +2,7 @@ import { Schema, model, Document } from 'mongoose'
 
 export interface IUser extends Document {
   name: string
-  email: string
+  email?: string
   image?: string
   provider: string
   providerAccountId: string
@@ -16,10 +16,10 @@ export interface IUser extends Document {
 
 const userSchema: Schema = new Schema<IUser>({
   name: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String },
   image: { type: String },
   provider: { type: String, required: true },
-  providerAccountId: { type: String, required: true, unique: true },
+  providerAccountId: { type: String, required: true },
   isActive: { type: Boolean },
   xp: { type: Number, default: 0 },
   win: { type: Number, default: 0 },
