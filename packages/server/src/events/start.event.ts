@@ -1,75 +1,88 @@
 import eventHandler from '../utils/eventHandler'
 import roomMap from '../db'
 import { PLAY_COOLDOWN, START_COOLDOWN } from '../constants/common'
+import Room, { ERoomStatus } from '../models/room.model'
+import Match from '../models/match.model'
 
 const start = eventHandler((io, socket) => {
-  socket.on('start', () => {
+  socket.on('start', async () => {
     const { roomId = '' } = socket.data ?? {}
-    const room = roomMap.get(roomId)
+    const roomMapItem = roomMap.get(roomId)!
 
-    if (!room) return
+    if (!roomMapItem) return
 
     const play = () => {
-      room.clearTimer()
+      roomMapItem.clearTimer()
 
       let playCooldown = PLAY_COOLDOWN
-      io.in(room.id).emit('playCooldown', playCooldown)
+      io.in(roomId).emit('playCooldown', playCooldown)
       const timer = setInterval(() => {
         if (playCooldown > 0) {
           playCooldown -= 1
+          roomMapItem.incrementPlayTime()
         }
 
         // keep counting down while the player does not any move
         // otherwise we stop running the event there and start counting in move event (see: ./move.event.ts)
-        if (room.board.moveCount === 0) {
-          io.in(room.id).emit('playCooldown', playCooldown)
+        if (roomMapItem.board.moveCount === 0) {
+          io.in(roomId).emit('playCooldown', playCooldown)
         }
 
         // swap turn and keep counting down the timer
         if (playCooldown <= 0) {
-          room.clearTimer()
+          roomMapItem.clearTimer()
 
-          if (room.board.moveCount === 0) {
-            io.in(room.id).emit(
+          if (roomMapItem.board.moveCount === 0) {
+            io.in(roomId).emit(
               'turn',
-              room.getNextTurn(),
-              room.board.state.board,
-              room.board.getAllMoves(room.board.state.board),
+              roomMapItem.getNextTurn(),
+              roomMapItem.board.state.board,
+              roomMapItem.board.getAllMoves(roomMapItem.board.state.board),
             )
             play()
           }
         }
       }, 1000)
-      room.setTimer(timer)
+      roomMapItem.setTimer(timer)
     }
 
-    const bothConnected = room.players.size === room.maxPlayer
-    if (bothConnected) {
-      let cooldown = START_COOLDOWN
+    const bothConnected = roomMapItem.players.size === roomMapItem.maxPlayer
+    if (!bothConnected) return
+
+    let cooldown = START_COOLDOWN
+    io.in(roomId).emit('readyToPlay', cooldown)
+    const timer = setInterval(async () => {
+      if (cooldown > 0) {
+        cooldown -= 1
+      }
+
       io.in(roomId).emit('readyToPlay', cooldown)
-      const timer = setInterval(() => {
-        if (cooldown > 0) {
-          cooldown -= 1
+
+      if (cooldown <= 0) {
+        const playerIds = [...roomMapItem.playerIdsCanPlay]
+        const match = await Match.create({ roomId, playerId1: playerIds[0], playerId2: playerIds[1] })
+        const room = await Room.findById(roomId)
+
+        if (room) {
+          room.status = ERoomStatus.PLAYING
+          await room.save()
         }
 
-        io.in(roomId).emit('readyToPlay', cooldown)
+        // start the game
+        roomMapItem.clearTimer()
+        roomMapItem.start(match.id)
 
-        if (cooldown <= 0) {
-          // start the game
-          room.clearTimer()
-          room.start()
-          io.in(roomId).emit(
-            'turn',
-            room.getNextTurn(),
-            room.board.state.board,
-            room.board.getAllMoves(room.board.state.board),
-          )
-
-          play()
-        }
-      }, 1000)
-      room.setTimer(timer)
-    }
+        io.in(roomId).emit(
+          'turn',
+          roomMapItem.getNextTurn(),
+          roomMapItem.board.state.board,
+          roomMapItem.board.getAllMoves(roomMapItem.board.state.board),
+        )
+        io.in(roomId).emit('play')
+        play()
+      }
+    }, 1000)
+    roomMapItem.setTimer(timer)
   })
 })
 

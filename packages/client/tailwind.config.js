@@ -18,7 +18,7 @@ module.exports = {
         trap: '#c5c5c5',
       },
       animation: {
-        'ripple': 'ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite',
+        ripple: 'ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite',
       },
       keyframes: {
         ripple: {
@@ -35,9 +35,9 @@ module.exports = {
             width: '72px',
             height: '72px',
             opacity: 0,
-          }
-        }
-      }
+          },
+        },
+      },
     },
   },
   plugins: [
@@ -48,11 +48,11 @@ module.exports = {
       matchUtilities(
         {
           'animation-delay': (value) => ({
-            'animation-delay': `${value}ms`
+            'animation-delay': `${value}ms`,
           }),
         },
-        { values: theme('delay') }
+        { values: theme('delay') },
       )
-    })
-  ]
+    }),
+  ],
 }

@@ -1,19 +1,21 @@
+import { ERoomStatus } from '../models/room.model'
+
 export const ROOM_STATUS = {
   waiting: {
     label: 'Waiting',
-    value: 'waiting',
+    value: ERoomStatus.WAITING,
   },
   playing: {
     label: 'Playing',
-    value: 'playing',
+    value: ERoomStatus.PLAYING,
   },
   ending: {
     label: 'Ending',
-    value: 'ending',
+    value: ERoomStatus.END,
   },
   tie: {
     label: 'Tie',
-    value: 'tie',
+    value: ERoomStatus.TIE,
   },
 }
 

@@ -2,35 +2,36 @@ import { ROOM_STATUS } from '../constants/common'
 import Player from './Player'
 import Game from '@jungle-board/service/lib/game'
 
-type RoomType = 'reserved' | 'custom'
-
 class Room {
   id: string
-  name: string
   maxPlayer = 2
   status: string
   players: Map<string, Player> = new Map()
-  type: RoomType
+  matchId: string
+  type: string
   board: Game
   playerTurn = ''
   playerIdsCanPlay: string[] = []
   cooldownTimer: NodeJS.Timer | null
 
-  constructor(id: string, name: string, status?: string, type?: RoomType) {
+  matchTime: number
+
+  constructor(id: string, status?: string, type?: string) {
     this.id = id
-    this.name = name
     this.status = status || ROOM_STATUS.waiting.value
     this.type = type || 'reserved'
     this.cooldownTimer = null
     this.board = new Game()
+    this.matchTime = 0
+    this.matchId = ''
   }
 
-  addPlayer(playerId: string, name: string): Player {
-    const player = new Player(playerId, name, this.id)
+  addPlayer(playerId: string, playerType: string): Player {
+    const player = new Player(playerId, this.id, playerType)
     this.players.set(playerId, player)
 
     if (this.players.size <= 2) {
-      this.players.set(playerId, { ...player, isGuest: false })
+      this.players.set(playerId, { ...player, isSpectator: false })
       this.playerIdsCanPlay.push(playerId)
     }
 
@@ -43,14 +44,13 @@ class Room {
     return this.playerTurn
   }
 
-  getHost(): string {
-    // the host will be first player join in the room
+  getFirstPlayer(): string {
     return this.playerIdsCanPlay[0]
   }
 
-  join(playerId: string): Player | undefined {
-    if (this.players.size >= this.maxPlayer) return
-    return this.addPlayer(playerId, playerId)
+  getHost(): string {
+    // the host will be first player join in the room
+    return this.getFirstPlayer()
   }
 
   leave(playerId: string) {
@@ -64,9 +64,11 @@ class Room {
     this.board.initBoard()
   }
 
-  start() {
+  start(matchId: string) {
     this.status = ROOM_STATUS.playing.value
     this.board.startGame()
+    this.matchId = matchId
+    this.matchTime = 0
   }
 
   end() {
@@ -85,6 +87,10 @@ class Room {
     if (this.cooldownTimer) {
       clearInterval(this.cooldownTimer)
     }
+  }
+
+  incrementPlayTime() {
+    this.matchTime += 1
   }
 }
 

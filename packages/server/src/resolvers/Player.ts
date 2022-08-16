@@ -1,13 +1,13 @@
 class Player {
   id: string
-  name: string
   roomId: string
-  isGuest = true
+  playerType: string
+  isSpectator = true
 
-  constructor(id: string, name: string, roomId: string) {
+  constructor(id: string, roomId: string, playerType: string) {
     this.id = id
-    this.name = name
     this.roomId = roomId
+    this.playerType = playerType
   }
 }
 

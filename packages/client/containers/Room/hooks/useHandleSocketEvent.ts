@@ -4,13 +4,14 @@ import useSocket from 'hooks/useSocket'
 
 type IHookArgs = {
   roomId: string
+  accountId: string
 }
 
 type IHookReturn = void
 
 type IHook = (args: IHookArgs) => IHookReturn
 
-const useHandleEventSocket: IHook = ({ roomId }) => {
+const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
   const { socket } = useSocket()
   const {
     canConnect,
@@ -22,6 +23,7 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
     onPlayCooldown,
     onNewTurn,
     onEndGame,
+    onStartGame,
     onDisconnect,
   } = useGameStore((state) => ({
     canConnect: state.canConnect,
@@ -33,6 +35,7 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
     onPlayCooldown: state.actions.onPlayCooldown,
     onNewTurn: state.actions.onNewTurn,
     onEndGame: state.actions.onEndGame,
+    onStartGame: state.actions.onStartGame,
     onDisconnect: state.actions.onDisconnect,
   }))
 
@@ -40,8 +43,8 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
   useEffect(() => {
     if (!canConnect || !roomId) return
     // join the room by roomId
-    socket?.emit('join', roomId)
-  }, [socket, canConnect, roomId])
+    socket?.emit('join', roomId, accountId)
+  }, [socket, canConnect, roomId, accountId])
 
   // Before start game
   useEffect(() => {
@@ -58,7 +61,11 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
     socket.on('readyToPlay', (cooldown) => {
       onReadyToPlay(cooldown)
     })
-  }, [socket, canConnect, onPlayerJoin, onCheckRoom, onReadyToPlay])
+
+    socket.on('play', () => {
+      onStartGame()
+    })
+  }, [socket, canConnect, onPlayerJoin, onCheckRoom, onReadyToPlay, onStartGame])
 
   // On playing
   useEffect(() => {

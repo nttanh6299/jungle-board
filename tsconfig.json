@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./packages"
-  }
+    "baseUrl": "./packages",
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules"]
 }
