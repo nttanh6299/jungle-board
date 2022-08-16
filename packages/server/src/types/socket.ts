@@ -17,7 +17,7 @@ export interface InterServerEvents {
 }
 
 export interface ClientToServerEvents {
-  join: (roomId: string) => void
+  join: (roomId: string, accountId: string) => void
   move: (moveFrom: BoardDelta, moveTo: BoardDelta) => void
   disconnect: () => void
   start: () => void
@@ -26,6 +26,7 @@ export interface ClientToServerEvents {
 export interface SocketData {
   roomId: string
   playerId: string
+  playerType: string
 }
 
 export type SocketServerType = Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>

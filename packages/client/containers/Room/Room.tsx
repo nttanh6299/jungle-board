@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import useSocket from 'hooks/useSocket'
-import { getPossibleMoves, stringify } from 'utils'
+import { getPossibleMoves } from 'utils'
 import GameBoard from 'components/Board'
 import { dequal } from 'dequal'
 import { isEmpty } from 'utils/lodash/isEmpty'
@@ -12,16 +12,21 @@ import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
 import { ResGetRoom } from '@jungle-board/server/lib/types'
 
-const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
-  const router = useRouter()
-  const { query } = router
+interface RoomProps {
+  room: ResGetRoom
+  accountId: string
+}
 
-  useHandleSocketEvent({ roomId: stringify(query.id) })
+const Room: React.FC<RoomProps> = ({ room, accountId }) => {
+  const router = useRouter()
+
+  useHandleSocketEvent({ roomId: room.id, accountId })
 
   const {
     board,
     possibleMoves,
     canConnect,
+    cooldown,
     isHost,
     playerId,
     gameStatus,
@@ -35,6 +40,7 @@ const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
     board: state.board,
     possibleMoves: state.possibleMoves,
     canConnect: state.canConnect,
+    cooldown: state.cooldown,
     isHost: state.isHost,
     playerId: state.playerId,
     gameStatus: state.gameStatus,
@@ -102,14 +108,8 @@ const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
   }, [goBack])
 
   useEffect(() => {
-    if (room) {
-      if (room?.quantity >= room?.max) {
-        router.push('/rooms')
-      } else {
-        onConnect()
-      }
-    }
-  }, [room, router, onConnect])
+    onConnect()
+  }, [onConnect])
 
   return (
     <div className="relative">
@@ -138,7 +138,7 @@ const Room: React.FC<{ room: ResGetRoom }> = ({ room }) => {
           <div className="flex flex-col items-center">
             <PlayerCooldown />
             <strong>You</strong>
-            <Show when={bothConnected && isHost && gameStatus === 'waiting'}>
+            <Show when={bothConnected && isHost && cooldown === 0 && gameStatus === 'waiting'}>
               <button onClick={handleStartGame}>Start</button>
             </Show>
           </div>

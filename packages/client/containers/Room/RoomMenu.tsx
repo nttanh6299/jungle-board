@@ -17,7 +17,7 @@ const RoomMenu: React.FC = () => {
 
   const gameStatusLabel = useMemo(() => {
     if (gameStatus === 'tie') return 'TIE'
-    if (gameStatus === 'ending') {
+    if (gameStatus === 'end') {
       return lastTurn === playerId ? 'YOU WIN' : 'YOU LOSE'
     }
     return ''

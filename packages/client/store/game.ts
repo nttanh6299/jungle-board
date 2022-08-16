@@ -28,7 +28,7 @@ type BaseState = {
   [K in Booleans]: boolean
 }
 
-type GameStatus = 'ending' | 'playing' | 'tie' | 'waiting'
+type GameStatus = 'end' | 'playing' | 'tie' | 'waiting'
 
 interface State extends BaseState {
   actions: Record<ActionNames, (...args) => void>
@@ -60,7 +60,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
         playerTurn: '',
         selectedSquare: [],
         endVisible: true,
-        gameStatus: status === ROOM_STATUS.ending.value ? 'ending' : 'tie',
+        gameStatus: status === ROOM_STATUS.ending.value ? 'end' : 'tie',
         lastTurn,
       })
     },

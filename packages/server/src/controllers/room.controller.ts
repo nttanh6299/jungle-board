@@ -1,40 +1,51 @@
 import httpStatus from 'http-status'
 import ApiError from '../utils/ApiError'
 import catchAsync from '../utils/catchAsync'
-import { generateId } from '../utils'
+import Room from '../models/room.model'
+import RoomResolver from '../resolvers/Room'
 import roomMap from '../db'
-import { ResGetRoom } from '../types'
-import Room from '../resolvers/Room'
-import { ROOM_STATUS } from '../constants/common'
 
-const toRoom = ({ id, name, status, type, maxPlayer, players }: Room) => ({
+const toRoom = ({ id, name, status, type, maxPlayer, players }) => ({
   id,
   name,
   status,
   type,
   max: maxPlayer,
-  quantity: players.size,
+  quantity: players,
 })
 
-const getRooms = catchAsync((req, res) => {
-  const mapToArray: ResGetRoom[] = Array.from(roomMap).map(([, room]) => toRoom(room))
-  return res.status(httpStatus.OK).send({ data: mapToArray })
+const getRooms = catchAsync(async (_, res) => {
+  const rooms = await Room.find()
+  return res.status(httpStatus.OK).send({
+    data: rooms.map(({ id, name, status, type }) => {
+      const roomMapItem = roomMap.get(id)
+      return toRoom({ id, name, status, type, players: roomMapItem?.playerIdsCanPlay?.length, maxPlayer: 2 })
+    }),
+  })
 })
 
-const getRoom = catchAsync((req, res) => {
+const getRoom = catchAsync(async (req, res) => {
   const { roomId } = req.params
-  const room = roomMap.get(roomId + '')
+  const room = await Room.findById(roomId)
   if (!room) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
   }
-  return res.status(httpStatus.OK).send({ data: toRoom(room) })
+
+  const { id, name, status, type } = room
+  const roomMapItem = roomMap.get(id)
+  const roomRes = toRoom({ id, name, status, type, players: roomMapItem?.playerIdsCanPlay?.length, maxPlayer: 2 })
+  return res.status(httpStatus.OK).send({ data: roomRes })
 })
 
-const createRoom = catchAsync((_, res) => {
-  const roomId = generateId()
-  const newRoom = new Room(roomId, roomId, ROOM_STATUS.waiting.value, 'custom')
-  roomMap.set(roomId, newRoom)
-  return res.status(httpStatus.OK).send({ data: toRoom(newRoom) })
+const createRoom = catchAsync(async (req, res) => {
+  const { name } = req.body ?? {}
+  const newRoom = await Room.create({ name: name || 'Unnamed', type: 'custom' })
+  if (!newRoom) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot create room')
+  }
+
+  roomMap.set(newRoom.id, new RoomResolver(newRoom.id, newRoom.status, newRoom.type))
+  return res.status(httpStatus.OK).send({ data: { id: newRoom.id } })
 })
 
 const roomController = {

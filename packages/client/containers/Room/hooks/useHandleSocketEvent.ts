@@ -4,13 +4,14 @@ import useSocket from 'hooks/useSocket'
 
 type IHookArgs = {
   roomId: string
+  accountId: string
 }
 
 type IHookReturn = void
 
 type IHook = (args: IHookArgs) => IHookReturn
 
-const useHandleEventSocket: IHook = ({ roomId }) => {
+const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
   const { socket } = useSocket()
   const {
     canConnect,
@@ -42,8 +43,8 @@ const useHandleEventSocket: IHook = ({ roomId }) => {
   useEffect(() => {
     if (!canConnect || !roomId) return
     // join the room by roomId
-    socket?.emit('join', roomId)
-  }, [socket, canConnect, roomId])
+    socket?.emit('join', roomId, accountId)
+  }, [socket, canConnect, roomId, accountId])
 
   // Before start game
   useEffect(() => {

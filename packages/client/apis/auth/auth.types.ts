@@ -7,6 +7,7 @@ export type ReqUser = {
   accessToken?: string
 }
 
-export type ResUser = Api.Reponse<ReqUser> & {
+export type ResUser = {
+  user: ReqUser
   accessToken: string
 }

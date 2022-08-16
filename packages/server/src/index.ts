@@ -8,6 +8,9 @@ import config from './config/config'
 import morgan from './config/morgan'
 import routes from './routes'
 import io from './events'
+import roomMap from './db'
+import Room from './models/room.model'
+import RoomResolver from './resolvers/Room'
 
 const app = express()
 const server = http.createServer(app)
@@ -22,14 +25,19 @@ const connectApp = async () => {
   try {
     await mongoose.connect(config.mongoose.url)
 
-    start()
+    const rooms = await Room.find({ isActive: true })
+    rooms.forEach((room) => {
+      roomMap.set(room.id, new RoomResolver(room.id, room.status, room.type))
+    })
+
+    startServer()
   } catch (error) {
     console.log(error)
     process.exit(1)
   }
 }
 
-const start = () => {
+const startServer = () => {
   server.listen(config.port, () => {
     console.log(`App started on port ${config.port}`)
   })
