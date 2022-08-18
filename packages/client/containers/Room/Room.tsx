@@ -10,7 +10,7 @@ import { useGameStore } from 'store/game'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
-import { ResGetRoom } from '@jungle-board/server/lib/types'
+import { ResGetRoom } from 'apis/room'
 
 interface RoomProps {
   room: ResGetRoom

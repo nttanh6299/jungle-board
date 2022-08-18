@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ResGetRoom } from '@jungle-board/server/lib/types'
-import { getRoom as getRoomApi } from 'apis/room'
+import { getRoom as getRoomApi, ResGetRoom } from 'apis/room'
 
 type IHookArgs = {
   id: string

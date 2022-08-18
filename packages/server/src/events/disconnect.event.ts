@@ -2,6 +2,7 @@ import eventHandler from '../utils/eventHandler'
 import roomMap from '../db'
 import Room, { ERoomStatus } from '../models/room.model'
 import Match from '../models/match.model'
+import User from '../models/user.model'
 import Participant, { EUserType } from '../models/participant.model'
 
 const disconnect = eventHandler((_, socket) => {
@@ -11,8 +12,8 @@ const disconnect = eventHandler((_, socket) => {
 
     if (!roomMapItem) return
 
-    const currentPlayer = roomMapItem?.players.get(playerId)
-    const isPlayer = !currentPlayer?.isSpectator
+    const leftPlayer = roomMapItem?.players.get(playerId)
+    const isPlayer = !leftPlayer?.isSpectator
 
     // emit to another player that we leave the room
     socket.to(roomId).emit('playerDisconnect', isPlayer)
@@ -20,21 +21,40 @@ const disconnect = eventHandler((_, socket) => {
 
     roomMapItem?.leave(playerId)
     if (isPlayer) {
-      roomMapItem?.reset()
       roomMapItem?.clearTimer()
 
       // set winner to another player
       if (roomMapItem?.playerIdsCanPlay.length === 1) {
         const match = await Match.findById(roomMapItem.matchId)
         if (match) {
-          console.log('room', roomMapItem)
           match.winnerId = roomMapItem.getFirstPlayer()
           match.move = roomMapItem.board.moveCount
           match.time = roomMapItem.matchTime
-          await match.save()
+          match.save()
 
           const players = Array.from(roomMapItem.players, ([_, player]) => player)
-          const participantPromises = [...players, currentPlayer].filter(Boolean).map(
+
+          const identifiedPlayersPlaying = [...players, leftPlayer].filter(
+            (player) => !player?.isSpectator && player?.playerType === EUserType.IDENTIFIED,
+          )
+          const userPromises = identifiedPlayersPlaying.map(async (player) => {
+            // winner is not the user has left the match
+            const isWinner = player?.id !== playerId
+            return await User.findOneAndUpdate(
+              { _id: player?.id },
+              {
+                $inc: {
+                  xp: isWinner ? 10 : 0,
+                  win: isWinner ? 1 : 0,
+                  lose: isWinner ? 0 : 1,
+                  coin: isWinner ? 3 : 0,
+                },
+              },
+            )
+          })
+          Promise.all(userPromises)
+
+          const participantPromises = [...players, leftPlayer].map(
             async (player) =>
               await Participant.create({
                 roomId: roomMapItem.id,
@@ -47,7 +67,7 @@ const disconnect = eventHandler((_, socket) => {
                   : { anonymousUserId: player?.id }),
               }),
           )
-          await Promise.all(participantPromises) //test win
+          Promise.all(participantPromises)
         }
       }
 
@@ -55,6 +75,8 @@ const disconnect = eventHandler((_, socket) => {
       if (room) {
         room.status = ERoomStatus.WAITING
         await room.save()
+
+        roomMapItem?.reset()
       }
     }
     // if (room.players.size === 0 && room.type === 'custom') {

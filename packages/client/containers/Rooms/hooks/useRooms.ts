@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react'
-import { ResGetRoom } from '@jungle-board/server/lib/types'
 import useIsomorphicLayoutEffect from 'hooks/useIsomorphicLayoutEffect'
-import { getRooms } from 'apis/room'
+import { getRooms, ResGetRoom } from 'apis/room'
 
 type IHookReturn = {
   fetching: boolean

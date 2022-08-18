@@ -1,7 +1,24 @@
 import React, { useState, useEffect, createContext } from 'react'
 import { API_ENDPOINT } from 'constants/common'
 import socketIOClient, { Socket } from 'socket.io-client'
-import { ServerToClientEvents, ClientToServerEvents } from '@jungle-board/server/lib/types/socket'
+import { AllPossibleMoves, Board, BoardDelta } from '@jungle-board/service/lib/gameLogic'
+
+export interface ServerToClientEvents {
+  checkRoom: (board: Board, bothConnected: boolean) => void
+  readyToPlay: (cooldown: number) => void
+  play: () => void
+  playerDisconnect: (isPlayerDisconnected: boolean) => void
+  playerJoin: (playerId: string, isHost: boolean) => void
+  turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
+  playCooldown: (cooldown: number) => void
+  end: (playerTurn: string, status: string) => void
+}
+export interface ClientToServerEvents {
+  join: (roomId: string, accountId: string) => void
+  move: (moveFrom: BoardDelta, moveTo: BoardDelta) => void
+  disconnect: () => void
+  start: () => void
+}
 
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents>
 

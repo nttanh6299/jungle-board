@@ -1,5 +1,13 @@
 import { fetchApi } from 'apis/apiCaller'
-import { ResGetRoom } from '@jungle-board/server/lib/types'
+
+export interface ResGetRoom {
+  id: string
+  name: string
+  quantity: number
+  max: number
+  status: string
+  type: string
+}
 
 export const getRoom = async (roomId: string) => {
   return fetchApi<ResGetRoom>(`/rooms/${roomId}`)
