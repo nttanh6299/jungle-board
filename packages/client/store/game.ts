@@ -3,7 +3,7 @@ import create, { SetState, GetState, StateSelector } from 'zustand'
 import shallow from 'zustand/shallow'
 import produce from 'immer'
 import { AllPossibleMoves, Board } from '@jungle-board/service/lib/gameLogic'
-import { ROOM_STATUS } from '@jungle-board/server/lib/constants/common'
+import { ROOM_STATUS } from 'constants/common'
 
 const actionNames = [
   'onSelectSquare',

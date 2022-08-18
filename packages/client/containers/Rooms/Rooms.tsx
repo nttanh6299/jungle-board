@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import useInterval from 'hooks/useInterval'
 import Show from 'components/Show'
-import { ROOM_STATUS } from '@jungle-board/server/lib/constants/common'
+import { ROOM_STATUS } from 'constants/common'
 import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
 import useAppState from 'hooks/useAppState'

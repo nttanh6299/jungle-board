@@ -10,6 +10,8 @@ import routes from './routes'
 import io from './events'
 import roomMap from './db'
 import Room from './models/room.model'
+import Match from './models/match.model'
+import Participant from './models/participant.model'
 import RoomResolver from './resolvers/Room'
 
 const app = express()
@@ -23,7 +25,15 @@ if (config.env !== 'test') {
 
 const connectApp = async () => {
   try {
+    if (config.env !== 'test') {
+      mongoose.set('debug', (collectionName, method, query, doc) => {
+        console.log(`${collectionName}.${method}`, JSON.stringify(query), doc)
+        console.log('-----------------------------')
+      })
+    }
     await mongoose.connect(config.mongoose.url)
+
+    await Promise.all([Match.deleteMany({}), Participant.deleteMany({})])
 
     const rooms = await Room.find({ isActive: true })
     rooms.forEach((room) => {

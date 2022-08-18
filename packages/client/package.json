@@ -9,7 +9,6 @@
     "start": "next start -p 3000"
   },
   "dependencies": {
-    "@jungle-board/server": "^1.0.0",
     "@jungle-board/service": "^0.0.0",
     "axios": "0.24.0",
     "clsx": "^1.1.1",

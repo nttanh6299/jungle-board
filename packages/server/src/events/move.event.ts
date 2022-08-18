@@ -3,6 +3,8 @@ import { GameStatus } from '@jungle-board/service/lib/game'
 import roomMap from '../db'
 import { PLAY_COOLDOWN } from '../constants/common'
 import Match from '../models/match.model'
+import User from '../models/user.model'
+import Room, { ERoomStatus } from '../models/room.model'
 import Participant, { EUserType } from '../models/participant.model'
 
 const move = eventHandler((io, socket) => {
@@ -67,9 +69,30 @@ const move = eventHandler((io, socket) => {
         }
         match.move = roomMapItem.board.moveCount
         match.time = roomMapItem.matchTime
-        await match.save()
+        match.save()
 
         const players = Array.from(roomMapItem.players, ([_, player]) => player)
+
+        const identifiedPlayersPlaying = players.filter(
+          (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
+        )
+        console.log(identifiedPlayersPlaying)
+        const userPromises = identifiedPlayersPlaying.map(async (player) => {
+          const isWinner = isEnd && player.id === playerId
+          return await User.findOneAndUpdate(
+            { _id: player.id },
+            {
+              $inc: {
+                xp: isWinner ? 10 : isTie ? 5 : 2,
+                win: isWinner ? 1 : 0,
+                lose: isWinner ? 0 : isTie ? 0 : 1,
+                coin: isWinner ? 3 : isTie ? 2 : 1,
+              },
+            },
+          )
+        })
+        Promise.all(userPromises)
+
         const participantPromises = players.map(
           async (player) =>
             await Participant.create({
@@ -81,10 +104,18 @@ const move = eventHandler((io, socket) => {
               ...(player.playerType === EUserType.IDENTIFIED ? { userId: player.id } : { anonymousUserId: player.id }),
             }),
         )
-        await Promise.all(participantPromises)
+        Promise.all(participantPromises)
       }
 
       io.in(roomId).emit('end', playerId, roomMapItem.status)
+
+      const room = await Room.findById(roomId)
+      if (room) {
+        room.status = ERoomStatus.WAITING
+        await room.save()
+
+        roomMapItem.reset()
+      }
     } else if (roomMapItem.board.gameStatus === GameStatus.PLAYING) {
       play()
     }

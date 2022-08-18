@@ -9,7 +9,6 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
     // get user id
     const token = await getToken({ req: context.req })
-    const { sub } = token ?? {}
 
     const { data } = await getRoomApi(roomId)
 
@@ -25,7 +24,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     return {
       props: {
         room: data,
-        accountId: sub || '',
+        accountId: token?.id ? String(token?.id) : '',
       },
     }
   } catch (_) {
