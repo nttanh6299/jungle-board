@@ -40,10 +40,6 @@ class Game {
     this.moveCount = 0
   }
 
-  getWinner(): string {
-    return gameLogic.getWinner(this.state.board)
-  }
-
   getAllMoves(board: gameLogic.Board): gameLogic.AllPossibleMoves {
     return gameLogic.getAllMoves(board, this.playerTurn)
   }
@@ -85,9 +81,10 @@ class Game {
         deltaTo.col = gameLogic.COLS - deltaTo.col - 1
       }
 
-      const { prevBoard, nextBoard, winner } = gameLogic.makeMove(this.state.board, deltaFrom, deltaTo)
+      const { nextBoard, winner } = gameLogic.makeMove(this.state.board, deltaFrom, deltaTo)
+      // const { prevBoard, nextBoard, winner } = gameLogic.makeMove(this.state.board, deltaFrom, deltaTo)
 
-      this.history.moves.push(prevBoard)
+      // this.history.moves.push(prevBoard)
       this.state.board = nextBoard
       this.moveCount += 1
 
@@ -102,7 +99,7 @@ class Game {
     }
   }
 
-  computerMove(setCanMakeMove?: (canMove: boolean) => void): void {
+  computerMove(): void {
     setTimeout(() => {
       if (this.state.board) {
         const [deltaFrom, deltaTo] = ai.createComputerMove(this.state.board, gameLogic.PlayerSymbol.W)
@@ -119,8 +116,6 @@ class Game {
           }
           return
         }
-
-        setCanMakeMove && setCanMakeMove(true)
       }
     }, 1000)
   }
