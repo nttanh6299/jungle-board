@@ -65,7 +65,7 @@ export const Animal = {
   Wolf: 'Wolf',
   Dog: 'Dog',
   Cat: 'Cat',
-  Mouse: 'Mouse',
+  Rat: 'Rat',
 }
 
 export const PieceName = {
@@ -81,7 +81,7 @@ export const PieceName = {
   BWolf: 'BWolf',
   BDog: 'BDog',
   BCat: 'BCat',
-  BMouse: 'BMouse',
+  BRat: 'BRat',
 
   WDen: 'WDen',
   WTrap: 'WTrap',
@@ -92,12 +92,12 @@ export const PieceName = {
   WWolf: 'WWolf',
   WDog: 'WDog',
   WCat: 'WCat',
-  WMouse: 'WMouse',
+  WRat: 'WRat',
 }
 
 const { L, R } = PieceName
-const { BDen, BTrap, BElephant, BLion, BTiger, BLeopard, BWolf, BDog, BCat, BMouse } = PieceName
-const { WDen, WTrap, WElephant, WLion, WTiger, WLeopard, WWolf, WDog, WCat, WMouse } = PieceName
+const { BDen, BTrap, BElephant, BLion, BTiger, BLeopard, BWolf, BDog, BCat, BRat } = PieceName
+const { WDen, WTrap, WElephant, WLion, WTiger, WLeopard, WWolf, WDog, WCat, WRat } = PieceName
 
 export function getEmptyBoard(): Board {
   return [
@@ -117,11 +117,11 @@ export function getInitialBoard(): Board {
   return [
     [WLion, L, WTrap, WDen, WTrap, L, WTiger],
     [L, WDog, L, WTrap, L, WCat, L],
-    [WMouse, L, WLeopard, L, WWolf, L, WElephant],
+    [WRat, L, WLeopard, L, WWolf, L, WElephant],
     [L, R, R, L, R, R, L],
     [L, R, R, L, R, R, L],
     [L, R, R, L, R, R, L],
-    [BElephant, L, BWolf, L, BLeopard, L, BMouse],
+    [BElephant, L, BWolf, L, BLeopard, L, BRat],
     [L, BCat, L, BTrap, L, BDog, L],
     [BTiger, L, BTrap, BDen, BTrap, L, BLion],
   ]
@@ -143,7 +143,7 @@ export function getAnimalLevel(animal: string): number {
       return 2
     case Animal.Cat:
       return 1
-    case Animal.Mouse:
+    case Animal.Rat:
       return 0
     default:
       return -1
@@ -166,8 +166,8 @@ export function getPieceKind(piece: string): string {
       return PieceName.BDog
     case PieceName.BCat:
       return PieceName.BCat
-    case PieceName.BMouse:
-      return PieceName.BMouse
+    case PieceName.BRat:
+      return PieceName.BRat
 
     case PieceName.WElephant:
       return PieceName.WElephant
@@ -183,8 +183,8 @@ export function getPieceKind(piece: string): string {
       return PieceName.WDog
     case PieceName.WCat:
       return PieceName.WCat
-    case PieceName.WMouse:
-      return PieceName.WMouse
+    case PieceName.WRat:
+      return PieceName.WRat
 
     default:
       return ''
@@ -269,9 +269,9 @@ export function isOwnTrap(playerTurn: string, delta: BoardDelta): boolean {
 }
 
 /**
- * Return true if there's a mouse in the river when lion or tiger wants to fly through
+ * Return true if there's a rat in the river when lion or tiger wants to fly through
  */
-export function isMouseOnWay(board: Board, deltaFrom: BoardDelta, deltaTo: BoardDelta): boolean {
+export function isRatOnWay(board: Board, deltaFrom: BoardDelta, deltaTo: BoardDelta): boolean {
   // horizontal line
   if (deltaFrom.row === deltaTo.row) {
     let riverCol1
@@ -286,7 +286,7 @@ export function isMouseOnWay(board: Board, deltaFrom: BoardDelta, deltaTo: Board
       riverCol2 = board[deltaFrom.row][deltaFrom.col - 2]
     }
 
-    return riverCol1.substring(1) === Animal.Mouse || riverCol2.substring(1) === Animal.Mouse
+    return riverCol1.substring(1) === Animal.Rat || riverCol2.substring(1) === Animal.Rat
   }
 
   // vertical line
@@ -305,9 +305,9 @@ export function isMouseOnWay(board: Board, deltaFrom: BoardDelta, deltaTo: Board
   }
 
   return (
-    riverRow1.substring(1) === Animal.Mouse ||
-    riverRow2.substring(1) === Animal.Mouse ||
-    riverRow3.substring(1) === Animal.Mouse
+    riverRow1.substring(1) === Animal.Rat ||
+    riverRow2.substring(1) === Animal.Rat ||
+    riverRow3.substring(1) === Animal.Rat
   )
 }
 
@@ -325,7 +325,7 @@ export function canMoveHelper(board: Board, playerTurn: string, deltaFrom: Board
    * there are two cases that player's chess can move
    * 1. opponent's chess is on player's own trap
    * 2. higher animal level can beat lower animal level
-   * 3. elephant and mouse is special case (mouse beats elephant)
+   * 3. elephant and rat is special case (rat beats elephant)
    */
 
   // opponent's chess is on player's own trap
@@ -337,19 +337,19 @@ export function canMoveHelper(board: Board, playerTurn: string, deltaFrom: Board
   const playerPieceLevel = getAnimalLevel(playerPiece.substring(1))
   const opponentPieceLevel = getAnimalLevel(opponentPiece.substring(1))
   const elephantLevel = getAnimalLevel(Animal.Elephant)
-  const mouseLevel = getAnimalLevel(Animal.Mouse)
+  const ratLevel = getAnimalLevel(Animal.Rat)
 
   // higher animal level can beat lower animal level
   if (playerPieceLevel >= opponentPieceLevel) {
     // special case
-    if (playerPieceLevel === elephantLevel && opponentPieceLevel === mouseLevel) {
+    if (playerPieceLevel === elephantLevel && opponentPieceLevel === ratLevel) {
       return false
     }
     return true
   } else {
     // playerPieceLevel < opponentPieceLevel
-    if (playerPieceLevel === mouseLevel && opponentPieceLevel === elephantLevel) {
-      return !isInRiver(deltaFrom) // but the mouse is in river cannot beat the elephant
+    if (playerPieceLevel === ratLevel && opponentPieceLevel === elephantLevel) {
+      return !isInRiver(deltaFrom) // but the rat is in river cannot beat the elephant
     }
     return false
   }
@@ -425,8 +425,8 @@ export function getFlyAnimalPossibleMoves(board: Board, playerTurn: string, delt
 
   const moveUp: BoardDelta = { row: deltaFrom.row - 1, col: deltaFrom.col }
   if (isInRiver(moveUp)) {
-    // a mouse is not on the way, can fly through
-    if (!isMouseOnWay(board, deltaFrom, moveUp)) {
+    // a rat is not on the way, can fly through
+    if (!isRatOnWay(board, deltaFrom, moveUp)) {
       moveUp.row = moveUp.row - 3
       if (canFlyAnimalMove(board, playerTurn, deltaFrom, moveUp)) {
         possibleMoves.push(moveUp)
@@ -440,7 +440,7 @@ export function getFlyAnimalPossibleMoves(board: Board, playerTurn: string, delt
 
   const moveDown: BoardDelta = { row: deltaFrom.row + 1, col: deltaFrom.col }
   if (isInRiver(moveDown)) {
-    if (!isMouseOnWay(board, deltaFrom, moveDown)) {
+    if (!isRatOnWay(board, deltaFrom, moveDown)) {
       moveDown.row = moveDown.row + 3
       if (canFlyAnimalMove(board, playerTurn, deltaFrom, moveDown)) {
         possibleMoves.push(moveDown)
@@ -454,7 +454,7 @@ export function getFlyAnimalPossibleMoves(board: Board, playerTurn: string, delt
 
   const moveLeft: BoardDelta = { row: deltaFrom.row, col: deltaFrom.col - 1 }
   if (isInRiver(moveLeft)) {
-    if (!isMouseOnWay(board, deltaFrom, moveLeft)) {
+    if (!isRatOnWay(board, deltaFrom, moveLeft)) {
       moveLeft.col = moveLeft.col - 2
       if (canFlyAnimalMove(board, playerTurn, deltaFrom, moveLeft)) {
         possibleMoves.push(moveLeft)
@@ -468,7 +468,7 @@ export function getFlyAnimalPossibleMoves(board: Board, playerTurn: string, delt
 
   const moveRight: BoardDelta = { row: deltaFrom.row, col: deltaFrom.col + 1 }
   if (isInRiver(moveRight)) {
-    if (!isMouseOnWay(board, deltaFrom, moveRight)) {
+    if (!isRatOnWay(board, deltaFrom, moveRight)) {
       moveRight.col = moveRight.col + 2
       if (canFlyAnimalMove(board, playerTurn, deltaFrom, moveRight)) {
         possibleMoves.push(moveRight)
@@ -537,7 +537,7 @@ export function getCatPossibleMoves(board: Board, playerTurn: string, deltaFrom:
   return getLandAnimalPossibleMoves(board, playerTurn, deltaFrom)
 }
 
-export function getMousePossibleMoves(board: Board, playerTurn: string, deltaFrom: BoardDelta): BoardDelta[] {
+export function getRatPossibleMoves(board: Board, playerTurn: string, deltaFrom: BoardDelta): BoardDelta[] {
   return getSwimPossibleMoves(board, playerTurn, deltaFrom)
 }
 
@@ -560,8 +560,8 @@ export function getPiecePossibleMoves(board: Board, playerTurn: string, deltaFro
       return getDogPossibleMoves(board, playerTurn, deltaFrom)
     case Animal.Cat:
       return getCatPossibleMoves(board, playerTurn, deltaFrom)
-    case Animal.Mouse:
-      return getMousePossibleMoves(board, playerTurn, deltaFrom)
+    case Animal.Rat:
+      return getRatPossibleMoves(board, playerTurn, deltaFrom)
     default:
       return []
   }

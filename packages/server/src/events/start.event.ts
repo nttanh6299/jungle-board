@@ -59,27 +59,27 @@ const start = eventHandler((io, socket) => {
       io.in(roomId).emit('readyToPlay', cooldown)
 
       if (cooldown <= 0) {
-        const playerIds = [...roomMapItem.playerIdsCanPlay]
-        const match = await Match.create({ roomId, playerId1: playerIds[0], playerId2: playerIds[1] })
         const room = await Room.findById(roomId)
+        if (room && room?.status !== ERoomStatus.PLAYING) {
+          const playerIds = [...roomMapItem.playerIdsCanPlay]
+          const match = await Match.create({ roomId, playerId1: playerIds[0], playerId2: playerIds[1] })
 
-        if (room) {
           room.status = ERoomStatus.PLAYING
           await room.save()
+
+          // start the game
+          roomMapItem.clearTimer()
+          roomMapItem.start(match.id)
+
+          io.in(roomId).emit(
+            'turn',
+            roomMapItem.getNextTurn(),
+            roomMapItem.board.state.board,
+            roomMapItem.board.getAllMoves(roomMapItem.board.state.board),
+          )
+          io.in(roomId).emit('play')
+          play()
         }
-
-        // start the game
-        roomMapItem.clearTimer()
-        roomMapItem.start(match.id)
-
-        io.in(roomId).emit(
-          'turn',
-          roomMapItem.getNextTurn(),
-          roomMapItem.board.state.board,
-          roomMapItem.board.getAllMoves(roomMapItem.board.state.board),
-        )
-        io.in(roomId).emit('play')
-        play()
       }
     }, 1000)
     roomMapItem.setTimer(timer)

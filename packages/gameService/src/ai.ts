@@ -185,8 +185,8 @@ export function getPossibleMoves(board: gameLogic.Board, computerTurn: string): 
           }
           break
 
-        case gameLogic.Animal.Mouse:
-          possibleMoves = gameLogic.getMousePossibleMoves(board, computerTurn, deltaFrom)
+        case gameLogic.Animal.Rat:
+          possibleMoves = gameLogic.getRatPossibleMoves(board, computerTurn, deltaFrom)
 
           if (possibleMoves.length > 0) {
             for (const deltaTo of possibleMoves) {
