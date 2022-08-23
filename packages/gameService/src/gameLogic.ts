@@ -153,38 +153,29 @@ export function getAnimalLevel(animal: string): number {
 export function getPieceKind(piece: string): string {
   switch (piece) {
     case PieceName.BElephant:
-      return PieceName.BElephant
-    case PieceName.BLion:
-      return PieceName.BLion
-    case PieceName.BTiger:
-      return PieceName.BTiger
-    case PieceName.BLeopard:
-      return PieceName.BLeopard
-    case PieceName.BWolf:
-      return PieceName.BWolf
-    case PieceName.BDog:
-      return PieceName.BDog
-    case PieceName.BCat:
-      return PieceName.BCat
-    case PieceName.BRat:
-      return PieceName.BRat
-
     case PieceName.WElephant:
-      return PieceName.WElephant
+      return Animal.Elephant
+    case PieceName.BLion:
     case PieceName.WLion:
-      return PieceName.WLion
+      return Animal.Lion
+    case PieceName.BTiger:
     case PieceName.WTiger:
-      return PieceName.WTiger
+      return Animal.Tiger
+    case PieceName.BLeopard:
     case PieceName.WLeopard:
-      return PieceName.WLeopard
+      return Animal.Leopard
+    case PieceName.BWolf:
     case PieceName.WWolf:
-      return PieceName.WWolf
+      return Animal.Wolf
+    case PieceName.BDog:
     case PieceName.WDog:
-      return PieceName.WDog
+      return Animal.Dog
+    case PieceName.BCat:
     case PieceName.WCat:
-      return PieceName.WCat
+      return Animal.Cat
+    case PieceName.BRat:
     case PieceName.WRat:
-      return PieceName.WRat
+      return Animal.Rat
 
     default:
       return ''

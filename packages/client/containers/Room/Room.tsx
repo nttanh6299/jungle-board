@@ -124,6 +124,7 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
           </div>
           <div className="pt-2 mt-2">
             <GameBoard
+              isPlaying={!!playerTurn}
               board={board}
               selectedSquare={selectedSquare}
               onSelectSquare={handleSelectSquare}
