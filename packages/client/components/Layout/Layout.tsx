@@ -2,6 +2,7 @@ import React from 'react'
 import useAppState from 'hooks/useAppState'
 import Show from 'components/Show'
 import MenuSettings from 'components/MenuSettings'
+import Auth from 'components/Auth'
 import { useSettingsStore } from 'store/settings'
 
 const Layout: React.FC = ({ children }) => {
@@ -27,7 +28,7 @@ const Layout: React.FC = ({ children }) => {
       <button onClick={toggleMenuSettings} className="fixed top-[10px] right-[10px] block p-2">
         Settings
       </button>
-      <div>{children}</div>
+      <Auth>{children}</Auth>
     </div>
   )
 }

@@ -58,7 +58,7 @@ const start = eventHandler((io, socket) => {
 
       io.in(roomId).emit('readyToPlay', cooldown)
 
-      if (cooldown <= 0) {
+      if (cooldown === 0) {
         const room = await Room.findById(roomId)
         if (room && room?.status !== ERoomStatus.PLAYING) {
           const playerIds = [...roomMapItem.playerIdsCanPlay]
