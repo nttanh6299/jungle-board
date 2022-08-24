@@ -5,7 +5,7 @@ import { ROOM_STATUS } from 'constants/common'
 import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
 import useAppState from 'hooks/useAppState'
-import { getRoom, createRoom } from 'apis/room'
+import { getRoom, createRoom, ReqCreateRoom } from 'apis/room'
 import CreateRoom from './CreateRoom'
 
 const RoomsPage = () => {
@@ -13,10 +13,10 @@ const RoomsPage = () => {
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
 
-  const onCreateRoom = async (name: string) => {
+  const onCreateRoom = async (params: ReqCreateRoom) => {
     try {
       dispatch({ type: 'displayLoader', payload: { value: true } })
-      const { data } = await createRoom(name)
+      const { data } = await createRoom(params)
 
       let errorLabel = ''
       if (!data) errorLabel = 'Something went wrong!'
@@ -64,10 +64,8 @@ const RoomsPage = () => {
 
   return (
     <div>
-      <div className="flex">
-        <h1 className="text-5xl font-semibold">Rooms</h1>
-        <CreateRoom onCreateRoom={onCreateRoom} className="pl-10" />
-      </div>
+      <h1 className="text-5xl font-semibold">Rooms</h1>
+      <CreateRoom onCreateRoom={onCreateRoom} className="mt-4" />
       <div className="pt-6">
         <Show when={fetching}>fetching..</Show>
         <Show when={!fetching}>

@@ -19,7 +19,7 @@ const matchSchema: Schema = new Schema<IMatch>({
   move: { type: Number, default: 0 },
   time: { type: Number, default: 0 },
   isTie: { type: Boolean, default: false },
-  createdAt: { type: Date, default: new Date() },
+  createdAt: { type: Date, default: Date.now },
 })
 
 export default model<IMatch>('Match', matchSchema)

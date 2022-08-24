@@ -4,6 +4,7 @@ import catchAsync from '../utils/catchAsync'
 import Room from '../models/room.model'
 import RoomResolver from '../resolvers/Room'
 import roomMap from '../db'
+import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN } from '../constants/common'
 
 const toRoom = ({ id, name, status, type, maxPlayer, players }) => ({
   id,
@@ -38,13 +39,18 @@ const getRoom = catchAsync(async (req, res) => {
 })
 
 const createRoom = catchAsync(async (req, res) => {
-  const { name } = req.body ?? {}
-  const newRoom = await Room.create({ name: name || 'Unnamed', type: 'custom' })
+  const { name, maxMove, cooldown } = req.body ?? {}
+  const newRoom = await Room.create({
+    name: name || 'Unnamed',
+    maxMove: maxMove || DEFAULT_MAX_MOVE,
+    cooldown: cooldown || PLAY_COOLDOWN,
+    type: 'custom',
+  })
   if (!newRoom) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot create room')
   }
 
-  roomMap.set(newRoom.id, new RoomResolver(newRoom.id, newRoom.status, newRoom.type))
+  roomMap.set(newRoom.id, new RoomResolver(newRoom.id, newRoom.maxMove, newRoom.cooldown, newRoom.status, newRoom.type))
   return res.status(httpStatus.OK).send({ data: { id: newRoom.id } })
 })
 

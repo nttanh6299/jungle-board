@@ -27,8 +27,8 @@ const userSchema: Schema = new Schema<IUser>({
   win: { type: Number, default: 0 },
   lose: { type: Number, default: 0 },
   coin: { type: Number, default: 0 },
-  createdAt: { type: Date, default: new Date() },
-  updatedAt: { type: Date, default: new Date() },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 })
 
 export default model<IUser>('User', userSchema)

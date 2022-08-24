@@ -61,7 +61,6 @@ const disconnect = eventHandler((_, socket) => {
                 matchId: roomMapItem.matchId,
                 userType: player?.playerType,
                 isSpectator: player?.isSpectator,
-                createdAt: new Date(),
                 ...(player?.playerType === EUserType.IDENTIFIED
                   ? { userId: player?.id }
                   : { anonymousUserId: player?.id }),

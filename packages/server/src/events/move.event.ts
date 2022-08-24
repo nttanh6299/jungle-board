@@ -1,7 +1,6 @@
 import eventHandler from '../utils/eventHandler'
 import { GameStatus } from '@jungle-board/service/lib/game'
 import roomMap from '../db'
-import { PLAY_COOLDOWN } from '../constants/common'
 import Match from '../models/match.model'
 import User from '../models/user.model'
 import Room, { ERoomStatus } from '../models/room.model'
@@ -30,7 +29,7 @@ const move = eventHandler((io, socket) => {
     const play = () => {
       roomMapItem.clearTimer()
 
-      let playCooldown = PLAY_COOLDOWN
+      let playCooldown = roomMapItem.cooldown
       io.in(roomId).emit('playCooldown', playCooldown)
       const timer = setInterval(() => {
         if (playCooldown > 0) {
@@ -76,7 +75,6 @@ const move = eventHandler((io, socket) => {
         const identifiedPlayersPlaying = players.filter(
           (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
         )
-        console.log(identifiedPlayersPlaying)
         const userPromises = identifiedPlayersPlaying.map(async (player) => {
           const isWinner = isEnd && player.id === playerId
           return await User.findOneAndUpdate(
@@ -100,7 +98,6 @@ const move = eventHandler((io, socket) => {
               matchId: roomMapItem.matchId,
               userType: player.playerType,
               isSpectator: player.isSpectator,
-              createdAt: new Date(),
               ...(player.playerType === EUserType.IDENTIFIED ? { userId: player.id } : { anonymousUserId: player.id }),
             }),
         )

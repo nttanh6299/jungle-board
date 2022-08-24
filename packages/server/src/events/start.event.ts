@@ -1,6 +1,6 @@
 import eventHandler from '../utils/eventHandler'
 import roomMap from '../db'
-import { PLAY_COOLDOWN, START_COOLDOWN } from '../constants/common'
+import { START_COOLDOWN } from '../constants/common'
 import Room, { ERoomStatus } from '../models/room.model'
 import Match from '../models/match.model'
 
@@ -14,7 +14,7 @@ const start = eventHandler((io, socket) => {
     const play = () => {
       roomMapItem.clearTimer()
 
-      let playCooldown = PLAY_COOLDOWN
+      let playCooldown = roomMapItem.cooldown
       io.in(roomId).emit('playCooldown', playCooldown)
       const timer = setInterval(() => {
         if (playCooldown > 0) {
