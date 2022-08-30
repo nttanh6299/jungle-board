@@ -1,12 +1,14 @@
 import eventHandler from '../utils/eventHandler'
 import roomMap from '../db'
-import { PLAY_COOLDOWN, START_COOLDOWN } from '../constants/common'
+import { START_COOLDOWN } from '../constants/common'
 import Room, { ERoomStatus } from '../models/room.model'
 import Match from '../models/match.model'
+import User from '../models/user.model'
+import Participant, { EUserType } from '../models/participant.model'
 
 const start = eventHandler((io, socket) => {
   socket.on('start', async () => {
-    const { roomId = '' } = socket.data ?? {}
+    const { roomId = '', playerId = '' } = socket.data ?? {}
     const roomMapItem = roomMap.get(roomId)!
 
     if (!roomMapItem) return
@@ -14,12 +16,69 @@ const start = eventHandler((io, socket) => {
     const play = () => {
       roomMapItem.clearTimer()
 
-      let playCooldown = PLAY_COOLDOWN
+      let playCooldown = roomMapItem.cooldown
       io.in(roomId).emit('playCooldown', playCooldown)
-      const timer = setInterval(() => {
+      const timer = setInterval(async () => {
         if (playCooldown > 0) {
           playCooldown -= 1
           roomMapItem.incrementPlayTime()
+
+          if (roomMapItem.isTimeOut()) {
+            roomMapItem.clearTimer()
+            roomMapItem.tie()
+
+            const match = await Match.findById(roomMapItem.matchId)
+            if (match) {
+              match.isTie = true
+              match.move = roomMapItem.board.moveCount
+              match.time = roomMapItem.matchTime
+              match.save()
+
+              const players = Array.from(roomMapItem.players, ([_, player]) => player)
+              const identifiedPlayersPlaying = players.filter(
+                (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
+              )
+              const userPromises = identifiedPlayersPlaying.map(async (player) => {
+                return await User.findOneAndUpdate(
+                  { _id: player.id },
+                  {
+                    $inc: {
+                      xp: 5,
+                      win: 0,
+                      lose: 0,
+                      tie: 1,
+                      coin: 2,
+                    },
+                  },
+                )
+              })
+              Promise.all(userPromises)
+
+              const participantPromises = players.map(
+                async (player) =>
+                  await Participant.create({
+                    roomId: roomMapItem.id,
+                    matchId: roomMapItem.matchId,
+                    userType: player.playerType,
+                    isSpectator: player.isSpectator,
+                    ...(player.playerType === EUserType.IDENTIFIED
+                      ? { userId: player.id }
+                      : { anonymousUserId: player.id }),
+                  }),
+              )
+              Promise.all(participantPromises)
+            }
+
+            io.in(roomId).emit('end', playerId, roomMapItem.status)
+
+            const room = await Room.findById(roomId)
+            if (room) {
+              room.status = ERoomStatus.WAITING
+              await room.save()
+
+              roomMapItem.reset()
+            }
+          }
         }
 
         // keep counting down while the player does not any move
@@ -29,10 +88,10 @@ const start = eventHandler((io, socket) => {
         }
 
         // swap turn and keep counting down the timer
-        if (playCooldown <= 0) {
+        if (playCooldown === 0) {
           roomMapItem.clearTimer()
 
-          if (roomMapItem.board.moveCount === 0) {
+          if (roomMapItem.status === ERoomStatus.PLAYING && roomMapItem.board.moveCount === 0) {
             io.in(roomId).emit(
               'turn',
               roomMapItem.getNextTurn(),
@@ -62,7 +121,14 @@ const start = eventHandler((io, socket) => {
         const room = await Room.findById(roomId)
         if (room && room?.status !== ERoomStatus.PLAYING) {
           const playerIds = [...roomMapItem.playerIdsCanPlay]
-          const match = await Match.create({ roomId, playerId1: playerIds[0], playerId2: playerIds[1] })
+          const match = await Match.create({
+            roomId,
+            playerId1: playerIds[0],
+            playerId2: playerIds[1],
+            maxMove: roomMapItem.maxMove,
+            maxTime: roomMapItem.maxTime,
+            cooldown: roomMapItem.cooldown,
+          })
 
           room.status = ERoomStatus.PLAYING
           await room.save()

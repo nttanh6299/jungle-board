@@ -1,4 +1,4 @@
-import { ROOM_STATUS } from '../constants/common'
+import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS } from '../constants/common'
 import Player from './Player'
 import Game from '@jungle-board/service/lib/game'
 
@@ -15,8 +15,11 @@ class Room {
   cooldownTimer: NodeJS.Timer | null
 
   matchTime: number
+  maxMove: number
+  cooldown: number
+  maxTime: number
 
-  constructor(id: string, status?: string, type?: string) {
+  constructor(id: string, maxMove: number, cooldown: number, status?: string, type?: string) {
     this.id = id
     this.status = status || ROOM_STATUS.waiting.value
     this.type = type || 'reserved'
@@ -24,6 +27,9 @@ class Room {
     this.board = new Game()
     this.matchTime = 0
     this.matchId = ''
+    this.maxMove = maxMove || DEFAULT_MAX_MOVE
+    this.cooldown = cooldown || PLAY_COOLDOWN
+    this.maxTime = this.maxMove * this.cooldown
   }
 
   addPlayer(playerId: string, playerType: string): Player {
@@ -66,7 +72,7 @@ class Room {
 
   start(matchId: string) {
     this.status = ROOM_STATUS.playing.value
-    this.board.startGame()
+    this.board.startGame(this.maxMove)
     this.matchId = matchId
     this.matchTime = 0
   }
@@ -91,6 +97,10 @@ class Room {
 
   incrementPlayTime() {
     this.matchTime += 1
+  }
+
+  isTimeOut() {
+    return this.matchTime === this.maxTime
   }
 }
 

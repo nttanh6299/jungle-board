@@ -1,7 +1,6 @@
 import eventHandler from '../utils/eventHandler'
 import { GameStatus } from '@jungle-board/service/lib/game'
 import roomMap from '../db'
-import { PLAY_COOLDOWN } from '../constants/common'
 import Match from '../models/match.model'
 import User from '../models/user.model'
 import Room, { ERoomStatus } from '../models/room.model'
@@ -30,24 +29,84 @@ const move = eventHandler((io, socket) => {
     const play = () => {
       roomMapItem.clearTimer()
 
-      let playCooldown = PLAY_COOLDOWN
+      let playCooldown = roomMapItem.cooldown
       io.in(roomId).emit('playCooldown', playCooldown)
-      const timer = setInterval(() => {
+      const timer = setInterval(async () => {
         if (playCooldown > 0) {
           playCooldown -= 1
           roomMapItem.incrementPlayTime()
+
+          if (roomMapItem.isTimeOut()) {
+            roomMapItem.clearTimer()
+            roomMapItem.tie()
+
+            const match = await Match.findById(roomMapItem.matchId)
+            if (match) {
+              match.isTie = true
+              match.move = roomMapItem.board.moveCount
+              match.time = roomMapItem.matchTime
+              match.save()
+
+              const players = Array.from(roomMapItem.players, ([_, player]) => player)
+              const identifiedPlayersPlaying = players.filter(
+                (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
+              )
+              const userPromises = identifiedPlayersPlaying.map(async (player) => {
+                return await User.findOneAndUpdate(
+                  { _id: player.id },
+                  {
+                    $inc: {
+                      xp: 5,
+                      win: 0,
+                      lose: 0,
+                      tie: 1,
+                      coin: 2,
+                    },
+                  },
+                )
+              })
+              Promise.all(userPromises)
+
+              const participantPromises = players.map(
+                async (player) =>
+                  await Participant.create({
+                    roomId: roomMapItem.id,
+                    matchId: roomMapItem.matchId,
+                    userType: player.playerType,
+                    isSpectator: player.isSpectator,
+                    ...(player.playerType === EUserType.IDENTIFIED
+                      ? { userId: player.id }
+                      : { anonymousUserId: player.id }),
+                  }),
+              )
+              Promise.all(participantPromises)
+            }
+
+            io.in(roomId).emit('end', playerId, roomMapItem.status)
+
+            const room = await Room.findById(roomId)
+            if (room) {
+              room.status = ERoomStatus.WAITING
+              await room.save()
+
+              roomMapItem.reset()
+            }
+          }
         }
 
         io.in(roomId).emit('playCooldown', playCooldown)
 
-        if (playCooldown <= 0) {
+        if (playCooldown === 0) {
           roomMapItem.clearTimer()
 
           const nextTurn = roomMapItem.getNextTurn()
 
           socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves)
           socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, otherPlayersPossibleMoves)
-          play()
+
+          if (roomMapItem.status === ERoomStatus.PLAYING) {
+            play()
+          }
         }
       }, 1000)
       roomMapItem.setTimer(timer)
@@ -72,11 +131,9 @@ const move = eventHandler((io, socket) => {
         match.save()
 
         const players = Array.from(roomMapItem.players, ([_, player]) => player)
-
         const identifiedPlayersPlaying = players.filter(
           (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
         )
-        console.log(identifiedPlayersPlaying)
         const userPromises = identifiedPlayersPlaying.map(async (player) => {
           const isWinner = isEnd && player.id === playerId
           return await User.findOneAndUpdate(
@@ -87,6 +144,7 @@ const move = eventHandler((io, socket) => {
                 win: isWinner ? 1 : 0,
                 lose: isWinner ? 0 : isTie ? 0 : 1,
                 coin: isWinner ? 3 : isTie ? 2 : 1,
+                tie: isTie ? 1 : 0,
               },
             },
           )
@@ -100,7 +158,6 @@ const move = eventHandler((io, socket) => {
               matchId: roomMapItem.matchId,
               userType: player.playerType,
               isSpectator: player.isSpectator,
-              createdAt: new Date(),
               ...(player.playerType === EUserType.IDENTIFIED ? { userId: player.id } : { anonymousUserId: player.id }),
             }),
         )

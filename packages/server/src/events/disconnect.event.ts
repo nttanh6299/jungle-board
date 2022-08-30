@@ -23,60 +23,61 @@ const disconnect = eventHandler((_, socket) => {
     if (isPlayer) {
       roomMapItem?.clearTimer()
 
-      // set winner to another player
-      if (roomMapItem?.playerIdsCanPlay.length === 1) {
-        const match = await Match.findById(roomMapItem.matchId)
-        if (match) {
-          match.winnerId = roomMapItem.getFirstPlayer()
-          match.move = roomMapItem.board.moveCount
-          match.time = roomMapItem.matchTime
-          match.save()
+      // set winner to another player if the match is playing
+      if (roomMapItem.status === ERoomStatus.PLAYING) {
+        if (roomMapItem?.playerIdsCanPlay.length === 1) {
+          const match = await Match.findById(roomMapItem.matchId)
+          if (match) {
+            match.winnerId = roomMapItem.getFirstPlayer()
+            match.move = roomMapItem.board.moveCount
+            match.time = roomMapItem.matchTime
+            match.save()
 
-          const players = Array.from(roomMapItem.players, ([_, player]) => player)
+            const players = Array.from(roomMapItem.players, ([_, player]) => player)
 
-          const identifiedPlayersPlaying = [...players, leftPlayer].filter(
-            (player) => !player?.isSpectator && player?.playerType === EUserType.IDENTIFIED,
-          )
-          const userPromises = identifiedPlayersPlaying.map(async (player) => {
-            // winner is not the user has left the match
-            const isWinner = player?.id !== playerId
-            return await User.findOneAndUpdate(
-              { _id: player?.id },
-              {
-                $inc: {
-                  xp: isWinner ? 10 : 0,
-                  win: isWinner ? 1 : 0,
-                  lose: isWinner ? 0 : 1,
-                  coin: isWinner ? 3 : 0,
-                },
-              },
+            const identifiedPlayersPlaying = [...players, leftPlayer].filter(
+              (player) => !player?.isSpectator && player?.playerType === EUserType.IDENTIFIED,
             )
-          })
-          Promise.all(userPromises)
+            const userPromises = identifiedPlayersPlaying.map(async (player) => {
+              // winner is not the user has left the match
+              const isWinner = player?.id !== playerId
+              return await User.findOneAndUpdate(
+                { _id: player?.id },
+                {
+                  $inc: {
+                    xp: isWinner ? 10 : 0,
+                    win: isWinner ? 1 : 0,
+                    lose: isWinner ? 0 : 1,
+                    coin: isWinner ? 3 : 0,
+                  },
+                },
+              )
+            })
+            Promise.all(userPromises)
 
-          const participantPromises = [...players, leftPlayer].map(
-            async (player) =>
-              await Participant.create({
-                roomId: roomMapItem.id,
-                matchId: roomMapItem.matchId,
-                userType: player?.playerType,
-                isSpectator: player?.isSpectator,
-                createdAt: new Date(),
-                ...(player?.playerType === EUserType.IDENTIFIED
-                  ? { userId: player?.id }
-                  : { anonymousUserId: player?.id }),
-              }),
-          )
-          Promise.all(participantPromises)
+            const participantPromises = [...players, leftPlayer].map(
+              async (player) =>
+                await Participant.create({
+                  roomId: roomMapItem.id,
+                  matchId: roomMapItem.matchId,
+                  userType: player?.playerType,
+                  isSpectator: player?.isSpectator,
+                  ...(player?.playerType === EUserType.IDENTIFIED
+                    ? { userId: player?.id }
+                    : { anonymousUserId: player?.id }),
+                }),
+            )
+            Promise.all(participantPromises)
+          }
         }
-      }
 
-      const room = await Room.findById(roomId)
-      if (room) {
-        room.status = ERoomStatus.WAITING
-        await room.save()
+        const room = await Room.findById(roomId)
+        if (room) {
+          room.status = ERoomStatus.WAITING
+          await room.save()
 
-        roomMapItem?.reset()
+          roomMapItem?.reset()
+        }
       }
     }
     // if (room.players.size === 0 && room.type === 'custom') {

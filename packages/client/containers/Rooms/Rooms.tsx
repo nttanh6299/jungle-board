@@ -5,7 +5,8 @@ import { ROOM_STATUS } from 'constants/common'
 import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
 import useAppState from 'hooks/useAppState'
-import { getRoom, createRoom } from 'apis/room'
+import { getRoom, createRoom, ReqCreateRoom } from 'apis/room'
+import { PeopleIcon, FootIcon, ClockIcon } from 'icons'
 import CreateRoom from './CreateRoom'
 
 const RoomsPage = () => {
@@ -13,10 +14,10 @@ const RoomsPage = () => {
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
 
-  const onCreateRoom = async (name: string) => {
+  const onCreateRoom = async (params: ReqCreateRoom) => {
     try {
       dispatch({ type: 'displayLoader', payload: { value: true } })
-      const { data } = await createRoom(name)
+      const { data } = await createRoom(params)
 
       let errorLabel = ''
       if (!data) errorLabel = 'Something went wrong!'
@@ -64,19 +65,28 @@ const RoomsPage = () => {
 
   return (
     <div>
-      <div className="flex">
-        <h1 className="text-5xl font-semibold">Rooms</h1>
-        <CreateRoom onCreateRoom={onCreateRoom} className="pl-10" />
-      </div>
+      <h1 className="text-5xl font-semibold">Rooms</h1>
+      <CreateRoom onCreateRoom={onCreateRoom} className="mt-4" />
       <div className="pt-6">
         <Show when={fetching}>fetching..</Show>
         <Show when={!fetching}>
-          <div className="flex">
-            {rooms?.map(({ id, name, quantity, max, status }) => (
-              <div key={id} className="border border-slate-900 mr-4 p-4">
-                <strong className="text-3xl">{name}</strong>
-                <div className="py-4 text-2xl">
-                  {quantity}/{max}
+          <div className="grid gap-4 grid-cols-fill-40">
+            {rooms?.map(({ id, name, quantity, max, status, maxMove, cooldown }) => (
+              <div key={id} className="border border-slate-900 p-4">
+                <strong className="text-3xl break-words">{name}</strong>
+                <div className="py-4 flex">
+                  <div className="text-2xl flex items-center">
+                    <PeopleIcon />{' '}
+                    <div className="ml-1.5">
+                      {quantity}/{max}
+                    </div>
+                  </div>
+                  <div className="mx-6 text-2xl flex items-center">
+                    <FootIcon /> <div className="ml-1.5">{maxMove}</div>
+                  </div>
+                  <div className="text-2xl flex items-center">
+                    <ClockIcon /> <div className="ml-1.5">{cooldown}</div>
+                  </div>
                 </div>
                 <div className="text-2xl">{ROOM_STATUS[status]?.label}</div>
                 <div className="mt-3 flex justify-end">

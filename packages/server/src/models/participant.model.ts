@@ -22,7 +22,7 @@ const participantSchema: Schema = new Schema<IParticipant>({
   anonymousUserId: { type: String },
   userType: { type: String, enum: EUserType, default: EUserType.IDENTIFIED },
   isSpectator: { type: Boolean, default: false },
-  createdAt: { type: Date, default: new Date() },
+  createdAt: { type: Date, default: Date.now },
 })
 
 export default model<IParticipant>('Participant', participantSchema)

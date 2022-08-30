@@ -1,5 +1,11 @@
 import { fetchApi } from 'apis/apiCaller'
 
+export interface ReqCreateRoom {
+  name: string
+  maxMove: number
+  cooldown: number
+}
+
 export interface ResGetRoom {
   id: string
   name: string
@@ -7,6 +13,8 @@ export interface ResGetRoom {
   max: number
   status: string
   type: string
+  maxMove: number
+  cooldown: number
 }
 
 export const getRoom = async (roomId: string) => {
@@ -17,6 +25,6 @@ export const getRooms = async () => {
   return fetchApi<ResGetRoom[]>(`/rooms`)
 }
 
-export const createRoom = async (name: string) => {
-  return fetchApi<ResGetRoom>('/rooms', 'POST', { name })
+export const createRoom = async (params: ReqCreateRoom) => {
+  return fetchApi<ResGetRoom>('/rooms', 'POST', params)
 }

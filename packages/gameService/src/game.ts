@@ -18,6 +18,7 @@ class Game {
   state: gameLogic.IState = { board: [] }
   playerTurn = ''
   moveCount = 0
+  maxMove = 0
 
   gameStatus: GameStatus = GameStatus.READY
   isSinglePlay = false
@@ -32,11 +33,12 @@ class Game {
     this.state.board = gameLogic.getEmptyBoard()
   }
 
-  startGame(isSinglePlay?: boolean): void {
+  startGame(maxMove: number, isSinglePlay?: boolean): void {
     this.gameStatus = GameStatus.PLAYING
     this.state.board = gameLogic.getInitialBoard()
     this.playerTurn = gameLogic.PlayerSymbol.B
     this.isSinglePlay = Boolean(isSinglePlay)
+    this.maxMove = maxMove
     this.moveCount = 0
   }
 
@@ -91,10 +93,9 @@ class Game {
       if (winner !== '') {
         if (winner === this.playerTurn || winner === gameLogic.getOpponentTurn(this.playerTurn)) {
           this.gameStatus = GameStatus.END
-        } else {
-          this.gameStatus = GameStatus.TIE
         }
-        return
+      } else if (this.moveCount === this.maxMove) {
+        this.gameStatus = GameStatus.TIE
       }
     }
   }

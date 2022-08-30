@@ -12,6 +12,8 @@ export interface IRoom extends Document {
   type: string
   status: ERoomStatus
   isActive: boolean
+  maxMove: number
+  cooldown: number
   createdAt: Date
 }
 
@@ -20,7 +22,9 @@ const roomSchema: Schema = new Schema<IRoom>({
   type: { type: String, required: true },
   status: { type: String, enum: ERoomStatus, default: ERoomStatus.WAITING },
   isActive: { type: Boolean, default: true },
-  createdAt: { type: Date, default: new Date() },
+  maxMove: { type: Number, default: 0 },
+  cooldown: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now },
 })
 
 export default model<IRoom>('Room', roomSchema)

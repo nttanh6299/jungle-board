@@ -11,6 +11,7 @@ export interface IUser extends Document {
   xp: number
   win: number
   lose: number
+  tie: number
   coin: number
   createdAt: Date
   updatedAt: Date
@@ -26,9 +27,10 @@ const userSchema: Schema = new Schema<IUser>({
   xp: { type: Number, default: 0 },
   win: { type: Number, default: 0 },
   lose: { type: Number, default: 0 },
+  tie: { type: Number, default: 0 },
   coin: { type: Number, default: 0 },
-  createdAt: { type: Date, default: new Date() },
-  updatedAt: { type: Date, default: new Date() },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 })
 
 export default model<IUser>('User', userSchema)
