@@ -4,6 +4,9 @@ module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}', './containers/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      gridTemplateColumns: {
+        'fill-40': 'repeat(auto-fill, minmax(180px, 1fr))',
+      },
       delay: {
         100: '100',
         200: '200',

@@ -6,11 +6,13 @@ import RoomResolver from '../resolvers/Room'
 import roomMap from '../db'
 import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN } from '../constants/common'
 
-const toRoom = ({ id, name, status, type, maxPlayer, players }) => ({
+const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove }) => ({
   id,
   name,
   status,
   type,
+  cooldown,
+  maxMove,
   max: maxPlayer,
   quantity: players,
 })
@@ -18,10 +20,18 @@ const toRoom = ({ id, name, status, type, maxPlayer, players }) => ({
 const getRooms = catchAsync(async (_, res) => {
   const rooms = await Room.find()
   return res.status(httpStatus.OK).send({
-    data: rooms.map(({ id, name, status, type }) => {
-      const roomMapItem = roomMap.get(id)
-      return toRoom({ id, name, status, type, players: roomMapItem?.playerIdsCanPlay?.length, maxPlayer: 2 })
-    }),
+    data: rooms.map(({ id, name, status, type, maxMove, cooldown }) =>
+      toRoom({
+        id,
+        name,
+        status,
+        type,
+        maxMove,
+        cooldown,
+        players: roomMap.get(id)?.playerIdsCanPlay?.length,
+        maxPlayer: 2,
+      }),
+    ),
   })
 })
 
@@ -32,9 +42,18 @@ const getRoom = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
   }
 
-  const { id, name, status, type } = room
+  const { id, name, status, type, maxMove, cooldown } = room
   const roomMapItem = roomMap.get(id)
-  const roomRes = toRoom({ id, name, status, type, players: roomMapItem?.playerIdsCanPlay?.length, maxPlayer: 2 })
+  const roomRes = toRoom({
+    id,
+    name,
+    status,
+    type,
+    maxMove,
+    cooldown,
+    players: roomMapItem?.playerIdsCanPlay?.length,
+    maxPlayer: 2,
+  })
   return res.status(httpStatus.OK).send({ data: roomRes })
 })
 

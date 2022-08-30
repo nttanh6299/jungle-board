@@ -6,6 +6,7 @@ import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
 import useAppState from 'hooks/useAppState'
 import { getRoom, createRoom, ReqCreateRoom } from 'apis/room'
+import { PeopleIcon, FootIcon, ClockIcon } from 'icons'
 import CreateRoom from './CreateRoom'
 
 const RoomsPage = () => {
@@ -69,12 +70,23 @@ const RoomsPage = () => {
       <div className="pt-6">
         <Show when={fetching}>fetching..</Show>
         <Show when={!fetching}>
-          <div className="flex">
-            {rooms?.map(({ id, name, quantity, max, status }) => (
-              <div key={id} className="border border-slate-900 mr-4 p-4">
-                <strong className="text-3xl">{name}</strong>
-                <div className="py-4 text-2xl">
-                  {quantity}/{max}
+          <div className="grid gap-4 grid-cols-fill-40">
+            {rooms?.map(({ id, name, quantity, max, status, maxMove, cooldown }) => (
+              <div key={id} className="border border-slate-900 p-4">
+                <strong className="text-3xl break-words">{name}</strong>
+                <div className="py-4 flex">
+                  <div className="text-2xl flex items-center">
+                    <PeopleIcon />{' '}
+                    <div className="ml-1.5">
+                      {quantity}/{max}
+                    </div>
+                  </div>
+                  <div className="mx-6 text-2xl flex items-center">
+                    <FootIcon /> <div className="ml-1.5">{maxMove}</div>
+                  </div>
+                  <div className="text-2xl flex items-center">
+                    <ClockIcon /> <div className="ml-1.5">{cooldown}</div>
+                  </div>
                 </div>
                 <div className="text-2xl">{ROOM_STATUS[status]?.label}</div>
                 <div className="mt-3 flex justify-end">

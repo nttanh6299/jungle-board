@@ -13,6 +13,8 @@ export interface ResGetRoom {
   max: number
   status: string
   type: string
+  maxMove: number
+  cooldown: number
 }
 
 export const getRoom = async (roomId: string) => {

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import clsx from 'clsx'
 import Show from 'components/Show'
 import { ReqCreateRoom } from 'apis/room'
+import { FootIcon, ClockIcon } from 'icons'
 
 interface CreateRoomProps {
   className?: string
@@ -68,8 +69,8 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ onCreateRoom, className }) => {
             />
           </div>
           <div className="flex flex-col ml-4">
-            <label className="block mb-1 text-md font-medium text-gray-900" htmlFor="maxMove">
-              Max move
+            <label className="block mb-1 text-md font-medium text-gray-900 flex items-center" htmlFor="maxMove">
+              <div className="mr-1.5">Max move</div> <FootIcon />
             </label>
             <select
               ref={maxMoveRef}
@@ -83,8 +84,8 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ onCreateRoom, className }) => {
             </select>
           </div>
           <div className="flex flex-col ml-4">
-            <label className="block mb-1 text-md font-medium text-gray-900" htmlFor="cooldown">
-              Cooldown
+            <label className="block mb-1 text-md font-medium text-gray-900 flex items-center" htmlFor="cooldown">
+              <div className="mr-1.5">Cooldown</div> <ClockIcon />
             </label>
             <select
               ref={cooldownRef}

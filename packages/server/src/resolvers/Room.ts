@@ -100,7 +100,7 @@ class Room {
   }
 
   isTimeOut() {
-    return this.matchTime >= this.maxTime
+    return this.matchTime === this.maxTime
   }
 }
 
