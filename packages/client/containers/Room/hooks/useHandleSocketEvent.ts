@@ -91,6 +91,11 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('playerDisconnect', (isPlayerDisconnected) => {
       onDisconnect(isPlayerDisconnected)
     })
+
+    socket.on('outWithNoReason', () => {
+      alert('You are disconnected!')
+      window.location.href = '/'
+    })
   }, [socket, canConnect, onDisconnect])
 
   // End game overlay

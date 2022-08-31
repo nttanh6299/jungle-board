@@ -4,13 +4,19 @@ import Room, { ERoomStatus } from '../models/room.model'
 import Match from '../models/match.model'
 import User from '../models/user.model'
 import Participant, { EUserType } from '../models/participant.model'
+import { EDisconnectReason } from '../constants/event'
 
 const disconnect = eventHandler((_, socket) => {
-  socket.on('disconnect', async () => {
+  socket.on('disconnect', async (reason) => {
     const { roomId = '', playerId = '' } = socket.data ?? {}
     const roomMapItem = roomMap.get(roomId)
 
     if (!roomMapItem) return
+
+    // player is disconnected for some reason
+    if (reason !== EDisconnectReason.CLIENT_NAMESPACE_DISCONNECT) {
+      socket.emit('outWithNoReason')
+    }
 
     const leftPlayer = roomMapItem?.players.get(playerId)
     const isPlayer = !leftPlayer?.isSpectator
