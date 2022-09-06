@@ -98,6 +98,21 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     })
   }, [socket, canConnect, onDisconnect])
 
+  // Check connect
+  useEffect(() => {
+    const checkConnectInterval = setInterval(() => {
+      if (socket.disconnected) {
+        clearInterval(checkConnectInterval)
+        alert('You are disconnected!')
+        window.location.href = '/'
+      }
+    }, 1000)
+
+    return () => {
+      clearInterval(checkConnectInterval)
+    }
+  }, [socket])
+
   // End game overlay
   useEffect(() => {
     let timeout
