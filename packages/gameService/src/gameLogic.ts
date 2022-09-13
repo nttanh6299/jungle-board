@@ -558,6 +558,26 @@ export function getPiecePossibleMoves(board: Board, playerTurn: string, deltaFro
   }
 }
 
+export const getPlayersPieces = (board: Board): { [key in keyof typeof PlayerSymbol]: string[] } => {
+  const wPieces: string[] = []
+  const bPieces: string[] = []
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      const piece = board[row][col]
+      const animal = getPieceKind(piece)
+      if (animal && piece.includes(PlayerSymbol.B)) {
+        bPieces.push(animal)
+      } else if (animal && piece.includes(PlayerSymbol.W)) {
+        wPieces.push(animal)
+      }
+    }
+  }
+  return {
+    B: bPieces,
+    W: wPieces,
+  }
+}
+
 export function getWinner(board: Board): string {
   // W win
   if (board[BlackDen.row][BlackDen.col] !== PieceName.BDen) {
@@ -569,9 +589,41 @@ export function getWinner(board: Board): string {
     return PlayerSymbol.B
   }
 
+  // const { B: bPieces, W: wPieces } = getPlayersPieces(board)
+
+  // const bPiecesLevel = bPieces.map((piece) => getAnimalLevel(piece))
+  // const bPieceMax = Math.max(...bPiecesLevel)
+  // const bPieceMin = Math.min(...bPiecesLevel)
+
+  // const wPiecesLevel = wPieces.map((piece) => getAnimalLevel(piece))
+  // const wPieceMax = Math.max(...wPiecesLevel)
+  // const wPieceMin = Math.min(...wPiecesLevel)
+
+  // const elephantLevel = getAnimalLevel(Animal.Elephant)
+  // const ratLevel = getAnimalLevel(Animal.Rat)
+
+  // if (bPieceMax > wPieceMax) {
+  //   // black elephant (highest level) is alive and white rat is dead => black cannot be beated
+  //   if (bPieceMax === elephantLevel) {
+  //     if (wPieceMin !== ratLevel) {
+  //       return PlayerSymbol.B
+  //     }
+  //   } else {
+  //     return PlayerSymbol.B
+  //   }
+  //   // white elephant (highest level) is alive and black rat is dead => white cannot be beated
+  // } else if (bPieceMax < wPieceMax) {
+  //   if (wPieceMax === elephantLevel) {
+  //     if (bPieceMin !== ratLevel) {
+  //       return PlayerSymbol.W
+  //     }
+  //   } else {
+  //     return PlayerSymbol.W
+  //   }
+  // }
+
   return ''
 }
-
 export function makeMove(board: Board, deltaFrom: BoardDelta, deltaTo: BoardDelta) {
   const prevBoard = klona(board)
   const nextBoard = klona(board)

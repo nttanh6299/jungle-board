@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import useInterval from 'hooks/useInterval'
 import Show from 'components/Show'
+import Button from 'components/Button'
 import { ROOM_STATUS } from 'constants/common'
 import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
@@ -90,13 +91,13 @@ const RoomsPage = () => {
                 </div>
                 <div className="text-2xl">{ROOM_STATUS[status]?.label}</div>
                 <div className="mt-3 flex justify-end">
-                  <button
-                    className="mt-4 px-6 py-3 text-2xl border rounded-lg bg-slate-900 hover:bg-slate-800 text-white"
+                  <Button
+                    className="mt-4"
                     disabled={!canJoin(quantity, max, status)}
                     onClick={() => onJoinRoom(id, quantity, max, status)}
                   >
                     Join
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}

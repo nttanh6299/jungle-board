@@ -4,13 +4,19 @@ import Room, { ERoomStatus } from '../models/room.model'
 import Match from '../models/match.model'
 import User from '../models/user.model'
 import Participant, { EUserType } from '../models/participant.model'
+import { EDisconnectReason } from '../constants/event'
 
 const disconnect = eventHandler((_, socket) => {
-  socket.on('disconnect', async () => {
+  socket.on('disconnect', async (reason) => {
     const { roomId = '', playerId = '' } = socket.data ?? {}
     const roomMapItem = roomMap.get(roomId)
 
     if (!roomMapItem) return
+
+    // player is disconnected for some reason
+    if (reason !== EDisconnectReason.CLIENT_NAMESPACE_DISCONNECT) {
+      socket.emit('outWithNoReason')
+    }
 
     const leftPlayer = roomMapItem?.players.get(playerId)
     const isPlayer = !leftPlayer?.isSpectator
@@ -35,9 +41,11 @@ const disconnect = eventHandler((_, socket) => {
 
             const players = Array.from(roomMapItem.players, ([_, player]) => player)
 
-            const identifiedPlayersPlaying = [...players, leftPlayer].filter(
-              (player) => !player?.isSpectator && player?.playerType === EUserType.IDENTIFIED,
-            )
+            const identifiedPlayersPlaying = players?.length
+              ? [...players, leftPlayer].filter(
+                  (player) => !player?.isSpectator && player?.playerType === EUserType.IDENTIFIED,
+                )
+              : []
             const userPromises = identifiedPlayersPlaying.map(async (player) => {
               // winner is not the user has left the match
               const isWinner = player?.id !== playerId
@@ -55,34 +63,33 @@ const disconnect = eventHandler((_, socket) => {
             })
             Promise.all(userPromises)
 
-            const participantPromises = [...players, leftPlayer].map(
-              async (player) =>
-                await Participant.create({
-                  roomId: roomMapItem.id,
-                  matchId: roomMapItem.matchId,
-                  userType: player?.playerType,
-                  isSpectator: player?.isSpectator,
-                  ...(player?.playerType === EUserType.IDENTIFIED
-                    ? { userId: player?.id }
-                    : { anonymousUserId: player?.id }),
-                }),
-            )
+            const participantPromises = players?.length
+              ? [...players, leftPlayer].map(
+                  async (player) =>
+                    await Participant.create({
+                      roomId: roomMapItem.id,
+                      matchId: roomMapItem.matchId,
+                      userType: player?.playerType,
+                      isSpectator: player?.isSpectator,
+                      ...(player?.playerType === EUserType.IDENTIFIED
+                        ? { userId: player?.id }
+                        : { anonymousUserId: player?.id }),
+                    }),
+                )
+              : []
             Promise.all(participantPromises)
           }
-        }
 
-        const room = await Room.findById(roomId)
-        if (room) {
-          room.status = ERoomStatus.WAITING
-          await room.save()
+          const room = await Room.findById(roomId)
+          if (room) {
+            room.status = ERoomStatus.WAITING
+            await room.save()
 
-          roomMapItem?.reset()
+            roomMapItem?.reset()
+          }
         }
       }
     }
-    // if (room.players.size === 0 && room.type === 'custom') {
-    //   roomMap.delete(roomId)
-    // }
   })
 })
 
