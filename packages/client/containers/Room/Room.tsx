@@ -91,11 +91,11 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
     if (gameStatus === 'playing') {
       if (window.confirm('Do you want to go back ?')) {
         // note: error when room has guests
-        onDisconnect(true)
+        onDisconnect()
         return router.push('/')
       }
     } else {
-      onDisconnect(true)
+      onDisconnect()
       router.push('/')
     }
   }, [gameStatus, router, onDisconnect])

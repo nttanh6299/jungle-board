@@ -89,7 +89,9 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     if (!canConnect) return
 
     socket.on('playerDisconnect', (isPlayerDisconnected) => {
-      onDisconnect(isPlayerDisconnected)
+      if (isPlayerDisconnected) {
+        onDisconnect()
+      }
     })
 
     socket.on('outWithNoReason', () => {
