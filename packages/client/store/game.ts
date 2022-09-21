@@ -2,8 +2,8 @@ import { createRef, MutableRefObject } from 'react'
 import create, { SetState, GetState, StateSelector } from 'zustand'
 import shallow from 'zustand/shallow'
 import produce from 'immer'
-import { AllPossibleMoves, Board } from '@jungle-board/service/lib/gameLogic'
-import { ROOM_STATUS } from '@jungle-board/server/lib/constants/common'
+import { AllPossibleMoves, Board } from 'jungle-board-service'
+import { ROOM_STATUS } from 'constants/common'
 
 const actionNames = [
   'onSelectSquare',
@@ -97,21 +97,19 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
     onNewTurn: (playerIdTurn: string, board: Board, allMoves: AllPossibleMoves) => {
       set({ playerTurn: playerIdTurn, possibleMoves: allMoves, selectedSquare: [], board })
     },
-    onDisconnect: (isPlayerDisconnected: boolean) => {
-      if (isPlayerDisconnected) {
-        const { initialBoard } = get()
-        set({
-          bothConnected: false,
-          cooldown: 0,
-          cooldownMenuVisible: false,
-          isHost: true,
-          board: initialBoard.current,
-          selectedSquare: [],
-          playerTurn: '',
-          lastTurn: '',
-          gameStatus: 'waiting',
-        })
-      }
+    onDisconnect: () => {
+      const { initialBoard } = get()
+      set({
+        bothConnected: false,
+        cooldown: 0,
+        cooldownMenuVisible: false,
+        isHost: true,
+        board: initialBoard.current,
+        selectedSquare: [],
+        playerTurn: '',
+        lastTurn: '',
+        gameStatus: 'waiting',
+      })
     },
   }
 

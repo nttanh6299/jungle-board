@@ -1,5 +1,5 @@
-import { AllPossibleMoves, BoardDelta, Board } from '@jungle-board/service/lib/gameLogic'
-import { ROOM_STATUS } from '@jungle-board/server/lib/constants/common'
+import { AllPossibleMoves, BoardDelta, Board } from 'jungle-board-service'
+import { ROOM_STATUS } from 'constants/common'
 import { isEmpty } from 'utils/lodash/isEmpty'
 
 export const isWaiting = (status: string) => {

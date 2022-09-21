@@ -21,3 +21,4 @@ export const ROOM_STATUS = {
 
 export const START_COOLDOWN = 5
 export const PLAY_COOLDOWN = 20
+export const DEFAULT_MAX_MOVE = 50

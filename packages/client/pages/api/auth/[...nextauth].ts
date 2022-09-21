@@ -38,6 +38,7 @@ export const nextAuthOptions: NextAuthOptions = {
           providerAccountId: account.providerAccountId,
         }
         const { data } = await signIn(loggedUser)
+        user.id = data?.user?.id
         if (data?.accessToken) {
           user.accessToken = data.accessToken
         }
@@ -49,11 +50,13 @@ export const nextAuthOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = user.accessToken
+        token.id = user.id
       }
       return token
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken
+      session.id = token.id
       return session
     },
   },

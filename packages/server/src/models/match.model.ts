@@ -7,6 +7,9 @@ export interface IMatch extends Document {
   playerId2: string
   move: number
   time: number
+  maxMove: number
+  cooldown: number
+  maxTime: number
   isTie: boolean
   createdAt: Date
 }
@@ -18,8 +21,11 @@ const matchSchema: Schema = new Schema<IMatch>({
   winnerId: { type: String },
   move: { type: Number, default: 0 },
   time: { type: Number, default: 0 },
+  maxMove: { type: Number, default: 0 },
+  cooldown: { type: Number, default: 0 },
+  maxTime: { type: Number, default: 0 },
   isTie: { type: Boolean, default: false },
-  createdAt: { type: Date, default: new Date() },
+  createdAt: { type: Date, default: Date.now },
 })
 
 export default model<IMatch>('Match', matchSchema)

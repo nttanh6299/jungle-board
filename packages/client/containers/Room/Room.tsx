@@ -10,7 +10,7 @@ import { useGameStore } from 'store/game'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
-import { ResGetRoom } from '@jungle-board/server/lib/types'
+import { ResGetRoom } from 'apis/room'
 
 interface RoomProps {
   room: ResGetRoom
@@ -91,11 +91,11 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
     if (gameStatus === 'playing') {
       if (window.confirm('Do you want to go back ?')) {
         // note: error when room has guests
-        onDisconnect(true)
+        onDisconnect()
         return router.push('/')
       }
     } else {
-      onDisconnect(true)
+      onDisconnect()
       router.push('/')
     }
   }, [gameStatus, router, onDisconnect])
@@ -124,6 +124,7 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
           </div>
           <div className="pt-2 mt-2">
             <GameBoard
+              isPlaying={!!playerTurn}
               board={board}
               selectedSquare={selectedSquare}
               onSelectSquare={handleSelectSquare}

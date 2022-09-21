@@ -1,13 +1,9 @@
 {
   "name": "jungle-board",
   "version": "1.0.0",
-  "main": "index.js",
   "author": "Tuan Anh Nguyen <nttanh6299@gmail.com> (https://github.com/nttanh6299)",
   "license": "MIT",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "5.14.0",
     "@typescript-eslint/parser": "5.14.0",
@@ -17,14 +13,11 @@
     "eslint-plugin-react": "7.29.3",
     "eslint-plugin-react-hooks": "4.3.0",
     "husky": "7.0.4",
-    "lerna": "^4.0.0",
     "lint-staged": "12.3.5",
     "prettier": "2.5.1",
     "typescript": "4.0"
   },
   "scripts": {
-    "dev": "lerna run --parallel dev",
-    "start": "lerna run --parallel start",
     "prepare": "husky install",
     "format": "prettier --write ."
   },

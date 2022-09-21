@@ -4,18 +4,15 @@ module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}', './containers/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      gridTemplateColumns: {
+        'fill-40': 'repeat(auto-fill, minmax(180px, 1fr))',
+      },
       delay: {
         100: '100',
         200: '200',
         300: '300',
         400: '400',
         500: '500',
-      },
-      colors: {
-        land: '#ffe8b7',
-        den: '#979797',
-        river: '#059bff',
-        trap: '#c5c5c5',
       },
       animation: {
         ripple: 'ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite',
