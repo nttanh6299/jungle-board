@@ -104,12 +104,13 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
   // Check connect
   useEffect(() => {
     const checkConnectInterval = setInterval(() => {
-      if (socket.disconnected) {
-        console.log('socket disconnect', socket)
-        clearInterval(checkConnectInterval)
-        alert('You are disconnected!')
-        window.location.href = '/'
-      }
+      console.log('check socket', socket)
+      // if (socket.disconnected) {
+      //   console.log('socket disconnect', socket)
+      //   clearInterval(checkConnectInterval)
+      //   alert('You are disconnected!')
+      //   window.location.href = '/'
+      // }
     }, 1000)
 
     return () => {
