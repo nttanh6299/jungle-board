@@ -1,5 +1,6 @@
 import { AppProps } from 'next/app'
 import { NextPage } from 'next'
+import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import AppStateProvider from 'contexts/AppStateProvider'
 import SocketProvider from 'contexts/SocketProvider'
@@ -10,7 +11,9 @@ type ICustomNextPage = NextPage & {
   requireSocket?: boolean
 }
 
-type ICustomAppProps = AppProps & {
+type ICustomAppProps = AppProps<{
+  session: Session
+}> & {
   Component: ICustomNextPage
 }
 
