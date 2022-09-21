@@ -2,7 +2,7 @@ import { createRef, MutableRefObject } from 'react'
 import create, { SetState, GetState, StateSelector } from 'zustand'
 import shallow from 'zustand/shallow'
 import produce from 'immer'
-import { AllPossibleMoves, Board } from '@jungle-board/service/lib/gameLogic'
+import { AllPossibleMoves, Board } from 'jungle-board-service'
 import { ROOM_STATUS } from 'constants/common'
 
 const actionNames = [

@@ -1,5 +1,5 @@
 import eventHandler from '../utils/eventHandler'
-import { GameStatus } from '@jungle-board/service/lib/game'
+import { GameStatus } from 'jungle-board-service'
 import roomMap from '../db'
 import Match from '../models/match.model'
 import User from '../models/user.model'

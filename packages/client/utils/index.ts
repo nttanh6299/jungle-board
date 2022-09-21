@@ -1,4 +1,4 @@
-import { AllPossibleMoves, BoardDelta, Board } from '@jungle-board/service/lib/gameLogic'
+import { AllPossibleMoves, BoardDelta, Board } from 'jungle-board-service'
 import { ROOM_STATUS } from 'constants/common'
 import { isEmpty } from 'utils/lodash/isEmpty'
 
