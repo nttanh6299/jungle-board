@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import { AllPossibleMoves, Board, BoardDelta } from '@jungle-board/service/lib/gameLogic'
+import { AllPossibleMoves, Board, BoardDelta } from 'jungle-board-service'
 
 export interface ServerToClientEvents {
   checkRoom: (board: Board, bothConnected: boolean) => void
