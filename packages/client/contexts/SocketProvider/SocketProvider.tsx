@@ -1,7 +1,7 @@
 import React, { useState, useEffect, createContext } from 'react'
 import { API_ENDPOINT } from 'constants/common'
 import socketIOClient, { Socket } from 'socket.io-client'
-import { AllPossibleMoves, Board, BoardDelta } from '@jungle-board/service/lib/gameLogic'
+import { AllPossibleMoves, Board, BoardDelta } from 'jungle-board-service'
 
 export interface ServerToClientEvents {
   checkRoom: (board: Board, bothConnected: boolean) => void

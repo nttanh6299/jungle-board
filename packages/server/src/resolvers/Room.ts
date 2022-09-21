@@ -1,6 +1,6 @@
 import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS } from '../constants/common'
 import Player from './Player'
-import Game from '@jungle-board/service/lib/game'
+import { Game } from 'jungle-board-service'
 
 class Room {
   id: string

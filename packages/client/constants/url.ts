@@ -1,4 +1,4 @@
-import { Animal } from '@jungle-board/service/lib/gameLogic'
+import { Animal } from 'jungle-board-service'
 
 export const AnimalPath = {
   [Animal.Rat]: '/images/rat.svg',

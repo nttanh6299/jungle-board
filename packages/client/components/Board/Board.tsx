@@ -15,7 +15,7 @@ import {
   getPieceKind,
   isOpponent,
   BoardDelta,
-} from '@jungle-board/service/lib/gameLogic'
+} from 'jungle-board-service'
 import { AnimalPath } from 'constants/url'
 
 const BOARD_ROWS = Array.from(Array(ROWS).keys())
