@@ -15,6 +15,7 @@ const disconnect = eventHandler((_, socket) => {
 
     // player is disconnected for some reason
     if (reason !== EDisconnectReason.CLIENT_NAMESPACE_DISCONNECT) {
+      console.log('Player is disconnected for some reason: ', reason)
       socket.emit('outWithNoReason')
     }
 
