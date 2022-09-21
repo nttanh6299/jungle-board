@@ -95,6 +95,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     })
 
     socket.on('outWithNoReason', () => {
+      console.log('outWithNoReason')
       alert('You are disconnected!')
       window.location.href = '/'
     })
@@ -104,6 +105,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
   useEffect(() => {
     const checkConnectInterval = setInterval(() => {
       if (socket.disconnected) {
+        console.log('socket disconnect', socket)
         clearInterval(checkConnectInterval)
         alert('You are disconnected!')
         window.location.href = '/'
