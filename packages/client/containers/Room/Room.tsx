@@ -108,8 +108,10 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
   }, [goBack])
 
   useEffect(() => {
-    onConnect()
-  }, [onConnect])
+    if (socket.connected) {
+      onConnect()
+    }
+  }, [socket, onConnect])
 
   return (
     <div className="relative">
