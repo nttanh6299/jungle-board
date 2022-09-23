@@ -97,8 +97,8 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
     onNewTurn: (playerIdTurn: string, board: Board, allMoves: AllPossibleMoves) => {
       set({ playerTurn: playerIdTurn, possibleMoves: allMoves, selectedSquare: [], board })
     },
-    onDisconnect: () => {
-      const { initialBoard } = get()
+    onDisconnect: (force?: boolean) => {
+      const { initialBoard, canConnect } = get()
       set({
         bothConnected: false,
         cooldown: 0,
@@ -109,7 +109,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
         playerTurn: '',
         lastTurn: '',
         gameStatus: 'waiting',
-        canConnect: false,
+        canConnect: force ? false : canConnect,
       })
     },
   }
