@@ -15,7 +15,7 @@ const Layout: React.FC = ({ children }) => {
   return (
     <div className="relative p-4">
       <Show when={appLoading}>
-        <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/[.75]">
+        <div className="fixed z-10 top-0 left-0 right-0 bottom-0 bg-black/[.75]">
           <div className="inline-block width-[80px] height-[80px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             <div className="animate-ripple absolute border-4 border-solid border-white rounded-full opacity-100"></div>
             <div className="animate-ripple absolute border-4 border-solid border-white rounded-full opacity-100 sibling:animation-delay-[-500]"></div>

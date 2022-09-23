@@ -22,7 +22,6 @@ const RoomsPage = () => {
 
       let errorLabel = ''
       if (!data) errorLabel = 'Something went wrong!'
-      dispatch({ type: 'displayLoader', payload: { value: false } })
 
       if (errorLabel) {
         alert(errorLabel)
@@ -47,7 +46,6 @@ const RoomsPage = () => {
       if (!canJoin(data.quantity, data.max, data.status)) {
         errorLabel = 'The room is busy now!'
       }
-      dispatch({ type: 'displayLoader', payload: { value: false } })
 
       if (errorLabel) {
         alert(errorLabel)
