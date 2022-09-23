@@ -7,6 +7,7 @@ import { dequal } from 'dequal'
 import { isEmpty } from 'utils/lodash/isEmpty'
 import Show from 'components/Show'
 import { useGameStore } from 'store/game'
+import useAppState from 'hooks/useAppState'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
@@ -19,6 +20,7 @@ interface RoomProps {
 
 const Room: React.FC<RoomProps> = ({ room, accountId }) => {
   const router = useRouter()
+  const [, dispatch] = useAppState()
 
   useHandleSocketEvent({ roomId: room.id, accountId })
 
@@ -108,10 +110,19 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
   }, [goBack])
 
   useEffect(() => {
-    if (socket.connected) {
-      onConnect()
+    // check until socket is connected
+    const checkConnectInterval = setInterval(() => {
+      if (socket.connected) {
+        clearInterval(checkConnectInterval)
+        dispatch({ type: 'displayLoader', payload: { value: false } })
+        onConnect()
+      }
+    }, 1000)
+
+    return () => {
+      clearInterval(checkConnectInterval)
     }
-  }, [socket, onConnect])
+  }, [socket, onConnect, dispatch])
 
   return (
     <div className="relative">

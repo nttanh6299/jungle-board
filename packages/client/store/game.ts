@@ -109,6 +109,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
         playerTurn: '',
         lastTurn: '',
         gameStatus: 'waiting',
+        canConnect: false,
       })
     },
   }

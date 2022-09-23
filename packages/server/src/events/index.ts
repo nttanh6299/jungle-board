@@ -9,7 +9,7 @@ import { ServerToClientEvents, ClientToServerEvents, InterServerEvents, SocketDa
 const initSocketServer = (httpServer: http.Server) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer)
   io.on('connection', (socket) => {
-    console.log('Socket connected')
+    console.log('Socket connected: ', socket.id)
 
     join(io, socket)
     start(io, socket)
