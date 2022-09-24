@@ -1,16 +1,15 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import Room from 'containers/Room'
+import SocketProvider from 'contexts/SocketProvider'
 import { getRoom as getRoomApi } from 'apis/room'
 import { getToken } from 'next-auth/jwt'
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   try {
-    const roomId = context.params?.id?.toString()
-
-    // get user id
-    const token = await getToken({ req: context.req })
-
-    const { data } = await getRoomApi(roomId)
+    const [token, { data }] = await Promise.all([
+      getToken({ req: context.req }),
+      getRoomApi(context.params?.id?.toString()),
+    ])
 
     if (!data || (data && data.quantity >= data.max)) {
       return {
@@ -38,7 +37,11 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 }
 
 const RoomPage = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  return <Room {...props} />
+  return (
+    <SocketProvider>
+      <Room {...props} />
+    </SocketProvider>
+  )
 }
 
 RoomPage.requireSocket = true

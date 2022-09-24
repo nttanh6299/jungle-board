@@ -19,20 +19,20 @@ const disconnect = eventHandler((_, socket) => {
       socket.emit('outWithNoReason')
     }
 
-    const leftPlayer = roomMapItem?.players.get(playerId)
+    const leftPlayer = roomMapItem.players.get(playerId)
     const isPlayer = !leftPlayer?.isSpectator
 
     // emit to another player that we leave the room
     socket.to(roomId).emit('playerDisconnect', isPlayer)
     socket.leave(roomId)
 
-    roomMapItem?.leave(playerId)
+    roomMapItem.leave(playerId)
     if (isPlayer) {
-      roomMapItem?.clearTimer()
+      roomMapItem.clearTimer()
 
       // set winner to another player if the match is playing
       if (roomMapItem.status === ERoomStatus.PLAYING) {
-        if (roomMapItem?.playerIdsCanPlay.length === 1) {
+        if (roomMapItem.playerIdsCanPlay.length === 1) {
           const match = await Match.findById(roomMapItem.matchId)
           if (match) {
             match.winnerId = roomMapItem.getFirstPlayer()
@@ -86,7 +86,7 @@ const disconnect = eventHandler((_, socket) => {
             room.status = ERoomStatus.WAITING
             await room.save()
 
-            roomMapItem?.reset()
+            roomMapItem.reset()
           }
         }
       }

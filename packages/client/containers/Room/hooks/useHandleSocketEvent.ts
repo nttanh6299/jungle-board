@@ -65,6 +65,13 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('play', () => {
       onStartGame()
     })
+
+    return () => {
+      socket.off('playerJoin')
+      socket.off('checkRoom')
+      socket.off('readyToPlay')
+      socket.off('play')
+    }
   }, [socket, canConnect, onPlayerJoin, onCheckRoom, onReadyToPlay, onStartGame])
 
   // On playing
@@ -82,6 +89,12 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('end', (lastTurn, status) => {
       onEndGame(lastTurn, status)
     })
+
+    return () => {
+      socket.off('playCooldown')
+      socket.off('turn')
+      socket.off('end')
+    }
   }, [socket, canConnect, onPlayCooldown, onNewTurn, onEndGame])
 
   // Disconnect
@@ -98,6 +111,11 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       alert('You are disconnected with no reason!')
       window.location.href = '/'
     })
+
+    return () => {
+      socket.off('playerDisconnect')
+      socket.off('outWithNoReason')
+    }
   }, [socket, canConnect, onDisconnect])
 
   // Check connect

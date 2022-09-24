@@ -25,7 +25,7 @@ if (config.env !== 'test') {
 
 const connectApp = async () => {
   try {
-    if (config.env !== 'test') {
+    if (config.env !== 'development') {
       mongoose.set('debug', (collectionName, method, query, doc) => {
         console.log(`${collectionName}.${method}`, JSON.stringify(query), doc)
         console.log('-----------------------------')
@@ -33,12 +33,13 @@ const connectApp = async () => {
     }
     await mongoose.connect(config.mongoose.url)
 
-    await Promise.all([Match.deleteMany({}), Participant.deleteMany({})])
-
-    const rooms = await Room.find({ isActive: true })
-    rooms.forEach((room) => {
-      roomMap.set(room.id, new RoomResolver(room.id, room.maxMove, room.cooldown, room.status, room.type))
-    })
+    if (config.env === 'development') {
+      await Promise.all([Match.deleteMany({}), Participant.deleteMany({})])
+      const rooms = await Room.find({ isActive: true })
+      rooms.forEach((room) => {
+        roomMap.set(room.id, new RoomResolver(room.id, room.maxMove, room.cooldown, room.status, room.type))
+      })
+    }
 
     startServer()
   } catch (error) {

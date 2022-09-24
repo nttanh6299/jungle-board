@@ -94,9 +94,13 @@ const move = eventHandler((io, socket) => {
           }
         }
 
-        io.in(roomId).emit('playCooldown', playCooldown)
+        if (playCooldown >= 0) {
+          io.in(roomId).emit('playCooldown', playCooldown)
+        }
 
         if (playCooldown === 0) {
+          playCooldown = -1
+
           roomMapItem.clearTimer()
 
           const nextTurn = roomMapItem.getNextTurn()
