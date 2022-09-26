@@ -35,11 +35,12 @@ const connectApp = async () => {
 
     if (config.env === 'development') {
       await Promise.all([Match.deleteMany({}), Participant.deleteMany({})])
-      const rooms = await Room.find({ isActive: true })
-      rooms.forEach((room) => {
-        roomMap.set(room.id, new RoomResolver(room.id, room.maxMove, room.cooldown, room.status, room.type))
-      })
     }
+
+    const rooms = await Room.find({ isActive: true })
+    rooms.forEach((room) => {
+      roomMap.set(room.id, new RoomResolver(room.id, room.maxMove, room.cooldown, room.status, room.type))
+    })
 
     startServer()
   } catch (error) {
