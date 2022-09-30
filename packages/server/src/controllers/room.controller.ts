@@ -28,7 +28,7 @@ const getRooms = catchAsync(async (_, res) => {
         type,
         maxMove,
         cooldown,
-        players: roomMap.get(id)?.playerIdsCanPlay?.length,
+        players: roomMap.get(id)?.playerIdsCanPlay?.length || 0,
         maxPlayer: 2,
       }),
     ),

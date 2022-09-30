@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useGameStore } from 'store/game'
 import useSocket from 'hooks/useSocket'
+import { EDisconnectReason } from 'constants/enum'
 
 type IHookArgs = {
   roomId: string
@@ -65,6 +66,13 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('play', () => {
       onStartGame()
     })
+
+    return () => {
+      socket.off('playerJoin')
+      socket.off('checkRoom')
+      socket.off('readyToPlay')
+      socket.off('play')
+    }
   }, [socket, canConnect, onPlayerJoin, onCheckRoom, onReadyToPlay, onStartGame])
 
   // On playing
@@ -82,6 +90,12 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('end', (lastTurn, status) => {
       onEndGame(lastTurn, status)
     })
+
+    return () => {
+      socket.off('playCooldown')
+      socket.off('turn')
+      socket.off('end')
+    }
   }, [socket, canConnect, onPlayCooldown, onNewTurn, onEndGame])
 
   // Disconnect
@@ -94,26 +108,19 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       }
     })
 
-    socket.on('outWithNoReason', () => {
-      alert('You are disconnected with no reason!')
-      window.location.href = '/'
-    })
-  }, [socket, canConnect, onDisconnect])
-
-  // Check connect
-  useEffect(() => {
-    const checkConnectInterval = setInterval(() => {
-      if (canConnect && socket.disconnected) {
-        clearInterval(checkConnectInterval)
+    socket.on('disconnect', (reason) => {
+      console.log('client disconnect', reason)
+      if (reason === EDisconnectReason.TRANSPORT_CLOSE) {
         alert('You are disconnected!')
         window.location.href = '/'
       }
-    }, 1000)
+    })
 
     return () => {
-      clearInterval(checkConnectInterval)
+      socket.off('playerDisconnect')
+      socket.off('disconnect')
     }
-  }, [canConnect, socket])
+  }, [socket, canConnect, onDisconnect])
 
   // End game overlay
   useEffect(() => {

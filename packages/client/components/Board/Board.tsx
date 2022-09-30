@@ -82,8 +82,8 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
                   <div
                     className={clsx(
                       'overflow-hidden h-full',
-                      { 'text-xl drop-shadow-[3px_3px_5px_blue]': board && !!piece },
-                      { '!drop-shadow-[3px_3px_5px_red]': board && isOpponent(board, cell) },
+                      { 'drop-shadow-[3px_3px_5px_blue]': board && !isOpponent(board, cell) },
+                      { 'drop-shadow-[3px_3px_5px_red]': board && isOpponent(board, cell) },
                     )}
                   >
                     {board && piece ? (

@@ -4,3 +4,7 @@ export enum ERoomStatus {
   END = 'end',
   TIE = 'tie',
 }
+
+export enum EDisconnectReason {
+  TRANSPORT_CLOSE = 'transport close',
+}
