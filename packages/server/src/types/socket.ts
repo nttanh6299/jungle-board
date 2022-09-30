@@ -10,7 +10,6 @@ export interface ServerToClientEvents {
   turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
   playCooldown: (cooldown: number) => void
   end: (playerTurn: string, status: string) => void
-  outWithNoReason: () => void
 }
 
 export interface InterServerEvents {
