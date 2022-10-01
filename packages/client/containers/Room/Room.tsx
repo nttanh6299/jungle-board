@@ -12,6 +12,7 @@ import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
 import { ResGetRoom } from 'apis/room'
+import { EDisconnectReason } from 'constants/enum'
 
 interface RoomProps {
   room: ResGetRoom
@@ -55,6 +56,7 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
   }))
 
   const { socket } = useSocket()
+  const [error, setError] = React.useState('')
 
   const handleSelectSquare = (row: number, col: number) => {
     if (playerTurn !== playerId) return
@@ -124,6 +126,17 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
     }
   }, [socket, onConnect, dispatch])
 
+  useEffect(() => {
+    socket.on('disconnect', (reason) => {
+      console.log('client disconnect', reason)
+      if (reason === EDisconnectReason.TRANSPORT_CLOSE) {
+        alert('You are disconnected!')
+        window.location.href = '/'
+      }
+      setError(reason)
+    })
+  }, [socket])
+
   return (
     <div className="relative">
       <button onClick={goBack} className="fixed top-[10px] left-[10px] block p-2">
@@ -132,6 +145,7 @@ const Room: React.FC<RoomProps> = ({ room, accountId }) => {
       <Show when={canConnect}>
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center">
+            <strong>Error: {error}</strong>
             <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
             <PlayerCooldown isOpponent />
           </div>
