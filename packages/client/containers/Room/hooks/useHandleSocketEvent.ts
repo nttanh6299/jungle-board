@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { useGameStore } from 'store/game'
 import useSocket from 'hooks/useSocket'
-import { EDisconnectReason } from 'constants/enum'
 
 type IHookArgs = {
   roomId: string
@@ -108,17 +107,8 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       }
     })
 
-    socket.on('disconnect', (reason) => {
-      console.log('client disconnect', reason)
-      if (reason === EDisconnectReason.TRANSPORT_CLOSE) {
-        alert('You are disconnected!')
-        window.location.href = '/'
-      }
-    })
-
     return () => {
       socket.off('playerDisconnect')
-      socket.off('disconnect')
     }
   }, [socket, canConnect, onDisconnect])
 
