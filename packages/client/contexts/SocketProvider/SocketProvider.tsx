@@ -12,6 +12,7 @@ export interface ServerToClientEvents {
   turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
   playCooldown: (cooldown: number) => void
   end: (playerTurn: string, status: string) => void
+  reconnectSuccess: () => void
 }
 
 export interface ClientToServerEvents {
@@ -19,6 +20,7 @@ export interface ClientToServerEvents {
   move: (moveFrom: BoardDelta, moveTo: BoardDelta) => void
   disconnect: () => void
   start: () => void
+  reconnect: (roomId: string, playerId: string) => void
 }
 
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents>
@@ -33,16 +35,6 @@ export const SocketStateContext = createContext<SocketStateContextType>({
 
 const SocketProvider: React.FC = ({ children }) => {
   const [socket, setSocket] = useState<SocketType>()
-
-  useEffect(() => {
-    const a = setInterval(() => {
-      console.log('socket', socket)
-    }, 1000)
-
-    return () => {
-      clearInterval(a)
-    }
-  }, [socket])
 
   useEffect(() => {
     const socket = socketIOClient(API_ENDPOINT, { transports: ['websocket'], reconnection: false })

@@ -15,9 +15,11 @@ const disconnect = eventHandler((_, socket) => {
 
     // player is disconnected for some reason
     if (reason !== EDisconnectReason.CLIENT_NAMESPACE_DISCONNECT) {
-      console.log('Player is disconnected for some reason: ', reason)
+      console.log(playerId + ' player is disconnected for some reason: ', reason)
+      socket.leave(roomId)
+      return
     } else {
-      console.log('Player is disconnected:', reason)
+      console.log(playerId + ' player is disconnected:', reason)
     }
 
     const leftPlayer = roomMapItem.players.get(playerId)

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useGameStore } from 'store/game'
 import useSocket from 'hooks/useSocket'
+import { EDisconnectReason } from 'constants/enum'
 
 type IHookArgs = {
   roomId: string
@@ -14,6 +15,7 @@ type IHook = (args: IHookArgs) => IHookReturn
 const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
   const { socket } = useSocket()
   const {
+    playerId,
     canConnect,
     endVisible,
     onAfterEndGame,
@@ -26,6 +28,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     onStartGame,
     onDisconnect,
   } = useGameStore((state) => ({
+    playerId: state.playerId,
     canConnect: state.canConnect,
     endVisible: state.endVisible,
     onAfterEndGame: state.actions.onAfterEndGame,
@@ -111,6 +114,28 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       socket.off('playerDisconnect')
     }
   }, [socket, canConnect, onDisconnect])
+
+  // Reconnect
+  useEffect(() => {
+    if (!canConnect || !roomId || !playerId) return
+
+    socket.on('disconnect', (reason) => {
+      console.log('client disconnect', reason)
+      if (reason === EDisconnectReason.TRANSPORT_CLOSE || reason === EDisconnectReason.TRANSPORT_ERROR) {
+        console.log(playerId + ' try to reconnect')
+        socket.connect().emit('reconnect', roomId, playerId)
+      }
+    })
+
+    socket.on('reconnectSuccess', () => {
+      console.log('Reconnect successfully!')
+    })
+
+    return () => {
+      socket.off('disconnect')
+      socket.off('reconnectSuccess')
+    }
+  }, [socket, canConnect, roomId, playerId])
 
   // End game overlay
   useEffect(() => {

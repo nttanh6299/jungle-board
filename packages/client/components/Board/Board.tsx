@@ -53,7 +53,7 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
 
             return (
               <div
-                key={`${row}${col}`}
+                key={`${row}|${col}|${board?.[row]?.[col]}`}
                 style={{
                   width: SQUARE_WIDTH,
                   height: SQUARE_HEIGHT,

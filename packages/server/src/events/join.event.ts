@@ -21,8 +21,8 @@ const join = eventHandler((io, socket) => {
     socket.join(roomMapItem.id)
     socket.data = {
       ...socket.data,
-      roomId: roomMapItem.id,
-      playerId: playerId,
+      roomId,
+      playerId,
       playerType,
     }
 
@@ -31,6 +31,24 @@ const join = eventHandler((io, socket) => {
 
     // to all clients in roomId
     io.in(roomId).emit('checkRoom', roomMapItem.board.state.board, bothConnected)
+  })
+
+  socket.on('reconnect', async (roomId, playerId) => {
+    const roomMapItem = roomMap.get(roomId)!
+
+    if (!roomMapItem) return
+
+    const playerType = roomMapItem.players.get(playerId)?.playerType
+
+    socket.join(roomMapItem.id)
+    socket.data = {
+      ...socket.data,
+      roomId,
+      playerId,
+      playerType,
+    }
+    socket.emit('reconnectSuccess')
+    console.log(playerId, 'reconnect')
   })
 })
 
