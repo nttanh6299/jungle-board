@@ -9,6 +9,7 @@ import useAppState from 'hooks/useAppState'
 import { getRoom, createRoom, ReqCreateRoom } from 'apis/room'
 import { PeopleIcon, FootIcon, ClockIcon } from 'icons'
 import CreateRoom from './CreateRoom'
+import ErrorBoundary from 'components/ErrorBoundary'
 
 const RoomsPage = () => {
   const router = useRouter()
@@ -65,43 +66,49 @@ const RoomsPage = () => {
   return (
     <div>
       <h1 className="text-5xl font-semibold">Rooms</h1>
-      <CreateRoom onCreateRoom={onCreateRoom} className="mt-4" />
-      <div className="pt-6">
-        <Show when={fetching}>fetching..</Show>
-        <Show when={!fetching}>
-          <div className="grid gap-4 grid-cols-fill-40">
-            {rooms?.map(({ id, name, quantity, max, status, maxMove, cooldown }) => (
-              <div key={id} className="border border-slate-900 p-4">
-                <strong className="text-3xl break-words">{name}</strong>
-                <div className="py-4 flex">
-                  <div className="text-2xl flex items-center">
-                    <PeopleIcon />{' '}
-                    <div className="ml-1.5">
-                      {quantity}/{max}
+
+      <ErrorBoundary>
+        <CreateRoom onCreateRoom={onCreateRoom} className="mt-4" />
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <div className="pt-6">
+          <Show when={fetching}>fetching..</Show>
+          <Show when={!fetching}>
+            <div className="grid gap-4 grid-cols-fill-40">
+              {rooms?.map(({ id, name, quantity, max, status, maxMove, cooldown }) => (
+                <div key={id} className="border border-slate-900 p-4">
+                  <strong className="text-3xl break-words">{name}</strong>
+                  <div className="py-4 flex">
+                    <div className="text-2xl flex items-center">
+                      <PeopleIcon />{' '}
+                      <div className="ml-1.5">
+                        {quantity}/{max}
+                      </div>
+                    </div>
+                    <div className="mx-6 text-2xl flex items-center">
+                      <FootIcon /> <div className="ml-1.5">{maxMove}</div>
+                    </div>
+                    <div className="text-2xl flex items-center">
+                      <ClockIcon /> <div className="ml-1.5">{cooldown}</div>
                     </div>
                   </div>
-                  <div className="mx-6 text-2xl flex items-center">
-                    <FootIcon /> <div className="ml-1.5">{maxMove}</div>
-                  </div>
-                  <div className="text-2xl flex items-center">
-                    <ClockIcon /> <div className="ml-1.5">{cooldown}</div>
+                  <div className="text-2xl">{ROOM_STATUS[status]?.label}</div>
+                  <div className="mt-3 flex justify-end">
+                    <Button
+                      className="mt-4"
+                      disabled={!canJoin(quantity, max, status)}
+                      onClick={() => onJoinRoom(id, quantity, max, status)}
+                    >
+                      Join
+                    </Button>
                   </div>
                 </div>
-                <div className="text-2xl">{ROOM_STATUS[status]?.label}</div>
-                <div className="mt-3 flex justify-end">
-                  <Button
-                    className="mt-4"
-                    disabled={!canJoin(quantity, max, status)}
-                    onClick={() => onJoinRoom(id, quantity, max, status)}
-                  >
-                    Join
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Show>
-      </div>
+              ))}
+            </div>
+          </Show>
+        </div>
+      </ErrorBoundary>
     </div>
   )
 }
