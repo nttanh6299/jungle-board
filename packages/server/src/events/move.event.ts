@@ -30,7 +30,7 @@ const move = eventHandler((io, socket) => {
       roomMapItem.clearTimer()
 
       let playCooldown = roomMapItem.cooldown
-      io.in(roomId).emit('playCooldown', playCooldown)
+      io.in(roomId).volatile.emit('playCooldown', playCooldown)
       const timer = setInterval(async () => {
         if (playCooldown > 0) {
           playCooldown -= 1
@@ -95,7 +95,7 @@ const move = eventHandler((io, socket) => {
         }
 
         if (playCooldown >= 0) {
-          io.in(roomId).emit('playCooldown', playCooldown)
+          io.in(roomId).volatile.emit('playCooldown', playCooldown)
         }
 
         if (playCooldown === 0) {

@@ -48,7 +48,7 @@ const join = eventHandler((io, socket) => {
       playerType,
     }
     socket.emit('reconnectSuccess')
-    console.log(playerId, 'reconnect')
+    console.log(`${roomId} ${playerId}: reconnect`)
   })
 })
 
