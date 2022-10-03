@@ -10,6 +10,7 @@ export interface ServerToClientEvents {
   turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
   playCooldown: (cooldown: number) => void
   end: (playerTurn: string, status: string) => void
+  reconnectSuccess: () => void
 }
 
 export interface InterServerEvents {
@@ -21,6 +22,7 @@ export interface ClientToServerEvents {
   move: (moveFrom: BoardDelta, moveTo: BoardDelta) => void
   disconnect: () => void
   start: () => void
+  reconnect: (roomId: string, playerId: string) => void
 }
 
 export interface SocketData {

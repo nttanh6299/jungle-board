@@ -5,8 +5,10 @@ import Room, { ERoomStatus } from '../models/room.model'
 import Match from '../models/match.model'
 import User from '../models/user.model'
 import Participant, { EUserType } from '../models/participant.model'
+import { SocketServerType, SocketType } from '../types/socket'
+import RoomResolver from '../resolvers/Room'
 
-const play = (io, socket, roomMapItem) => {
+const play = (io: SocketServerType, socket: SocketType, roomMapItem: RoomResolver) => {
   const { roomId = '', playerId = '' } = socket.data ?? {}
   roomMapItem.clearTimer()
 
@@ -111,14 +113,14 @@ const start = eventHandler((io, socket) => {
     if (!bothConnected) return
 
     let cooldown = START_COOLDOWN
-    io.in(roomId).emit('readyToPlay', cooldown)
+    io.in(roomId).volatile.emit('readyToPlay', cooldown)
     const timer = setInterval(async () => {
       if (cooldown > 0) {
         cooldown -= 1
       }
 
       if (cooldown >= 0) {
-        io.in(roomId).emit('readyToPlay', cooldown)
+        io.in(roomId).volatile.emit('readyToPlay', cooldown)
       }
 
       if (cooldown === 0) {
