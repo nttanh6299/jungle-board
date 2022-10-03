@@ -124,6 +124,9 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       if (reason === EDisconnectReason.TRANSPORT_ERROR || reason === EDisconnectReason.PING_TIMEOUT) {
         console.log(playerId + ' try to reconnect')
         socket.connect().emit('reconnect', roomId, playerId)
+      } else {
+        alert('You are disconnected!')
+        window.location.href = '/'
       }
     })
 
