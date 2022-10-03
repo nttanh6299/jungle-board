@@ -40,5 +40,5 @@ module.exports = {
     ],
     'react/react-in-jsx-scope': 'off',
   },
-  ignorePatterns: ['*.test.ts', '*.test.tsx', 'tailwind.config.js'],
+  ignorePatterns: ['*.test.ts', '*.test.tsx', 'tailwind.config.js', 'next.config.js'],
 }
