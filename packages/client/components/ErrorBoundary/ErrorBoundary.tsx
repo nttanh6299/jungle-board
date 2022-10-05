@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/nextjs'
 import { Component, ErrorInfo, ReactNode } from 'react'
 
 interface IState {
@@ -22,9 +21,6 @@ export default class ErrorBoundary extends Component<IProps, IState> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('Uncaught error:', error, errorInfo)
-    if (process.env.NODE_ENV === 'production') {
-      Sentry.captureException(errorInfo)
-    }
   }
 
   render(): ReactNode {

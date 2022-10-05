@@ -20,7 +20,7 @@ const useRooms: IHook = () => {
         setFetching(true)
       }
       const { data } = await getRooms()
-      if (data) {
+      if (Array.isArray(data)) {
         setRooms(data)
       }
       setFetching(false)
