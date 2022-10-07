@@ -1,48 +1,78 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import { useEffect, useLayoutEffect } from 'react'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import Room from 'containers/Room'
 import SocketProvider from 'contexts/SocketProvider'
-import { getRoom as getRoomApi } from 'apis/room'
-import { getToken } from 'next-auth/jwt'
+import { useRoomStore } from 'store/room'
+import { verifyRoom } from 'apis/room'
+import { UNABLE_PLAY_REASON } from 'constants/common'
+import useAppState from 'hooks/useAppState'
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  try {
-    const [token, { data }] = await Promise.all([
-      getToken({ req: context.req }),
-      getRoomApi(context.params?.id?.toString()),
-    ])
+export const getStaticPaths = () => ({
+  paths: [],
+  fallback: 'blocking',
+})
 
-    if (!data || (data && data.quantity >= data.max)) {
-      return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        },
+export const getStaticProps = () => ({
+  props: {},
+})
+
+const RoomPage = () => {
+  const router = useRouter()
+  const { query } = router
+  const { data: session } = useSession()
+  const [, dispatch] = useAppState()
+
+  const roomId = query?.id ? String(query.id) : ''
+  const accountId = session?.id ? String(session.id) : ''
+
+  const { onResetVerification, onVerifyRoom, valid } = useRoomStore((state) => ({
+    roomId: state.roomId,
+    valid: state.valid,
+    onResetVerification: state.actions.onResetVerification,
+    onVerifyRoom: state.actions.onVerifyRoom,
+  }))
+
+  useLayoutEffect(() => {
+    const verify = async () => {
+      dispatch({ type: 'displayLoader', payload: { value: true } })
+      const { data } = await verifyRoom({ roomId, accountId })
+      let errorLabel = ''
+      if (!data) errorLabel = 'Something went wrong!'
+      if (data.reason === UNABLE_PLAY_REASON.roomFull) {
+        errorLabel = 'The room is busy now!'
+      } else if (data.reason === UNABLE_PLAY_REASON.playing) {
+        errorLabel = 'You are already in another room!'
       }
+
+      if (errorLabel) {
+        alert(errorLabel)
+        window.location.href = '/'
+      }
+
+      onVerifyRoom(roomId)
     }
 
-    return {
-      props: {
-        room: data,
-        accountId: token?.id ? String(token?.id) : '',
-      },
+    if (!valid) {
+      verify()
     }
-  } catch (_) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
+  }, [roomId, accountId, valid, onVerifyRoom, dispatch])
+
+  useEffect(() => {
+    return () => {
+      onResetVerification()
     }
+  }, [onResetVerification])
+
+  if (!valid) {
+    return null
   }
-}
 
-const RoomPage = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <SocketProvider>
-      <Room {...props} />
+      <Room roomId={roomId} accountId={accountId} />
     </SocketProvider>
   )
 }
 
-RoomPage.requireSocket = true
 export default RoomPage
