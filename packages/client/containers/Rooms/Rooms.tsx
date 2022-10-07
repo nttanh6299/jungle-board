@@ -2,19 +2,25 @@ import { useRouter } from 'next/router'
 import useInterval from 'hooks/useInterval'
 import Show from 'components/Show'
 import Button from 'components/Button'
-import { ROOM_STATUS } from 'constants/common'
+import { ROOM_STATUS, UNABLE_PLAY_REASON } from 'constants/common'
 import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
 import useAppState from 'hooks/useAppState'
-import { getRoom, createRoom, ReqCreateRoom } from 'apis/room'
+import { createRoom, ReqCreateRoom, verifyRoom } from 'apis/room'
 import { PeopleIcon, FootIcon, ClockIcon } from 'icons'
 import CreateRoom from './CreateRoom'
 import ErrorBoundary from 'components/ErrorBoundary'
+import { useSession } from 'next-auth/react'
+import { useRoomStore } from 'store/room'
 
 const RoomsPage = () => {
   const router = useRouter()
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
+  const { data: session } = useSession()
+  const { onVerifyRoom } = useRoomStore((state) => ({
+    onVerifyRoom: state.actions.onVerifyRoom,
+  }))
 
   const onCreateRoom = async (params: ReqCreateRoom) => {
     try {
@@ -40,18 +46,21 @@ const RoomsPage = () => {
       if (!canJoin(quantity, max, status)) return
 
       dispatch({ type: 'displayLoader', payload: { value: true } })
-      const { data } = await getRoom(roomId)
+      const { data } = await verifyRoom({ roomId, accountId: session?.id ? String(session?.id) : '' })
 
       let errorLabel = ''
       if (!data) errorLabel = 'Something went wrong!'
-      if (!canJoin(data.quantity, data.max, data.status)) {
+      if (data.reason === UNABLE_PLAY_REASON.roomFull) {
         errorLabel = 'The room is busy now!'
+      } else if (data.reason === UNABLE_PLAY_REASON.playing) {
+        errorLabel = 'You are already in another room!'
       }
 
       if (errorLabel) {
         alert(errorLabel)
         router.reload()
       } else {
+        onVerifyRoom(roomId)
         router.push('/room/' + roomId)
       }
     } catch (error) {

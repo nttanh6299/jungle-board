@@ -20,3 +20,8 @@ export const ROOM_STATUS = {
     value: ERoomStatus.TIE,
   },
 }
+
+export const UNABLE_PLAY_REASON = {
+  roomFull: 'ROOM_FULL',
+  playing: 'PLAYING',
+}

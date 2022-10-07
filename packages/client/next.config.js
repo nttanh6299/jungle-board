@@ -12,7 +12,7 @@ const sentryModuleExports = {
   },
 }
 
-module.exports = withSentryConfig(sentryModuleExports, {
+const defaultModuleExports = {
   images: {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -24,4 +24,9 @@ module.exports = withSentryConfig(sentryModuleExports, {
     })
     return config
   },
-})
+}
+
+module.exports =
+  process.env.NODE_ENV === 'production'
+    ? withSentryConfig(sentryModuleExports, defaultModuleExports)
+    : defaultModuleExports

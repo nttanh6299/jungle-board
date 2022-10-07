@@ -11,18 +11,17 @@ import useAppState from 'hooks/useAppState'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
-import { ResGetRoom } from 'apis/room'
 
 interface RoomProps {
-  room: ResGetRoom
+  roomId: string
   accountId: string
 }
 
-const Room: React.FC<RoomProps> = ({ room, accountId }) => {
+const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
   const router = useRouter()
   const [, dispatch] = useAppState()
 
-  useHandleSocketEvent({ roomId: room.id, accountId })
+  useHandleSocketEvent({ roomId, accountId })
 
   const {
     board,

@@ -6,14 +6,10 @@ import AppStateProvider from 'contexts/AppStateProvider'
 import Layout from 'components/Layout'
 import 'styles/_app.scss'
 
-type ICustomNextPage = NextPage & {
-  requireSocket?: boolean
-}
-
 type ICustomAppProps = AppProps<{
   session: Session
 }> & {
-  Component: ICustomNextPage
+  Component: NextPage
 }
 
 const App: React.FC<ICustomAppProps> = ({ Component, pageProps: { session, ...pageProps } }) => {

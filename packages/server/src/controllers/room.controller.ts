@@ -4,7 +4,7 @@ import catchAsync from '../utils/catchAsync'
 import Room from '../models/room.model'
 import RoomResolver from '../resolvers/Room'
 import roomMap from '../db'
-import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN } from '../constants/common'
+import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS, UNABLE_PLAY_REASON } from '../constants/common'
 
 const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove }) => ({
   id,
@@ -73,10 +73,35 @@ const createRoom = catchAsync(async (req, res) => {
   return res.status(httpStatus.OK).send({ data: { id: newRoom.id } })
 })
 
+const verifyRoom = catchAsync(async (req, res) => {
+  const { roomId, accountId } = req.body ?? {}
+  const room = await Room.findById(roomId)
+  if (!room) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
+  }
+  const roomMapItem = roomMap.get(roomId)
+  const isWaiting = room.status === ROOM_STATUS.waiting.value
+  const canJoin = Number(roomMapItem?.playerIdsCanPlay?.length) < 2
+  if (!(isWaiting && canJoin)) {
+    return res.status(httpStatus.OK).send({ data: { status: false, reason: UNABLE_PLAY_REASON.roomFull } })
+  }
+
+  if (accountId) {
+    for (const room of roomMap.values()) {
+      if (room.players.get(accountId)) {
+        return res.status(httpStatus.OK).send({ data: { status: false, reason: UNABLE_PLAY_REASON.playing } })
+      }
+    }
+  }
+
+  return res.status(httpStatus.OK).send({ data: { status: true } })
+})
+
 const roomController = {
   getRooms,
   getRoom,
   createRoom,
+  verifyRoom,
 }
 
 export default roomController
