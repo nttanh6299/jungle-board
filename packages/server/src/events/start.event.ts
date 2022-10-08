@@ -80,7 +80,7 @@ const play = (io: SocketServerType, socket: SocketType, roomMapItem: RoomResolve
     // keep counting down while the player does not any move
     // otherwise we stop running the event there and start counting in move event (see: ./move.event.ts)
     if (roomMapItem.board.moveCount === 0 && playCooldown >= 0) {
-      io.in(roomId).emit('playCooldown', playCooldown)
+      io.in(roomId).volatile.emit('playCooldown', playCooldown)
     }
 
     // swap turn and keep counting down the timer
@@ -113,7 +113,7 @@ const start = eventHandler((io, socket) => {
     if (!bothConnected) return
 
     let cooldown = START_COOLDOWN
-    io.in(roomId).volatile.emit('readyToPlay', cooldown)
+    io.in(roomId).emit('readyToPlay', cooldown)
     const timer = setInterval(async () => {
       if (cooldown > 0) {
         cooldown -= 1
