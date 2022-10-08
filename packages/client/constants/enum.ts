@@ -1,5 +1,6 @@
 export enum ERoomStatus {
   WAITING = 'waiting',
+  READY = 'ready',
   PLAYING = 'playing',
   END = 'end',
   TIE = 'tie',

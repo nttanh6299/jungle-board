@@ -3,11 +3,10 @@ import create, { SetState, GetState, StateSelector } from 'zustand'
 import shallow from 'zustand/shallow'
 import produce from 'immer'
 import { AllPossibleMoves, Board } from 'jungle-board-service'
-import { ROOM_STATUS } from 'constants/common'
+import { ERoomStatus } from 'constants/enum'
 
 const actionNames = [
   'onSelectSquare',
-  'onSetGameStatus',
   'onStartGame',
   'onEndGame',
   'onAfterEndGame',
@@ -28,8 +27,6 @@ type BaseState = {
   [K in Booleans]: boolean
 }
 
-type GameStatus = 'end' | 'playing' | 'tie' | 'waiting'
-
 interface State extends BaseState {
   actions: Record<ActionNames, (...args) => void>
   playerId: string
@@ -40,7 +37,7 @@ interface State extends BaseState {
   selectedSquare: number[]
   cooldown: number
   playCooldown: number
-  gameStatus: GameStatus
+  gameStatus: ERoomStatus
   initialBoard: MutableRefObject<Board>
 }
 
@@ -49,24 +46,21 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
     onSelectSquare: (newSquare: number[]) => {
       set({ selectedSquare: newSquare })
     },
-    onSetGameStatus: (status: GameStatus) => {
-      set({ gameStatus: status })
-    },
     onStartGame: () => {
-      set({ gameStatus: 'playing' })
+      set({ gameStatus: ERoomStatus.PLAYING })
     },
     onEndGame: (lastTurn: string, status: string) => {
       set({
         playerTurn: '',
         selectedSquare: [],
         endVisible: true,
-        gameStatus: status === ROOM_STATUS.ending.value ? 'end' : 'tie',
+        gameStatus: status === ERoomStatus.END ? ERoomStatus.END : ERoomStatus.TIE,
         lastTurn,
       })
     },
     onAfterEndGame: () => {
       const { initialBoard } = get()
-      set({ endVisible: false, board: initialBoard.current, gameStatus: 'waiting', lastTurn: '' })
+      set({ endVisible: false, board: initialBoard.current, gameStatus: ERoomStatus.WAITING, lastTurn: '' })
     },
     onConnect: () => {
       set({ canConnect: true })
@@ -89,7 +83,13 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
       set(newState)
     },
     onReadyToPlay: (cooldown: number) => {
-      set({ cooldown, endVisible: false, cooldownMenuVisible: cooldown > 0 })
+      const { gameStatus } = get()
+      set({
+        cooldown,
+        endVisible: false,
+        cooldownMenuVisible: cooldown > 0,
+        gameStatus: cooldown === 0 ? ERoomStatus.READY : gameStatus,
+      })
     },
     onPlayCooldown: (playCooldown: number) => {
       set({ playCooldown })
@@ -108,7 +108,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
         selectedSquare: [],
         playerTurn: '',
         lastTurn: '',
-        gameStatus: 'waiting',
+        gameStatus: ERoomStatus.WAITING,
         canConnect: force ? false : canConnect,
       })
     },
@@ -129,7 +129,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
     selectedSquare: [],
     cooldown: 0,
     playCooldown: 0,
-    gameStatus: 'waiting',
+    gameStatus: ERoomStatus.WAITING,
     initialBoard: createRef<Board>(),
   }
 })

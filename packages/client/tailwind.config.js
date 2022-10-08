@@ -14,27 +14,6 @@ module.exports = {
         400: '400',
         500: '500',
       },
-      animation: {
-        ripple: 'ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite',
-      },
-      keyframes: {
-        ripple: {
-          '0%': {
-            top: '36px',
-            left: '36px',
-            width: '0px',
-            height: '0px',
-            opacity: 1,
-          },
-          '100%': {
-            top: '0px',
-            left: '0px',
-            width: '72px',
-            height: '72px',
-            opacity: 0,
-          },
-        },
-      },
     },
   },
   plugins: [

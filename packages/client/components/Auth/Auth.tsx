@@ -1,7 +1,7 @@
-import React from 'react'
+import { PropsWithChildren } from 'react'
 import { useSession } from 'next-auth/react'
 
-const Auth: React.FC = ({ children }) => {
+const Auth = ({ children }: PropsWithChildren<unknown>) => {
   const { status } = useSession()
 
   if (status === 'loading') return null
