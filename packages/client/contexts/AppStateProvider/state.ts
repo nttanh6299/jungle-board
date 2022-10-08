@@ -9,7 +9,7 @@ interface AppState {
 }
 
 export const initialAppState: AppState = {
-  loading: true,
+  loading: false,
   error: null,
 }
 
