@@ -37,7 +37,11 @@ const SocketProvider: React.FC = ({ children }) => {
   const [socket, setSocket] = useState<SocketType>()
 
   useEffect(() => {
-    const socket = socketIOClient(API_ENDPOINT, { transports: ['websocket'], reconnection: false })
+    const socket = socketIOClient(API_ENDPOINT, {
+      transports: ['websocket'],
+      reconnection: false,
+      closeOnBeforeunload: false,
+    })
     setSocket(socket)
 
     return () => {

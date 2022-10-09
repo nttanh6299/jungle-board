@@ -102,11 +102,27 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
   }, [gameStatus, router, onDisconnect])
 
   useEffect(() => {
-    window.addEventListener('popstate', goBack)
-    return () => {
-      window.removeEventListener('popstate', goBack)
+    const preventBackButton = () => {
+      history.pushState(null, document.title, location.href)
     }
-  }, [goBack])
+    history.pushState(null, document.title, location.href)
+    window.addEventListener('popstate', preventBackButton)
+    return () => {
+      window.removeEventListener('popstate', preventBackButton)
+    }
+  }, [])
+
+  useEffect(() => {
+    const exitGame = (event) => {
+      if (gameStatus === 'playing') {
+        event.returnValue = 'Are you sure?'
+      }
+    }
+    window.addEventListener('beforeunload', exitGame)
+    return () => {
+      window.removeEventListener('beforeunload', exitGame)
+    }
+  }, [gameStatus])
 
   useEffect(() => {
     // check until socket is connected
