@@ -7,7 +7,9 @@
     "dev": "next",
     "build": "next build",
     "start": "next start -p 3000",
-    "sentry-setup": "npx @sentry/wizard -i nextjs"
+    "sentry-setup": "npx @sentry/wizard -i nextjs",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@sentry/nextjs": "^7.14.1",
@@ -24,10 +26,20 @@
     "zustand": "^3.7.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.19.6",
+    "@storybook/addon-actions": "^6.5.13",
+    "@storybook/addon-essentials": "^6.5.13",
+    "@storybook/addon-interactions": "^6.5.13",
+    "@storybook/addon-links": "^6.5.13",
+    "@storybook/builder-webpack5": "^6.5.13",
+    "@storybook/manager-webpack5": "^6.5.13",
+    "@storybook/react": "^6.5.13",
+    "@storybook/testing-library": "^0.0.13",
     "@types/node": "^12.12.21",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
     "autoprefixer": "^10.4.7",
+    "babel-loader": "^8.2.5",
     "postcss": "^8.4.13",
     "tailwindcss": "^3.0.24",
     "typescript": "4.0"
