@@ -4,7 +4,7 @@ import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import AppStateProvider from 'contexts/AppStateProvider'
 import Layout from 'components/Layout'
-import 'styles/_app.css'
+import 'styles/app.css'
 
 type ICustomAppProps = AppProps<{
   session: Session
