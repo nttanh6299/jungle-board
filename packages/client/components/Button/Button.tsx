@@ -67,8 +67,9 @@ const Button = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={clsx('flex items-center px-5 py-2 rounded-xl transition duration-200 active:shadow-none font-bold', {
-        'rounded-full': rounded,
+      className={clsx('flex items-center transition duration-200 active:shadow-none', {
+        'rounded-xl font-bold px-5 py-2': variant !== 'custom',
+        '!rounded-full': rounded,
         uppercase: uppercase,
         [generateButtonStyles({ variant, type, disabled, size })]: true,
         [className]: !!className,

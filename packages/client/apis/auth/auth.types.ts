@@ -12,3 +12,13 @@ export type ResUser = {
   user: ReqUser
   accessToken: string
 }
+
+export type UserInfo = {
+  id: string
+  name: string
+  xp: number
+  win: number
+  lose: number
+  tie: number
+  coin: number
+}

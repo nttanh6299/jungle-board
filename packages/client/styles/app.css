@@ -23,7 +23,26 @@ body {
     linear-gradient(-45deg, #ffd966 25%, transparent 25%, transparent 75%, #ffd966 75%, #ffd966);
   background-size: 60px 60px;
   background-position: 0 0;
-  animation: bodySlide 8s infinite linear;
+  /* animation: bodySlide 8s infinite linear; */
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffec63;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #f99500;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #f99500;
 }
 
 @keyframes bodySlide {

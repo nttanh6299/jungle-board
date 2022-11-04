@@ -32,6 +32,8 @@ module.exports = {
         google: '#FF3300',
         facebook: '#007AFF',
         github: '#333',
+
+        cardShadow: '#DCC600',
       },
       boxShadow: {
         tight: '-4px 4px 4px 0 rgb(0 0 0 / 0.05)',
