@@ -20,7 +20,7 @@ const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove,
 })
 
 const getRooms = catchAsync(async (_, res) => {
-  const rooms = await Room.find()
+  const rooms = await Room.find({ isPrivate: false })
   return res.status(httpStatus.OK).send({
     data: rooms.map(({ id, name, status, type, maxMove, cooldown, theme }) =>
       toRoom({
