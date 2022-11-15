@@ -1,6 +1,5 @@
 import { Fragment, PropsWithChildren } from 'react'
 import { Popover as HPopover, Transition } from '@headlessui/react'
-import Button from 'components/Button'
 import CarretDownTinyIcon from 'icons/CarretDownTiny'
 
 type PopoverProps = PropsWithChildren<{
@@ -13,14 +12,12 @@ const Popover = ({ children, title, className }: PopoverProps) => {
     <HPopover className="relative">
       <>
         <HPopover.Button className="focus:outline-none focus-visible:outline-0">
-          <Button
-            variant="custom"
-            className="bg-corange rounded-lg px-3 py-1 text-white font-medium"
-            size="sm"
-            iconRight={<CarretDownTinyIcon />}
-          >
+          <div className="flex items-center text-sm bg-corange rounded-lg px-3 py-1 text-white font-medium">
             {title}
-          </Button>
+            <div className="ml-2">
+              <CarretDownTinyIcon />
+            </div>
+          </div>
         </HPopover.Button>
         <Transition
           as={Fragment}

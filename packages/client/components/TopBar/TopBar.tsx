@@ -14,7 +14,11 @@ import formatCoin from 'utils/formatCoin'
 import calculateLevel from 'utils/calculateLevel'
 import RocketLauchIcon from 'icons/RocketLauch'
 
-const TopBar = () => {
+interface TopBarProps {
+  hideAutoJoin?: boolean
+}
+
+const TopBar = ({ hideAutoJoin }: TopBarProps) => {
   const { user, isLoading } = useMe()
   const [openMenuSettings, toggleMenuSettings] = useSettingsStore((state) => [
     state.openMenu,
@@ -30,10 +34,7 @@ const TopBar = () => {
       </Show>
       <div className="flex justify-between">
         <div className="flex">
-          <div
-            onClick={() => signOut()}
-            className="w-[80px] h-[80px] bg-primary border-4 border-cred rounded-full"
-          ></div>
+          <div onClick={() => signOut()} className="w-[80px] h-[80px] bg-primary border-4 border-cred rounded-full" />
           <Show when={!isLoading}>
             <div className="ml-3">
               <Show when={!user}>
@@ -96,9 +97,11 @@ const TopBar = () => {
           <div onClick={toggleMenuSettings} className="cursor-pointer mb-2">
             <GearIcon />
           </div>
-          <Button uppercase rounded iconLeft={<RocketLauchIcon />}>
-            Auto Join
-          </Button>
+          {!hideAutoJoin && (
+            <Button uppercase rounded iconLeft={<RocketLauchIcon />}>
+              Auto Join
+            </Button>
+          )}
         </div>
       </div>
     </>

@@ -5,14 +5,16 @@ import Room from '../models/room.model'
 import RoomResolver from '../resolvers/Room'
 import roomMap from '../db'
 import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS, UNABLE_PLAY_REASON } from '../constants/common'
+import { ResGetRoom } from '../types'
 
-const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove }) => ({
+const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove, theme }): ResGetRoom => ({
   id,
   name,
   status,
   type,
   cooldown,
   maxMove,
+  theme,
   max: maxPlayer,
   quantity: players,
 })
@@ -20,7 +22,7 @@ const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove 
 const getRooms = catchAsync(async (_, res) => {
   const rooms = await Room.find()
   return res.status(httpStatus.OK).send({
-    data: rooms.map(({ id, name, status, type, maxMove, cooldown }) =>
+    data: rooms.map(({ id, name, status, type, maxMove, cooldown, theme }) =>
       toRoom({
         id,
         name,
@@ -28,6 +30,7 @@ const getRooms = catchAsync(async (_, res) => {
         type,
         maxMove,
         cooldown,
+        theme,
         players: roomMap.get(id)?.playerIdsCanPlay?.length || 0,
         maxPlayer: 2,
       }),
@@ -42,7 +45,7 @@ const getRoom = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
   }
 
-  const { id, name, status, type, maxMove, cooldown } = room
+  const { id, name, status, type, maxMove, cooldown, theme } = room
   const roomMapItem = roomMap.get(id)
   const roomRes = toRoom({
     id,
@@ -51,6 +54,7 @@ const getRoom = catchAsync(async (req, res) => {
     type,
     maxMove,
     cooldown,
+    theme,
     players: roomMapItem?.playerIdsCanPlay?.length,
     maxPlayer: 2,
   })
@@ -58,11 +62,13 @@ const getRoom = catchAsync(async (req, res) => {
 })
 
 const createRoom = catchAsync(async (req, res) => {
-  const { name, maxMove, cooldown } = req.body ?? {}
+  const { name, maxMove, cooldown, theme, isPrivate } = req.body ?? {}
   const newRoom = await Room.create({
     name: name || 'Unnamed',
-    maxMove: maxMove || DEFAULT_MAX_MOVE,
     cooldown: cooldown || PLAY_COOLDOWN,
+    maxMove: maxMove || DEFAULT_MAX_MOVE,
+    theme: theme || 'rainforest',
+    isPrivate: !!isPrivate,
     type: 'custom',
   })
   if (!newRoom) {

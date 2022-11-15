@@ -8,10 +8,7 @@ import { canJoin } from 'utils'
 import useRooms from './hooks/useRooms'
 import useAppState from 'hooks/useAppState'
 import { ResGetRoom, verifyRoom } from 'apis/room'
-// import { createRoom, ReqCreateRoom } from 'apis/room'
-// import CreateRoom from './CreateRoom'
 import ErrorBoundary from 'components/ErrorBoundary'
-import { useSession } from 'next-auth/react'
 import { useRoomStore } from 'store/room'
 import TopBar from 'components/TopBar'
 import Tooltip from 'components/Tooltip'
@@ -21,35 +18,21 @@ import HandFistIcon from 'icons/HandFist'
 import ClockIcon from 'icons/Clock'
 import FilmScriptIcon from 'icons/FilmScript'
 import GameControllerIcon from 'icons/GameController'
+import useMe from 'hooks/useMe'
 
 const RoomsPage = () => {
   const router = useRouter()
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
-  const { data: session } = useSession()
+  const { user } = useMe()
   const { onVerifyRoom } = useRoomStore((state) => ({
     onVerifyRoom: state.actions.onVerifyRoom,
   }))
   const [selectedRoom, setSelectedRoom] = useState<ResGetRoom>(null)
 
-  // const onCreateRoom = async (params: ReqCreateRoom) => {
-  //   try {
-  //     dispatch({ type: 'displayLoader', payload: { value: true } })
-  //     const { data } = await createRoom(params)
-
-  //     let errorLabel = ''
-  //     if (!data) errorLabel = 'Something went wrong!'
-
-  //     if (errorLabel) {
-  //       alert(errorLabel)
-  //       router.reload()
-  //     } else {
-  //       router.push('/room/' + data.id)
-  //     }
-  //   } catch (error) {
-  //     console.log('Create room error: ', error)
-  //   }
-  // }
+  const onNewRoom = () => {
+    router.push('/new')
+  }
 
   const onJoinRoom = async () => {
     try {
@@ -57,7 +40,7 @@ const RoomsPage = () => {
       if (!canJoin(quantity, max, status)) return
 
       dispatch({ type: 'displayLoader', payload: { value: true } })
-      const { data } = await verifyRoom({ roomId: id, accountId: session?.id ? String(session?.id) : '' })
+      const { data } = await verifyRoom({ roomId: id, accountId: user?.id ? String(user?.id) : '' })
 
       let errorLabel = ''
       if (!data) errorLabel = 'Something went wrong!'
@@ -89,9 +72,9 @@ const RoomsPage = () => {
       <div className="bg-primary rounded-lg mt-3 max-h-[422px] overflow-auto overflow-x-hidden">
         <ErrorBoundary>
           <div className="p-2">
-            <Show when={fetching}>
+            <Show when={fetching || !rooms?.length}>
               <div className="grid gap-2 grid-cols-fill-40">
-                {Array.from({ length: 12 }, (_, i) => i)?.map((_, i) => (
+                {Array.from({ length: 16 }, (_, i) => i)?.map((_, i) => (
                   <div
                     key={i}
                     className="rounded-lg border-4 border-white py-2 px-3 bg-white shadow-tight shadow-cardShadow/25"
@@ -124,7 +107,7 @@ const RoomsPage = () => {
             <Show when={!fetching}>
               <div className="grid gap-2 grid-cols-fill-40">
                 {rooms?.map((room) => {
-                  const { id, name, quantity, max, status, maxMove, cooldown } = room
+                  const { id, name, quantity, max, status, maxMove, cooldown, theme } = room
                   return (
                     <div
                       key={id}
@@ -135,7 +118,7 @@ const RoomsPage = () => {
                       onClick={() => setSelectedRoom(room)}
                     >
                       <h5 className="text-base font-normal break-words -mt-1">{name}</h5>
-                      <p className="text-sm text-placeholder -mt-[2px] font-light">#tuOz</p>
+                      <p className="text-sm text-placeholder -mt-[2px] font-light">{theme}</p>
                       <p
                         className={clsx(
                           'text-sm text-right font-medium',
@@ -175,7 +158,14 @@ const RoomsPage = () => {
         </ErrorBoundary>
       </div>
       <div className="flex justify-center mt-4">
-        <Button rounded uppercase variant="secondary" iconLeft={<FilmScriptIcon />} className="w-[120px]">
+        <Button
+          rounded
+          uppercase
+          variant="secondary"
+          iconLeft={<FilmScriptIcon />}
+          className="w-[120px]"
+          onClick={onNewRoom}
+        >
           New
         </Button>
         <Button

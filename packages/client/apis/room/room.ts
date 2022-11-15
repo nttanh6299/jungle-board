@@ -4,6 +4,8 @@ export interface ReqCreateRoom {
   name: string
   maxMove: number
   cooldown: number
+  isPrivate: boolean
+  theme: string
 }
 
 export interface ResGetRoom {
@@ -15,6 +17,7 @@ export interface ResGetRoom {
   type: string
   maxMove: number
   cooldown: number
+  theme: string
 }
 
 export interface ReqVerifyRoom {
