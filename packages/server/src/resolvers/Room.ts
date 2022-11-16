@@ -18,8 +18,9 @@ class Room {
   maxMove: number
   cooldown: number
   maxTime: number
+  isPrivate: boolean
 
-  constructor(id: string, maxMove: number, cooldown: number, status?: string, type?: string) {
+  constructor(id: string, maxMove: number, cooldown: number, isPrivate: boolean, status?: string, type?: string) {
     this.id = id
     this.status = status || ROOM_STATUS.waiting.value
     this.type = type || 'reserved'
@@ -30,6 +31,7 @@ class Room {
     this.maxMove = maxMove || DEFAULT_MAX_MOVE
     this.cooldown = cooldown || PLAY_COOLDOWN
     this.maxTime = this.maxMove * this.cooldown
+    this.isPrivate = isPrivate
   }
 
   addPlayer(playerId: string, playerType: string): Player {

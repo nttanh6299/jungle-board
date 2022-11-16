@@ -1,4 +1,5 @@
 import { signIn, signOut } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import Button from 'components/Button'
 import MenuSettings from 'components/MenuSettings'
 import Popover from 'components/Popover'
@@ -13,19 +14,43 @@ import CoinsIcon from 'icons/Coins'
 import formatCoin from 'utils/formatCoin'
 import calculateLevel from 'utils/calculateLevel'
 import RocketLauchIcon from 'icons/RocketLauch'
+import { autoJoinRoom } from 'apis/room'
+import useAppState from 'hooks/useAppState'
 
 interface TopBarProps {
   hideAutoJoin?: boolean
 }
 
 const TopBar = ({ hideAutoJoin }: TopBarProps) => {
+  const router = useRouter()
   const { user, isLoading } = useMe()
+  const [, dispatch] = useAppState()
   const [openMenuSettings, toggleMenuSettings] = useSettingsStore((state) => [
     state.openMenu,
     state.actions.onToggleMenu,
   ])
   const exp = user?.xp || 0
   const { level, expNextLevelNeeded } = calculateLevel(exp)
+
+  const onAutoJoinRoom = async () => {
+    try {
+      dispatch({ type: 'displayLoader', payload: { value: true } })
+      const { data } = await autoJoinRoom()
+
+      let errorLabel = ''
+      if (!data.roomId) {
+        errorLabel = 'No rooms can join!'
+      }
+
+      if (errorLabel) {
+        alert(errorLabel)
+      } else {
+        router.push('/room/' + data.roomId)
+      }
+    } catch (error) {
+      console.log('Join room error: ', error)
+    }
+  }
 
   return (
     <>
@@ -98,7 +123,7 @@ const TopBar = ({ hideAutoJoin }: TopBarProps) => {
             <GearIcon />
           </div>
           {!hideAutoJoin && (
-            <Button uppercase rounded iconLeft={<RocketLauchIcon />}>
+            <Button uppercase rounded iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
               Auto Join
             </Button>
           )}

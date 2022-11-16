@@ -1,11 +1,12 @@
 import httpStatus from 'http-status'
 import ApiError from '../utils/ApiError'
 import catchAsync from '../utils/catchAsync'
-import Room from '../models/room.model'
+import Room, { ERoomStatus } from '../models/room.model'
 import RoomResolver from '../resolvers/Room'
 import roomMap from '../db'
 import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS, UNABLE_PLAY_REASON } from '../constants/common'
 import { ResGetRoom } from '../types'
+import { shuffle } from '../utils'
 
 const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove, theme }): ResGetRoom => ({
   id,
@@ -75,7 +76,10 @@ const createRoom = catchAsync(async (req, res) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot create room')
   }
 
-  roomMap.set(newRoom.id, new RoomResolver(newRoom.id, newRoom.maxMove, newRoom.cooldown, newRoom.status, newRoom.type))
+  roomMap.set(
+    newRoom.id,
+    new RoomResolver(newRoom.id, newRoom.maxMove, newRoom.cooldown, !!isPrivate, newRoom.status, newRoom.type),
+  )
   return res.status(httpStatus.OK).send({ data: { id: newRoom.id } })
 })
 
@@ -103,11 +107,31 @@ const verifyRoom = catchAsync(async (req, res) => {
   return res.status(httpStatus.OK).send({ data: { status: true } })
 })
 
+const autoJoin = catchAsync(async (req, res) => {
+  const mapToArray = [...roomMap].map(([_, room]) => room)
+  const shuffleArray = shuffle(mapToArray)
+
+  for (const room of shuffleArray) {
+    if (room.playerIdsCanPlay.length === 1 && room.status === ERoomStatus.WAITING && !room.isPrivate) {
+      return res.status(httpStatus.OK).send({ data: { roomId: room.id } })
+    }
+  }
+
+  for (const room of shuffleArray) {
+    if (room.status === ERoomStatus.WAITING && !room.isPrivate) {
+      return res.status(httpStatus.OK).send({ data: { roomId: room.id } })
+    }
+  }
+
+  throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot join automatically')
+})
+
 const roomController = {
   getRooms,
   getRoom,
   createRoom,
   verifyRoom,
+  autoJoin,
 }
 
 export default roomController

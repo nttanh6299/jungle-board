@@ -30,6 +30,10 @@ export interface ResVerifyRoom {
   reason?: string
 }
 
+export interface ResAutoJoinRoom {
+  roomId: string
+}
+
 export const getRoom = async (roomId: string) => {
   return fetchApi<ResGetRoom>(`/rooms/${roomId}`)
 }
@@ -44,4 +48,8 @@ export const createRoom = async (params: ReqCreateRoom) => {
 
 export const verifyRoom = async (params: ReqVerifyRoom) => {
   return fetchApi<ResVerifyRoom>('/rooms/verify', 'POST', params)
+}
+
+export const autoJoinRoom = async () => {
+  return fetchApi<ResAutoJoinRoom>('/rooms/auto-join')
 }
