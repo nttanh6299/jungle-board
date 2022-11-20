@@ -34,6 +34,9 @@ module.exports = {
         github: '#333',
 
         cardShadow: '#DCC600',
+
+        player: '#3748E7',
+        opponent: '#9E283D',
       },
       boxShadow: {
         tight: '-4px 4px 4px 0 rgb(0 0 0 / 0.05)',

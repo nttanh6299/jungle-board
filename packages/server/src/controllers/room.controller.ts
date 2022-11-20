@@ -47,7 +47,6 @@ const getRoom = catchAsync(async (req, res) => {
   }
 
   const { id, name, status, type, maxMove, cooldown, theme } = room
-  const roomMapItem = roomMap.get(id)
   const roomRes = toRoom({
     id,
     name,
@@ -56,7 +55,7 @@ const getRoom = catchAsync(async (req, res) => {
     maxMove,
     cooldown,
     theme,
-    players: roomMapItem?.playerIdsCanPlay?.length,
+    players: roomMap.get(id)?.playerIdsCanPlay?.length,
     maxPlayer: 2,
   })
   return res.status(httpStatus.OK).send({ data: roomRes })
@@ -104,7 +103,24 @@ const verifyRoom = catchAsync(async (req, res) => {
     }
   }
 
-  return res.status(httpStatus.OK).send({ data: { status: true } })
+  const { id, name, status, type, maxMove, cooldown, theme } = room
+
+  return res.status(httpStatus.OK).send({
+    data: {
+      status: true,
+      info: toRoom({
+        id,
+        name,
+        status,
+        type,
+        maxMove,
+        cooldown,
+        theme,
+        players: roomMap.get(id)?.playerIdsCanPlay?.length,
+        maxPlayer: 2,
+      }),
+    },
+  })
 })
 
 const autoJoin = catchAsync(async (req, res) => {

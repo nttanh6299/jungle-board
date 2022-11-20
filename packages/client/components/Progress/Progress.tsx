@@ -8,7 +8,7 @@ type ProgressProps = {
 const Progress = ({ percent, color }: ProgressProps) => {
   return (
     <div
-      className={clsx('w-full rounded-full h-[8px]', {
+      className={clsx('w-full rounded-full h-[8px] transition-[background-color]', {
         'bg-primary/25': color === 'primary',
         'bg-cred/25': color === 'cred',
         'bg-corange/25': color === 'corange',
@@ -16,7 +16,7 @@ const Progress = ({ percent, color }: ProgressProps) => {
       })}
     >
       <div
-        className={clsx('bg-${color} h-[8px] rounded-full transition-[width]', {
+        className={clsx('bg-${color} h-[8px] rounded-full', {
           'bg-primary': color === 'primary',
           'bg-cred': color === 'cred',
           'bg-corange': color === 'corange',

@@ -27,7 +27,6 @@ const RoomPage = () => {
   const accountId = session?.id ? String(session.id) : ''
 
   const { onResetVerification, onVerifyRoom, valid } = useRoomStore((state) => ({
-    roomId: state.roomId,
     valid: state.valid,
     onResetVerification: state.actions.onResetVerification,
     onVerifyRoom: state.actions.onVerifyRoom,
@@ -50,7 +49,7 @@ const RoomPage = () => {
         window.location.href = '/'
       }
 
-      onVerifyRoom(roomId)
+      onVerifyRoom(data.info)
     }
 
     if (!valid) {

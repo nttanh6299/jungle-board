@@ -11,6 +11,14 @@ import useAppState from 'hooks/useAppState'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
+import TopBar from 'components/TopBar'
+import Button from 'components/Button'
+import ArrowLeftIcon from 'icons/ArrowLeft'
+import Avatar from 'components/Avatar'
+import Input from 'components/Input'
+import AnimalsStatus from 'components/AnimalsStatus'
+import useMe from 'hooks/useMe'
+import getPlayerAnimals from 'utils/getPlayerAnimals'
 
 interface RoomProps {
   roomId: string
@@ -23,6 +31,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
 
   useHandleSocketEvent({ roomId, accountId })
 
+  const { user } = useMe()
   const {
     board,
     possibleMoves,
@@ -52,6 +61,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
     onDisconnect: state.actions.onDisconnect,
     onSelectSquare: state.actions.onSelectSquare,
   }))
+  const { playerAnimals, opponentAnimals } = getPlayerAnimals(board)
 
   const { socket } = useSocket()
 
@@ -124,17 +134,42 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
   }, [socket, onConnect, dispatch])
 
   return (
-    <div className="relative">
-      <button onClick={goBack} className="fixed top-[10px] left-[10px] block p-2">
-        Back
-      </button>
-      <Show when={canConnect}>
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center">
-            <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
-            <PlayerCooldown isOpponent />
+    <Show when={canConnect}>
+      <TopBar hideAutoJoin hideInfo />
+      <div className="relative mt-4">
+        <div className="flex">
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="flex flex-col items-end">
+              <Show when={bothConnected}>
+                <div className="flex flex-col items-end">
+                  <Avatar size="md" />
+                  <h5 className="text-sm my-1">Opponent Name</h5>
+                  <div className="mb-2">
+                    <AnimalsStatus alive={opponentAnimals} />
+                  </div>
+                  <PlayerCooldown isOpponent />
+                </div>
+              </Show>
+            </div>
+
+            <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end">
+                <PlayerCooldown />
+                <Show when={bothConnected && isHost && cooldown === 0 && gameStatus === 'waiting'}>
+                  <Button uppercase rounded variant="secondary" size="sm" onClick={handleStartGame}>
+                    Start
+                  </Button>
+                </Show>
+                <div className="mt-2">
+                  <AnimalsStatus alive={playerAnimals} />
+                </div>
+                <h5 className="text-sm my-1">{user?.name || 'Guest'}</h5>
+                <Avatar size="md" />
+              </div>
+            </div>
           </div>
-          <div className="pt-2 mt-2">
+
+          <div className="relative mx-3">
             <GameBoard
               isPlaying={!!playerTurn}
               board={board}
@@ -147,19 +182,47 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
                 selectedSquare?.[1] ?? -1,
               )}
             />
-          </div>
-          <div className="flex flex-col items-center">
-            <PlayerCooldown />
-            <strong>You</strong>
-            <Show when={bothConnected && isHost && cooldown === 0 && gameStatus === 'waiting'}>
-              <button onClick={handleStartGame}>Start</button>
-            </Show>
+            <RoomMenu />
           </div>
 
-          <RoomMenu />
+          <div className="flex-1">
+            <div className="flex flex-col h-full pt-3">
+              <div className="relative flex-1">
+                <div className="w-full h-full shadow-[0_0_4px] shadow-cardShadow/25 rounded-lg pt-4 px-2">
+                  <div className="text-xs">
+                    <span className="text-player">You&nbsp;</span>
+                    <span className="font-light">just moved Elephant piece</span>
+                  </div>
+                </div>
+                <div className="absolute -top-[15px] right-[10px] w-[99px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
+                  Commands
+                </div>
+              </div>
+              <div className="relative flex-1 mt-6">
+                <div className="w-full h-full shadow-[0_0_4px] shadow-cardShadow/25 rounded-lg pt-4 px-2">
+                  <div className="text-xs">
+                    <span className="text-player">You:&nbsp;</span>
+                    <span className="font-light">just moved Elephant piece</span>
+                  </div>
+                </div>
+                <div className="flex absolute bottom-0 w-full shadow-[inner_0_0_2px] shadow-cardShadow/25 rounded-b-lg overflow-hidden">
+                  <Input
+                    className="py-1.5 px-2 !text-xs font-light border-0"
+                    placeholder="Say something to your opponent"
+                  />
+                </div>
+                <div className="absolute -top-[15px] right-[10px] w-[99px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
+                  Chat
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </Show>
-    </div>
+      </div>
+      <Button iconLeft={<ArrowLeftIcon />} uppercase rounded className="mt-6" onClick={goBack}>
+        Leave
+      </Button>
+    </Show>
   )
 }
 

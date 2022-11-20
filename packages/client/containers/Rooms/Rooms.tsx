@@ -54,7 +54,7 @@ const RoomsPage = () => {
         alert(errorLabel)
         router.reload()
       } else {
-        onVerifyRoom(id)
+        onVerifyRoom(data.info)
         router.push('/room/' + id)
       }
     } catch (error) {

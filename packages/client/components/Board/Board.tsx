@@ -21,8 +21,8 @@ import { AnimalPath } from 'constants/url'
 const BOARD_ROWS = Array.from(Array(ROWS).keys())
 const BOARD_COLS = Array.from(Array(COLS).keys())
 
-const SQUARE_WIDTH = 60
-const SQUARE_HEIGHT = 60
+const SQUARE_WIDTH = 50
+const SQUARE_HEIGHT = 50
 
 // plus 4 because of border-2
 const BOARD_WIDTH = SQUARE_WIDTH * BOARD_COLS.length + 4
@@ -61,7 +61,7 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
                   left: col * SQUARE_HEIGHT,
                 }}
                 className={clsx(
-                  'absolute border-2 border-solid border-green-600 select-none',
+                  'absolute border border-solid border-green-600 select-none',
                   { '!border-blue-600': dequal(selectedSquare, [row, col]) },
                   {
                     '!border-lime-300': !!possibleMoves?.find((move) => dequal(move, cell)),

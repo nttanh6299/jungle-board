@@ -1,5 +1,8 @@
 import React from 'react'
 import { useGameStore } from 'store/game'
+import { useRoomStore } from 'store/room'
+import Progress from 'components/Progress'
+import getProgressColor from 'utils/getProgressColor'
 
 interface IPlayerCooldownProps {
   isOpponent?: boolean
@@ -11,14 +14,21 @@ const PlayerCooldown: React.FC<IPlayerCooldownProps> = ({ isOpponent }) => {
     playerId: state.playerId,
     playCooldown: state.playCooldown,
   }))
+  const { room } = useRoomStore((state) => ({
+    room: state.room,
+  }))
+  const initialCooldown = room?.cooldown || 1
+  const percent = playCooldown * (100 / initialCooldown)
 
   return (
-    <div className="h-5">
-      <strong className="mt-2">
-        {isOpponent && playerTurn && playerId !== playerTurn ? playCooldown : null}
-        {!isOpponent && playerTurn && playerId === playerTurn ? playCooldown : null}
-      </strong>
-    </div>
+    <>
+      {isOpponent && playerTurn && playerId !== playerTurn ? (
+        <Progress percent={percent} color={getProgressColor(percent)} />
+      ) : null}
+      {!isOpponent && playerTurn && playerId === playerTurn ? (
+        <Progress percent={percent} color={getProgressColor(percent)} />
+      ) : null}
+    </>
   )
 }
 

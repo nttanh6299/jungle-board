@@ -27,6 +27,7 @@ export interface ReqVerifyRoom {
 
 export interface ResVerifyRoom {
   status: boolean
+  info: ResGetRoom
   reason?: string
 }
 
