@@ -8,9 +8,6 @@ import { isEmpty } from 'utils/lodash/isEmpty'
 import Show from 'components/Show'
 import { useGameStore } from 'store/game'
 import useAppState from 'hooks/useAppState'
-import useHandleSocketEvent from './hooks/useHandleSocketEvent'
-import RoomMenu from './RoomMenu'
-import PlayerCooldown from './PlayerCooldown'
 import TopBar from 'components/TopBar'
 import Button from 'components/Button'
 import ArrowLeftIcon from 'icons/ArrowLeft'
@@ -19,6 +16,9 @@ import Input from 'components/Input'
 import AnimalsStatus from 'components/AnimalsStatus'
 import useMe from 'hooks/useMe'
 import getPlayerAnimals from 'utils/getPlayerAnimals'
+import useHandleSocketEvent from './hooks/useHandleSocketEvent'
+import RoomMenu from './RoomMenu'
+import PlayerCooldown from './PlayerCooldown'
 
 interface RoomProps {
   roomId: string
@@ -142,8 +142,8 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
             <div className="flex flex-col items-end">
               <Show when={bothConnected}>
                 <div className="flex flex-col items-end">
-                  <Avatar size="md" />
-                  <h5 className="text-sm my-1">Opponent Name</h5>
+                  <Avatar size="md" color="opponent" />
+                  <h5 className="text-sm my-1">Opponent</h5>
                   <div className="mb-2">
                     <AnimalsStatus alive={opponentAnimals} />
                   </div>
@@ -194,8 +194,8 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
                     <span className="font-light">just moved Elephant piece</span>
                   </div>
                 </div>
-                <div className="absolute -top-[15px] right-[10px] w-[99px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
-                  Commands
+                <div className="absolute -top-[15px] right-[10px] w-[80px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
+                  Logs
                 </div>
               </div>
               <div className="relative flex-1 mt-6">
@@ -211,7 +211,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
                     placeholder="Say something to your opponent"
                   />
                 </div>
-                <div className="absolute -top-[15px] right-[10px] w-[99px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
+                <div className="absolute -top-[15px] right-[10px] w-[80px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
                   Chat
                 </div>
               </div>

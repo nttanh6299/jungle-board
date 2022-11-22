@@ -70,12 +70,13 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
               >
                 <div
                   className={clsx(
-                    'grid place-items-center w-full h-full',
+                    'grid place-items-center w-full h-full p-1',
                     { 'cursor-pointer': isPlaying },
                     { 'bg-green-500': isLand(cell) },
                     { 'bg-cyan-400': isInRiver(cell) },
                     { 'bg-yellow-700': isInWTrap(cell) || isInBTrap(cell) },
-                    { 'bg-yellow-800': isWDen(cell) || isBDen(cell) },
+                    { 'bg-player': isBDen(cell) },
+                    { 'bg-opponent': isWDen(cell) },
                   )}
                   onClick={() => onSelectSquare(row, col)}
                 >

@@ -17,8 +17,6 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
   const {
     playerId,
     canConnect,
-    endVisible,
-    onAfterEndGame,
     onPlayerJoin,
     onCheckRoom,
     onReadyToPlay,
@@ -30,8 +28,6 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
   } = useGameStore((state) => ({
     playerId: state.playerId,
     canConnect: state.canConnect,
-    endVisible: state.endVisible,
-    onAfterEndGame: state.actions.onAfterEndGame,
     onPlayerJoin: state.actions.onPlayerJoin,
     onCheckRoom: state.actions.onCheckRoom,
     onReadyToPlay: state.actions.onReadyToPlay,
@@ -139,22 +135,6 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       socket.off('reconnectSuccess')
     }
   }, [socket, canConnect, roomId, playerId])
-
-  // End game overlay
-  useEffect(() => {
-    let timeout
-    if (endVisible) {
-      timeout = setTimeout(() => {
-        onAfterEndGame()
-      }, 10000)
-    }
-
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout)
-      }
-    }
-  }, [endVisible, onAfterEndGame])
 }
 
 export default useHandleEventSocket

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import GameMenu from 'components/BoardMenu'
 import { useGameStore } from 'store/game'
 import Show from 'components/Show'
@@ -15,6 +15,22 @@ const RoomMenu: React.FC = () => {
       onAfterEndGame: state.actions.onAfterEndGame,
     }),
   )
+
+  // End game overlay
+  useEffect(() => {
+    let timeout
+    if (endVisible) {
+      timeout = setTimeout(() => {
+        onAfterEndGame()
+      }, 10000)
+    }
+
+    return () => {
+      if (timeout) {
+        clearTimeout(timeout)
+      }
+    }
+  }, [endVisible, onAfterEndGame])
 
   const gameStatusLabel = useMemo(() => {
     if (gameStatus === 'tie')
