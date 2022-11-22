@@ -12,13 +12,13 @@ import TopBar from 'components/TopBar'
 import Button from 'components/Button'
 import ArrowLeftIcon from 'icons/ArrowLeft'
 import Avatar from 'components/Avatar'
-import Input from 'components/Input'
 import AnimalsStatus from 'components/AnimalsStatus'
 import useMe from 'hooks/useMe'
 import getPlayerAnimals from 'utils/getPlayerAnimals'
 import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
+import Chat from './Chat'
 
 interface RoomProps {
   roomId: string
@@ -199,21 +199,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
                 </div>
               </div>
               <div className="relative flex-1 mt-6">
-                <div className="w-full h-full shadow-[0_0_4px] shadow-cardShadow/25 rounded-lg pt-4 px-2">
-                  <div className="text-xs">
-                    <span className="text-player">You:&nbsp;</span>
-                    <span className="font-light">just moved Elephant piece</span>
-                  </div>
-                </div>
-                <div className="flex absolute bottom-0 w-full shadow-[inner_0_0_2px] shadow-cardShadow/25 rounded-b-lg overflow-hidden">
-                  <Input
-                    className="py-1.5 px-2 !text-xs font-light border-0"
-                    placeholder="Say something to your opponent"
-                  />
-                </div>
-                <div className="absolute -top-[15px] right-[10px] w-[80px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
-                  Chat
-                </div>
+                <Chat />
               </div>
             </div>
           </div>

@@ -16,6 +16,7 @@ function Input({
   readOnly,
   error = '',
   className = '',
+  ...props
 }: InputProps) {
   return (
     <input
@@ -35,6 +36,7 @@ function Input({
       value={value}
       disabled={disabled}
       readOnly={readOnly}
+      {...props}
     />
   )
 }

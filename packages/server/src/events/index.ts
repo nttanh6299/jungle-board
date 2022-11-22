@@ -3,6 +3,7 @@ import http from 'http'
 import join from './join.event'
 import start from './start.event'
 import move from './move.event'
+import chat from './chat.event'
 import disconnect from './disconnect.event'
 import { ServerToClientEvents, ClientToServerEvents, InterServerEvents, SocketData } from '../types/socket'
 
@@ -14,6 +15,7 @@ const initSocketServer = (httpServer: http.Server) => {
     join(io, socket)
     start(io, socket)
     move(io, socket)
+    chat(io, socket)
     disconnect(io, socket)
   })
   return io

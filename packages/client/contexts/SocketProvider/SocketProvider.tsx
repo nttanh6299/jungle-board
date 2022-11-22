@@ -13,6 +13,7 @@ export interface ServerToClientEvents {
   playCooldown: (cooldown: number) => void
   end: (playerTurn: string, status: string) => void
   reconnectSuccess: () => void
+  message: (message: string) => void
 }
 
 export interface ClientToServerEvents {
@@ -21,6 +22,7 @@ export interface ClientToServerEvents {
   disconnect: () => void
   start: () => void
   reconnect: (roomId: string, playerId: string) => void
+  message: (message: string) => void
 }
 
 export type SocketType = Socket<ServerToClientEvents, ClientToServerEvents>
