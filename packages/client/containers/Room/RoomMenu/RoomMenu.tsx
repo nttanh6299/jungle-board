@@ -4,22 +4,30 @@ import { useGameStore } from 'store/game'
 import Show from 'components/Show'
 
 const RoomMenu: React.FC = () => {
-  const { cooldown, cooldownMenuVisible, endVisible, gameStatus, lastTurn, playerId, onAfterEndGame } = useGameStore(
-    (state) => ({
-      cooldownMenuVisible: state.cooldownMenuVisible,
-      endVisible: state.endVisible,
-      cooldown: state.cooldown,
-      gameStatus: state.gameStatus,
-      lastTurn: state.lastTurn,
-      playerId: state.playerId,
-      onAfterEndGame: state.actions.onAfterEndGame,
-    }),
-  )
+  const {
+    cooldown,
+    cooldownMenuVisible,
+    endVisible,
+    disconnectVisible,
+    gameStatus,
+    lastTurn,
+    playerId,
+    onAfterEndGame,
+  } = useGameStore((state) => ({
+    cooldownMenuVisible: state.cooldownMenuVisible,
+    endVisible: state.endVisible,
+    disconnectVisible: state.disconnectVisible,
+    cooldown: state.cooldown,
+    gameStatus: state.gameStatus,
+    lastTurn: state.lastTurn,
+    playerId: state.playerId,
+    onAfterEndGame: state.actions.onAfterEndGame,
+  }))
 
   // End game overlay
   useEffect(() => {
     let timeout
-    if (endVisible) {
+    if (endVisible || disconnectVisible) {
       timeout = setTimeout(() => {
         onAfterEndGame()
       }, 10000)
@@ -30,7 +38,7 @@ const RoomMenu: React.FC = () => {
         clearTimeout(timeout)
       }
     }
-  }, [endVisible, onAfterEndGame])
+  }, [endVisible, disconnectVisible, onAfterEndGame])
 
   const gameStatusLabel = useMemo(() => {
     if (gameStatus === 'tie')
@@ -56,7 +64,7 @@ const RoomMenu: React.FC = () => {
   }, [gameStatus, lastTurn, playerId])
 
   return (
-    <Show when={cooldownMenuVisible || endVisible}>
+    <Show when={cooldownMenuVisible || endVisible || disconnectVisible}>
       <div className="absolute top-0 w-full h-full">
         <GameMenu visible={cooldownMenuVisible}>
           <h2 className="text-lg mt-10">The match is ready</h2>
@@ -71,7 +79,7 @@ const RoomMenu: React.FC = () => {
             OK
           </div>
         </GameMenu>
-        <GameMenu visible={false}>
+        <GameMenu visible={disconnectVisible}>
           <h2 className="text-lg mt-10">The opponent has left the match</h2>
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10 invisible">-</div>

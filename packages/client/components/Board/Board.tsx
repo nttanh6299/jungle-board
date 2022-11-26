@@ -1,5 +1,4 @@
 import React from 'react'
-import NextImage from 'next/image'
 import clsx from 'clsx'
 import { dequal } from 'dequal'
 import {
@@ -82,13 +81,13 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
                 >
                   <div
                     className={clsx(
-                      'overflow-hidden h-full',
+                      'overflow-hidden w-full h-full',
                       { 'drop-shadow-[3px_3px_5px_blue]': board && !isOpponent(board, cell) },
                       { 'drop-shadow-[3px_3px_5px_red]': board && isOpponent(board, cell) },
                     )}
                   >
                     {board && piece ? (
-                      <NextImage src={piece ? AnimalPath[piece] : ''} alt={piece} width="100%" height="100%" priority />
+                      <img src={piece ? AnimalPath[piece] : ''} alt={piece} width="100%" height="100%" loading="lazy" />
                     ) : null}
                   </div>
                 </div>

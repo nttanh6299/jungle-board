@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
-import { useGameStore } from 'store/game'
+import { useGameStore, getState } from 'store/game'
 import useSocket from 'hooks/useSocket'
 import { EDisconnectReason } from 'constants/enum'
+import { notify } from 'utils/subscriber'
 
 type IHookArgs = {
   roomId: string
@@ -83,6 +84,18 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
 
     socket.on('turn', (playerIdTurn, board, allMoves) => {
       onNewTurn(playerIdTurn, board, allMoves)
+
+      const { playerId } = getState()
+      let className = ''
+      let text = ''
+      if (playerIdTurn === playerId) {
+        className = 'text-player'
+        text = 'Your turn!'
+      } else {
+        className = 'text-opponent'
+        text = `Opponent's turn!`
+      }
+      notify<Utils.Log>('addLog', { text, className })
     })
 
     socket.on('end', (lastTurn, status) => {
@@ -103,6 +116,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('playerDisconnect', (isPlayerDisconnected) => {
       if (isPlayerDisconnected) {
         onDisconnect()
+        notify<Utils.Log>('addLog', { text: 'The opponent has left the room' })
       }
     })
 

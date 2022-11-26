@@ -1,4 +1,3 @@
-import NextImage from 'next/image'
 import { AnimalPath } from 'constants/url'
 import { Animal } from 'jungle-board-service'
 import clsx from 'clsx'
@@ -18,7 +17,7 @@ const AnimalsStatus = ({ alive }: AnimalsStatusProps) => {
           })}
         >
           {AnimalPath[animal] && (
-            <NextImage src={AnimalPath[animal]} alt={animal} width="100%" height="100%" priority />
+            <img src={AnimalPath[animal]} alt={animal} width="100%" height="100%" loading="lazy" />
           )}
         </div>
       ))}

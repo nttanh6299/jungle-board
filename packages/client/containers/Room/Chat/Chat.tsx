@@ -45,11 +45,11 @@ const Chat = () => {
   }, [socket])
 
   return (
-    <>
-      <div className="w-full h-full shadow-[0_0_4px] shadow-cardShadow/25 rounded-lg pt-4 pb-8 px-2">
-        <div className="h-full max-h-[161px] overflow-y-auto">
+    <div className="relative h-full">
+      <div className="w-full h-full shadow-[0_0_4px] shadow-cardShadow/25 rounded-lg pt-4 pb-8">
+        <div className="max-h-[161px] overflow-y-auto px-2">
           {messages?.map(({ message, isOpponentMessage }, index) => (
-            <div key={index} className="flex text-sm">
+            <div key={index} className="flex text-xs">
               <span
                 className={clsx({
                   'text-opponent': isOpponentMessage,
@@ -66,7 +66,7 @@ const Chat = () => {
       </div>
       <div className="flex absolute bottom-0 w-full shadow-[inner_0_0_2px] shadow-cardShadow/25 rounded-b-lg overflow-hidden">
         <Input
-          className="py-1.5 px-2 !text-xs font-light border-0"
+          className="py-1.5 !px-2 !text-xs font-light border-0"
           placeholder="Say something to your opponent"
           value={text}
           onChange={onInputChange}
@@ -76,7 +76,7 @@ const Chat = () => {
       <div className="absolute -top-[15px] right-[10px] w-[80px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
         Chat
       </div>
-    </>
+    </div>
   )
 }
 

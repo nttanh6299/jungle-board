@@ -14,11 +14,12 @@ import ArrowLeftIcon from 'icons/ArrowLeft'
 import Avatar from 'components/Avatar'
 import AnimalsStatus from 'components/AnimalsStatus'
 import useMe from 'hooks/useMe'
+import useHandleSocketEvent from 'hooks/useHandleSocketEvent'
 import getPlayerAnimals from 'utils/getPlayerAnimals'
-import useHandleSocketEvent from './hooks/useHandleSocketEvent'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
 import Chat from './Chat'
+import Logs from './Logs'
 
 interface RoomProps {
   roomId: string
@@ -187,18 +188,10 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
 
           <div className="flex-1">
             <div className="flex flex-col h-full pt-3">
-              <div className="relative flex-1">
-                <div className="w-full h-full shadow-[0_0_4px] shadow-cardShadow/25 rounded-lg pt-4 px-2">
-                  <div className="text-xs">
-                    <span className="text-player">You&nbsp;</span>
-                    <span className="font-light">just moved Elephant piece</span>
-                  </div>
-                </div>
-                <div className="absolute -top-[15px] right-[10px] w-[80px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
-                  Logs
-                </div>
+              <div className="flex-1">
+                <Logs />
               </div>
-              <div className="relative flex-1 mt-6">
+              <div className="flex-1 mt-6">
                 <Chat />
               </div>
             </div>
