@@ -8,6 +8,9 @@ interface Message {
   message: string
 }
 
+const threshold = 50
+let lastTimeSend = Date.now()
+
 const Chat = () => {
   const { socket } = useSocket()
   const [messages, setMessages] = useState<Message[]>([])
@@ -20,9 +23,15 @@ const Chat = () => {
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && !!text.trim()) {
-      setMessages((prev) => [...prev, { message: text, isOpponentMessage: false }])
-      setText('')
-      socket.emit('message', text)
+      const timeSend = Date.now()
+      if (timeSend - lastTimeSend > threshold) {
+        lastTimeSend = timeSend
+        setMessages((prev) => [...prev, { message: text, isOpponentMessage: false }])
+        setText('')
+        socket.emit('message', text)
+      } else {
+        setText('')
+      }
     }
   }
 
