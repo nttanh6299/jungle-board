@@ -69,7 +69,7 @@ const NewRoom = () => {
 
   return (
     <>
-      <TopBar hideAutoJoin />
+      <TopBar hideAutoJoin hideRoomInfo />
       <div className="bg-primary rounded-lg mt-3 max-h-[422px]">
         <ErrorBoundary>
           <div className="p-2">

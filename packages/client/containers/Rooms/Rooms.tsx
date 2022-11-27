@@ -68,7 +68,7 @@ const RoomsPage = () => {
 
   return (
     <>
-      <TopBar />
+      <TopBar hideRoomInfo />
       <div className="bg-primary rounded-lg mt-3 min-h-[422px] max-h-[422px] overflow-auto overflow-x-hidden">
         <ErrorBoundary>
           <div className="p-2">

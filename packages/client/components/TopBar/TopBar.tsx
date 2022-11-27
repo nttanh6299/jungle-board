@@ -7,6 +7,7 @@ import Show from 'components/Show'
 import useMe from 'hooks/useMe'
 import FacebookIcon from 'icons/Facebook'
 import GearIcon from 'icons/Gear'
+import InfoIcon from 'icons/Info'
 import GithubIcon from 'icons/Github'
 import GoogleIcon from 'icons/Google'
 import { useSettingsStore } from 'store/settings'
@@ -17,16 +18,22 @@ import RocketLauchIcon from 'icons/RocketLauch'
 import { autoJoinRoom } from 'apis/room'
 import useAppState from 'hooks/useAppState'
 import Avatar from 'components/Avatar'
+import Tooltip from 'components/Tooltip'
+import { useRoomStore } from 'store/room'
 
 interface TopBarProps {
   hideAutoJoin?: boolean
   hideInfo?: boolean
+  hideRoomInfo?: boolean
 }
 
-const TopBar = ({ hideAutoJoin, hideInfo }: TopBarProps) => {
+const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo }: TopBarProps) => {
   const router = useRouter()
   const { user, isLoading } = useMe()
   const [, dispatch] = useAppState()
+  const { room } = useRoomStore((state) => ({
+    room: state.room,
+  }))
   const [openMenuSettings, toggleMenuSettings] = useSettingsStore((state) => [
     state.openMenu,
     state.actions.onToggleMenu,
@@ -123,8 +130,27 @@ const TopBar = ({ hideAutoJoin, hideInfo }: TopBarProps) => {
           </Show>
         </div>
         <div className="flex flex-col items-end">
-          <div onClick={toggleMenuSettings} className="cursor-pointer mb-2">
-            <GearIcon />
+          <div className="flex mb-2.5">
+            <Show when={!hideRoomInfo}>
+              <div className="cursor-pointer mr-2">
+                <Tooltip
+                  title={
+                    <div>
+                      <div>Max turns: {room?.maxMove}</div>
+                      <div>Cooldown: {room?.cooldown}</div>
+                      <div>Theme: {room?.theme}</div>
+                    </div>
+                  }
+                  position="bottom"
+                  className="top-[120%]"
+                >
+                  <InfoIcon />
+                </Tooltip>
+              </div>
+            </Show>
+            <div onClick={toggleMenuSettings} className="cursor-pointer">
+              <GearIcon />
+            </div>
           </div>
           <Show when={!hideAutoJoin}>
             <Button uppercase rounded iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
