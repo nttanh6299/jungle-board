@@ -9,7 +9,7 @@ export interface ServerToClientEvents {
   play: () => void
   playerDisconnect: (isPlayerDisconnected: boolean) => void
   playerJoin: (playerId: string, isHost: boolean) => void
-  turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
+  turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves, moveFrom: BoardDelta, moveTo: BoardDelta) => void
   playCooldown: (cooldown: number) => void
   end: (playerTurn: string, status: string) => void
   reconnectSuccess: () => void

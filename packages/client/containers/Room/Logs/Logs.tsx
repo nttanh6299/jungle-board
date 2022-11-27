@@ -6,8 +6,8 @@ const Logs = () => {
   const [logs, setLogs] = useState<Utils.Log[]>([])
   const bottomRef = useRef(null)
 
-  const addLog = useCallback((newLog) => {
-    setLogs((prev) => [...prev, newLog])
+  const addLog = useCallback((logs) => {
+    setLogs((prev) => [...prev, ...logs])
   }, [])
 
   useEffect(() => {

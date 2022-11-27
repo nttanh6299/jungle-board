@@ -80,7 +80,7 @@ const RoomMenu: React.FC = () => {
           </div>
         </GameMenu>
         <GameMenu visible={disconnectVisible}>
-          <h2 className="text-lg mt-10">The opponent has left the match</h2>
+          <h2 className="text-lg mt-10">The opponent has left the room</h2>
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10 invisible">-</div>
           <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onAfterEndGame}>

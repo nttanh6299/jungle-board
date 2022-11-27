@@ -3,6 +3,7 @@ import { useGameStore, getState } from 'store/game'
 import useSocket from 'hooks/useSocket'
 import { EDisconnectReason } from 'constants/enum'
 import { notify } from 'utils/subscriber'
+import { getPieceKind } from 'jungle-board-service'
 
 type IHookArgs = {
   roomId: string
@@ -82,12 +83,25 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       onPlayCooldown(cooldown)
     })
 
-    socket.on('turn', (playerIdTurn, board, allMoves) => {
+    socket.on('turn', (playerIdTurn, board, allMoves, _, moveTo) => {
       onNewTurn(playerIdTurn, board, allMoves)
 
       const { playerId } = getState()
-      let className = ''
+      let className = playerIdTurn === playerId ? 'text-player' : 'text-opponent'
       let text = ''
+
+      if (moveTo) {
+        const piece = getPieceKind(board[moveTo.row][moveTo.col])
+        if (playerIdTurn === playerId) {
+          className = 'text-opponent'
+          text = `Opponent just moved ${piece} piece!`
+        } else {
+          className = 'text-player'
+          text = `You just moved ${piece} piece!`
+        }
+      }
+      const moveTurn = { text, className }
+
       if (playerIdTurn === playerId) {
         className = 'text-player'
         text = 'Your turn!'
@@ -95,7 +109,9 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
         className = 'text-opponent'
         text = `Opponent's turn!`
       }
-      notify<Utils.Log>('addLog', { text, className })
+      const turnLog = { text, className }
+
+      notify<Utils.Log[]>('addLog', [moveTurn, turnLog])
     })
 
     socket.on('end', (lastTurn, status) => {
@@ -116,7 +132,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('playerDisconnect', (isPlayerDisconnected) => {
       if (isPlayerDisconnected) {
         onDisconnect()
-        notify<Utils.Log>('addLog', { text: 'The opponent has left the room' })
+        notify<Utils.Log[]>('addLog', [{ text: 'The opponent has left the room' }])
       }
     })
 
