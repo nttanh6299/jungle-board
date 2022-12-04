@@ -1,1 +1,1 @@
-export default './RangeSlider'
+export { default } from './RangeSlider'

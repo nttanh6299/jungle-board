@@ -9,7 +9,7 @@ type PopoverProps = PropsWithChildren<{
 
 const Popover = ({ children, title, className }: PopoverProps) => {
   return (
-    <HPopover className="relative">
+    <HPopover className="relative z-20">
       <>
         <HPopover.Button className="focus:outline-none focus-visible:outline-0">
           <div className="flex items-center text-sm bg-corange rounded-lg px-3 py-1 text-white font-medium">

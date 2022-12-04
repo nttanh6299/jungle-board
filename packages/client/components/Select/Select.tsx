@@ -16,7 +16,7 @@ const Select = ({ options, selected, onChange }: SelectProps) => {
     <div className="w-full">
       <Listbox value={selected} onChange={onChange}>
         <div className="relative">
-          <Listbox.Button className="relative z-0 w-full border border-placeholder cursor-default rounded-lg bg-white px-4 py-3 text-left focus:outline-none text-sm">
+          <Listbox.Button className="relative z-0 w-full border border-placeholder cursor-pointer rounded-lg bg-white px-4 py-3 text-left focus:outline-none text-sm">
             <span className="block truncate">{selectedOption?.label}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
               <CarretDownIcon />
@@ -28,7 +28,7 @@ const Select = ({ options, selected, onChange }: SelectProps) => {
                 <Listbox.Option
                   key={option.value}
                   className={({ active, selected }) =>
-                    clsx('relative cursor-default select-none py-2 px-4', {
+                    clsx('relative cursor-pointer select-none py-2 px-4', {
                       'bg-primary text-white': active || selected,
                     })
                   }

@@ -1,4 +1,4 @@
-import create, { SetState, GetState, StateSelector } from 'zustand'
+import create, { SetState, StateSelector } from 'zustand'
 import { persist } from 'zustand/middleware'
 import shallow from 'zustand/shallow'
 import produce from 'immer'
@@ -8,14 +8,7 @@ export const STORAGE_KEY = 'settings'
 export type SettingLevel = 'low' | 'medium' | 'high'
 export type AudioType = 'music' | 'sfx'
 
-const actionNames = [
-  'onToggleMenu',
-  'onToggleMute',
-  'onSetTutorials',
-  'onSetShowFps',
-  'onSetGraphicLevel',
-  'onSetVolume',
-] as const
+const actionNames = ['onToggleMute', 'onSetTutorials', 'onSetShowFps', 'onSetGraphicLevel', 'onSetVolume'] as const
 export type ActionNames = typeof actionNames[number]
 
 interface GameSettings {
@@ -52,12 +45,8 @@ interface State {
 
 const useStoreImpl = create<State>(
   persist<State>(
-    (set: SetState<State>, get: GetState<State>) => {
+    (set: SetState<State>) => {
       const actions: Record<ActionNames, (...args) => void> = {
-        onToggleMenu: () => {
-          const { openMenu } = get()
-          set({ openMenu: !openMenu })
-        },
         onToggleMute: (type: AudioType) => {
           const newState = produce<State>((state) => {
             if (type === 'music') {
