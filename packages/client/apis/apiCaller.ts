@@ -1,5 +1,5 @@
 import axios, { AxiosPromise, CancelToken, Method } from 'axios'
-// import { getSession, signOut } from 'next-auth/react'
+import { getSession, signOut } from 'next-auth/react'
 import { API_ENDPOINT } from 'constants/common'
 
 const instanceNext = axios.create({
@@ -10,10 +10,10 @@ const instanceNext = axios.create({
 instanceNext.interceptors.request.use(
   async (config) => {
     if (!config.headers.Authorization) {
-      // const session = await getSession()
-      // if (session?.accessToken) {
-      //   config.headers.Authorization = `Bearer ${session.accessToken}`
-      // }
+      const session = await getSession()
+      if (session?.accessToken) {
+        config.headers.Authorization = `Bearer ${session.accessToken}`
+      }
     }
     return config
   },
@@ -23,9 +23,9 @@ instanceNext.interceptors.request.use(
 instanceNext.interceptors.response.use(
   (response) => response.data,
   (error) => {
-    // if ((error.response && error.response.status === 401) || (error.response && error.response.status === 403)) {
-    //   signOut()
-    // }
+    if ((error.response && error.response.status === 401) || (error.response && error.response.status === 403)) {
+      signOut({ redirect: false })
+    }
 
     if (error.response) {
       return Promise.reject(error.response)

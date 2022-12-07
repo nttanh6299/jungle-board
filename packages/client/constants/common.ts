@@ -4,19 +4,19 @@ export const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || ''
 
 export const ROOM_STATUS = {
   waiting: {
-    label: 'Waiting',
+    label: 'Idle',
     value: ERoomStatus.WAITING,
   },
   playing: {
-    label: 'Playing',
+    label: 'InGame',
     value: ERoomStatus.PLAYING,
   },
   ending: {
-    label: 'Ending',
+    label: 'InGame',
     value: ERoomStatus.END,
   },
   tie: {
-    label: 'Tie',
+    label: 'InGame',
     value: ERoomStatus.TIE,
   },
 }

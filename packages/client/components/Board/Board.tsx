@@ -1,5 +1,4 @@
 import React from 'react'
-import NextImage from 'next/image'
 import clsx from 'clsx'
 import { dequal } from 'dequal'
 import {
@@ -21,8 +20,8 @@ import { AnimalPath } from 'constants/url'
 const BOARD_ROWS = Array.from(Array(ROWS).keys())
 const BOARD_COLS = Array.from(Array(COLS).keys())
 
-const SQUARE_WIDTH = 60
-const SQUARE_HEIGHT = 60
+const SQUARE_WIDTH = 50
+const SQUARE_HEIGHT = 50
 
 // plus 4 because of border-2
 const BOARD_WIDTH = SQUARE_WIDTH * BOARD_COLS.length + 4
@@ -61,7 +60,7 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
                   left: col * SQUARE_HEIGHT,
                 }}
                 className={clsx(
-                  'absolute border-2 border-solid border-green-600 select-none',
+                  'absolute border border-solid border-green-600 select-none',
                   { '!border-blue-600': dequal(selectedSquare, [row, col]) },
                   {
                     '!border-lime-300': !!possibleMoves?.find((move) => dequal(move, cell)),
@@ -70,24 +69,25 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
               >
                 <div
                   className={clsx(
-                    'grid place-items-center w-full h-full',
+                    'grid place-items-center w-full h-full p-1',
                     { 'cursor-pointer': isPlaying },
                     { 'bg-green-500': isLand(cell) },
                     { 'bg-cyan-400': isInRiver(cell) },
                     { 'bg-yellow-700': isInWTrap(cell) || isInBTrap(cell) },
-                    { 'bg-yellow-800': isWDen(cell) || isBDen(cell) },
+                    { 'bg-player': isBDen(cell) },
+                    { 'bg-opponent': isWDen(cell) },
                   )}
                   onClick={() => onSelectSquare(row, col)}
                 >
                   <div
                     className={clsx(
-                      'overflow-hidden h-full',
+                      'overflow-hidden w-full h-full',
                       { 'drop-shadow-[3px_3px_5px_blue]': board && !isOpponent(board, cell) },
                       { 'drop-shadow-[3px_3px_5px_red]': board && isOpponent(board, cell) },
                     )}
                   >
                     {board && piece ? (
-                      <NextImage src={piece ? AnimalPath[piece] : ''} alt={piece} width="100%" height="100%" priority />
+                      <img src={piece ? AnimalPath[piece] : ''} alt={piece} width="100%" height="100%" loading="lazy" />
                     ) : null}
                   </div>
                 </div>

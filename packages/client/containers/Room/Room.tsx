@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import useSocket from 'hooks/useSocket'
 import { getPossibleMoves } from 'utils'
 import GameBoard from 'components/Board'
@@ -8,9 +9,18 @@ import { isEmpty } from 'utils/lodash/isEmpty'
 import Show from 'components/Show'
 import { useGameStore } from 'store/game'
 import useAppState from 'hooks/useAppState'
-import useHandleSocketEvent from './hooks/useHandleSocketEvent'
+import TopBar from 'components/TopBar'
+import Button from 'components/Button'
+import ArrowLeftIcon from 'icons/ArrowLeft'
+import Avatar from 'components/Avatar'
+import AnimalsStatus from 'components/AnimalsStatus'
+import useMe from 'hooks/useMe'
+import useHandleSocketEvent from 'hooks/useHandleSocketEvent'
+import getPlayerAnimals from 'utils/getPlayerAnimals'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
+import Chat from './Chat'
+import Logs from './Logs'
 
 interface RoomProps {
   roomId: string
@@ -20,9 +30,11 @@ interface RoomProps {
 const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
   const router = useRouter()
   const [, dispatch] = useAppState()
+  const { t } = useTranslation('common')
 
   useHandleSocketEvent({ roomId, accountId })
 
+  const { user } = useMe()
   const {
     board,
     possibleMoves,
@@ -52,6 +64,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
     onDisconnect: state.actions.onDisconnect,
     onSelectSquare: state.actions.onSelectSquare,
   }))
+  const { playerAnimals, opponentAnimals } = getPlayerAnimals(board)
 
   const { socket } = useSocket()
 
@@ -90,7 +103,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
 
   const goBack = useCallback(() => {
     if (gameStatus === 'playing') {
-      if (window.confirm('Do you want to go back ?')) {
+      if (window.confirm(t('confirmGoBack'))) {
         // note: error when room has guests
         onDisconnect(true)
         return router.push('/')
@@ -99,7 +112,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
       onDisconnect(true)
       router.push('/')
     }
-  }, [gameStatus, router, onDisconnect])
+  }, [gameStatus, router, onDisconnect, t])
 
   useEffect(() => {
     window.addEventListener('popstate', goBack)
@@ -124,17 +137,42 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
   }, [socket, onConnect, dispatch])
 
   return (
-    <div className="relative">
-      <button onClick={goBack} className="fixed top-[10px] left-[10px] block p-2">
-        Back
-      </button>
-      <Show when={canConnect}>
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center">
-            <strong>{bothConnected ? 'Opponent' : 'Waiting an opponent...'}</strong>
-            <PlayerCooldown isOpponent />
+    <Show when={canConnect}>
+      <TopBar hideAutoJoin hideInfo />
+      <div className="relative mt-4">
+        <div className="flex">
+          <div className="flex-1 flex flex-col justify-between">
+            <div className="flex flex-col items-end">
+              <Show when={bothConnected}>
+                <div className="flex flex-col items-end">
+                  <Avatar size="md" color="opponent" />
+                  <h5 className="text-sm my-1">{t('opponent')}</h5>
+                  <div className="mb-2">
+                    <AnimalsStatus alive={opponentAnimals} />
+                  </div>
+                  <PlayerCooldown isOpponent />
+                </div>
+              </Show>
+            </div>
+
+            <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end">
+                <PlayerCooldown />
+                <Show when={bothConnected && isHost && cooldown === 0 && gameStatus === 'waiting'}>
+                  <Button uppercase rounded variant="secondary" size="sm" onClick={handleStartGame}>
+                    {t('start')}
+                  </Button>
+                </Show>
+                <div className="mt-2">
+                  <AnimalsStatus alive={playerAnimals} />
+                </div>
+                <h5 className="text-sm my-1">{user?.name || t('guest')}</h5>
+                <Avatar size="md" />
+              </div>
+            </div>
           </div>
-          <div className="pt-2 mt-2">
+
+          <div className="relative mx-3">
             <GameBoard
               isPlaying={!!playerTurn}
               board={board}
@@ -147,19 +185,25 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
                 selectedSquare?.[1] ?? -1,
               )}
             />
-          </div>
-          <div className="flex flex-col items-center">
-            <PlayerCooldown />
-            <strong>You</strong>
-            <Show when={bothConnected && isHost && cooldown === 0 && gameStatus === 'waiting'}>
-              <button onClick={handleStartGame}>Start</button>
-            </Show>
+            <RoomMenu />
           </div>
 
-          <RoomMenu />
+          <div className="flex-1">
+            <div className="flex flex-col h-full pt-3">
+              <div className="flex-1">
+                <Logs />
+              </div>
+              <div className="flex-1 mt-6">
+                <Chat />
+              </div>
+            </div>
+          </div>
         </div>
-      </Show>
-    </div>
+      </div>
+      <Button iconLeft={<ArrowLeftIcon />} uppercase rounded className="mt-6" onClick={goBack}>
+        {t('leave')}
+      </Button>
+    </Show>
   )
 }
 

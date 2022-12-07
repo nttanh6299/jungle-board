@@ -1,3 +1,4 @@
+import { ResGetRoom } from 'apis/room'
 import create, { SetState, StateSelector } from 'zustand'
 import shallow from 'zustand/shallow'
 
@@ -6,23 +7,23 @@ export type ActionNames = typeof actionNames[number]
 
 interface State {
   actions: Record<ActionNames, (...args) => void>
-  roomId: string
+  room: ResGetRoom
   valid: boolean
 }
 
 const useStoreImpl = create<State>((set: SetState<State>) => {
   const actions: Record<ActionNames, (...args) => void> = {
-    onVerifyRoom: (roomId: string) => {
-      set({ roomId, valid: true })
+    onVerifyRoom: (room: ResGetRoom) => {
+      set({ room, valid: true })
     },
     onResetVerification: () => {
-      set({ roomId: '', valid: false })
+      set({ room: null, valid: false })
     },
   }
 
   return {
     actions,
-    roomId: '',
+    room: null,
     valid: false,
   }
 })

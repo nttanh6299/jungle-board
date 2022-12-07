@@ -39,7 +39,10 @@ const connectApp = async () => {
 
     const rooms = await Room.find({ isActive: true })
     rooms.forEach((room) => {
-      roomMap.set(room.id, new RoomResolver(room.id, room.maxMove, room.cooldown, room.status, room.type))
+      roomMap.set(
+        room.id,
+        new RoomResolver(room.id, room.maxMove, room.cooldown, room.isPrivate, room.status, room.type),
+      )
     })
 
     startServer()

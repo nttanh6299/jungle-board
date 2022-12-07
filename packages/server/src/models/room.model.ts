@@ -7,6 +7,13 @@ export enum ERoomStatus {
   TIE = 'tie',
 }
 
+export enum Map {
+  RAINFOREST = 'rainforest',
+  DESERT = 'desert',
+  GRASSLAND = 'grassland',
+  TUNDRA = 'tundra',
+}
+
 export interface IRoom extends Document {
   name: string
   type: string
@@ -14,6 +21,8 @@ export interface IRoom extends Document {
   isActive: boolean
   maxMove: number
   cooldown: number
+  isPrivate: boolean
+  theme: string
   createdAt: Date
 }
 
@@ -24,6 +33,8 @@ const roomSchema: Schema = new Schema<IRoom>({
   isActive: { type: Boolean, default: true },
   maxMove: { type: Number, default: 0 },
   cooldown: { type: Number, default: 0 },
+  isPrivate: { type: Boolean, default: false },
+  theme: { type: String, default: Map.RAINFOREST },
   createdAt: { type: Date, default: Date.now },
 })
 

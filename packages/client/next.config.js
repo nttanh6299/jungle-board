@@ -1,18 +1,8 @@
 const { withSentryConfig } = require('@sentry/nextjs')
+const { i18n } = require('./next-i18next.config')
 
-const sentryModuleExports = {
-  sentry: {
-    // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
-    // for client-side builds. (This will be the default starting in
-    // `@sentry/nextjs` version 8.0.0.) See
-    // https://webpack.js.org/configuration/devtool/ and
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map
-    // for more information.
-    hideSourceMaps: true,
-  },
-}
-
-const defaultModuleExports = {
+const moduleExports = {
+  i18n,
   images: {
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
@@ -24,9 +14,13 @@ const defaultModuleExports = {
     })
     return config
   },
+  sentry: {
+    hideSourceMaps: true,
+  },
 }
 
-module.exports =
-  process.env.NODE_ENV === 'production'
-    ? withSentryConfig(sentryModuleExports, defaultModuleExports)
-    : defaultModuleExports
+const sentryWebpackPluginOptions = {
+  silent: true,
+}
+
+module.exports = withSentryConfig(moduleExports, sentryWebpackPluginOptions)

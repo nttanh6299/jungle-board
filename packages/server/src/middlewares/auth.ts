@@ -14,7 +14,7 @@ const authenticateJwt = (req, res, next) => {
     if (err) {
       return res.status(httpStatus.UNAUTHORIZED).send({ error: 'Unauthorized' })
     }
-    req.user = user
+    req.userId = user.id
     next()
   })
 }

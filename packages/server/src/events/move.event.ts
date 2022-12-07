@@ -1,5 +1,5 @@
 import eventHandler from '../utils/eventHandler'
-import { GameStatus } from 'jungle-board-service'
+import { GameStatus, ROWS, COLS, BoardDelta } from 'jungle-board-service'
 import roomMap from '../db'
 import Match from '../models/match.model'
 import User from '../models/user.model'
@@ -16,15 +16,24 @@ const move = eventHandler((io, socket) => {
     const shouldRotateBoard = playerId !== roomMapItem.getHost()
     roomMapItem.board.move(moveFrom, moveTo, shouldRotateBoard)
 
+    const rotatedMoveFrom: BoardDelta = { row: ROWS - moveFrom.row - 1, col: COLS - moveFrom.col - 1 }
+    const rotatedMoveTo: BoardDelta = { row: ROWS - moveTo.row - 1, col: COLS - moveTo.col - 1 }
+
     const nextTurn = roomMapItem.getNextTurn()
+
     const currentBoard = roomMapItem.board.state.board
     const rotatedBoard = roomMapItem.board.getRotatedBoard()
+
     const playerSelfBoard = shouldRotateBoard ? rotatedBoard : currentBoard
     const otherPlayersBoard = shouldRotateBoard ? currentBoard : rotatedBoard
+
     const playerSelfPossibleMoves = roomMapItem.board.getAllMoves(playerSelfBoard)
     const otherPlayersPossibleMoves = roomMapItem.board.getAllMoves(otherPlayersBoard)
-    socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves)
-    socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, otherPlayersPossibleMoves)
+
+    socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves, moveFrom, moveTo)
+    socket
+      .to(roomId)
+      .emit('turn', nextTurn, otherPlayersBoard, otherPlayersPossibleMoves, rotatedMoveFrom, rotatedMoveTo)
 
     const play = () => {
       roomMapItem.clearTimer()

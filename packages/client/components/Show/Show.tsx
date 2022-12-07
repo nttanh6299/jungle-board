@@ -1,11 +1,11 @@
-import React from 'react'
+import { PropsWithChildren } from 'react'
 
-interface ShowProps {
+type ShowProps = PropsWithChildren<{
   when: boolean
-}
+}>
 
-const Show: React.FC<ShowProps> = ({ when, children }) => {
-  return when ? <>{children}</> : <></>
+const Show = ({ when, children }: ShowProps) => {
+  return when ? <>{children}</> : <>{false}</>
 }
 
 export default Show
