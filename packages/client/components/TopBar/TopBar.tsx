@@ -1,5 +1,6 @@
 import { signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import Button from 'components/Button'
 import Popover from 'components/Popover'
 import Show from 'components/Show'
@@ -27,6 +28,7 @@ interface TopBarProps {
 
 const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo }: TopBarProps) => {
   const router = useRouter()
+  const { t } = useTranslation('common')
   const { user, isLoading } = useMe()
   const [, dispatch] = useAppState()
   const { room } = useRoomStore((state) => ({
@@ -42,7 +44,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo }: TopBarProps) => {
 
       let errorLabel = ''
       if (!data.roomId) {
-        errorLabel = 'No rooms can join!'
+        errorLabel = t('error.noRoomsCanJoin')
       }
 
       if (errorLabel) {
@@ -63,9 +65,9 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo }: TopBarProps) => {
           <Show when={!isLoading}>
             <div className="ml-3">
               <Show when={!user}>
-                <h5 className="text-base">Guest</h5>
-                <Popover title="Login in here" className="p-4">
-                  <p className="text-lg">Unlock our awesome features now</p>
+                <h5 className="text-base">{t('guest')}</h5>
+                <Popover title={t('loginInHere')} className="p-4">
+                  <p className="text-lg">{t('unlockFeatures')}</p>
                   <div className="mt-3 flex">
                     <Button
                       className="font-medium min-w-[140px] bg-google border-google shadow-google/25"
@@ -122,13 +124,19 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo }: TopBarProps) => {
       <div className="flex flex-col items-end">
         <div className="flex mb-2.5">
           <Show when={!hideRoomInfo}>
-            <div className="cursor-pointer mr-2">
+            <div className="mr-2">
               <Tooltip
                 title={
                   <div>
-                    <div>Max turns: {room?.maxMove}</div>
-                    <div>Cooldown: {room?.cooldown}</div>
-                    <div>Theme: {room?.theme}</div>
+                    <div>
+                      {t('maxTurns')}: {room?.maxMove}
+                    </div>
+                    <div>
+                      {t('cooldown')}: {room?.cooldown}
+                    </div>
+                    <div>
+                      {t('theme')}: {room?.theme}
+                    </div>
                   </div>
                 }
                 position="bottom"
@@ -138,11 +146,11 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo }: TopBarProps) => {
               </Tooltip>
             </div>
           </Show>
-          <Settings label="Settings" />
+          <Settings label={t('settings')} />
         </div>
         <Show when={!hideAutoJoin}>
           <Button uppercase rounded iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
-            Auto Join
+            {t('autoJoin')}
           </Button>
         </Show>
       </div>

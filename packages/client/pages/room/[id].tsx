@@ -1,5 +1,8 @@
 import { useEffect, useLayoutEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { GetStaticProps } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
 import { useRouter } from 'next/router'
 import Room from 'containers/Room'
 import SocketProvider from 'contexts/SocketProvider'
@@ -13,8 +16,10 @@ export const getStaticPaths = () => ({
   fallback: 'blocking',
 })
 
-export const getStaticProps = () => ({
-  props: {},
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: {
+    ...(await serverSideTranslations(locale ?? 'en', ['common'])),
+  },
 })
 
 const RoomPage = () => {
@@ -22,6 +27,7 @@ const RoomPage = () => {
   const { query } = router
   const { data: session } = useSession()
   const [, dispatch] = useAppState()
+  const { t } = useTranslation('common')
 
   const roomId = query?.id ? String(query.id) : ''
   const accountId = session?.id ? String(session.id) : ''
@@ -37,11 +43,11 @@ const RoomPage = () => {
       dispatch({ type: 'displayLoader', payload: { value: true } })
       const { data } = await verifyRoom({ roomId, accountId })
       let errorLabel = ''
-      if (!data) errorLabel = 'Something went wrong!'
+      if (!data) errorLabel = t('error.somethingWrong')
       if (data.reason === UNABLE_PLAY_REASON.roomFull) {
-        errorLabel = 'The room is busy now!'
+        errorLabel = t('error.roomBusy')
       } else if (data.reason === UNABLE_PLAY_REASON.playing) {
-        errorLabel = 'You are already in another room!'
+        errorLabel = t('error.alreadyInAnotherRoom')
       }
 
       if (errorLabel) {
@@ -55,7 +61,7 @@ const RoomPage = () => {
     if (!valid) {
       verify()
     }
-  }, [roomId, accountId, valid, onVerifyRoom, dispatch])
+  }, [roomId, accountId, valid, onVerifyRoom, dispatch, t])
 
   useEffect(() => {
     return () => {

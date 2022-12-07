@@ -1,8 +1,10 @@
 import clsx from 'clsx'
 import { useEffect, useState, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { subscribe, unsubscribe } from 'utils/subscriber'
 
 const Logs = () => {
+  const { t } = useTranslation('common')
   const [logs, setLogs] = useState<Utils.Log[]>([])
   const bottomRef = useRef(null)
 
@@ -34,7 +36,7 @@ const Logs = () => {
         </div>
       </div>
       <div className="absolute -top-[15px] right-[10px] w-[80px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
-        Logs
+        {t('logs')}
       </div>
     </div>
   )

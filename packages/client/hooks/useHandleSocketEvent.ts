@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useGameStore, getState } from 'store/game'
 import useSocket from 'hooks/useSocket'
 import { EDisconnectReason } from 'constants/enum'
@@ -15,6 +16,7 @@ type IHookReturn = void
 type IHook = (args: IHookArgs) => IHookReturn
 
 const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
+  const { t } = useTranslation('common')
   const { socket } = useSocket()
   const {
     playerId,
@@ -94,20 +96,20 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
         const piece = getPieceKind(board[moveTo.row][moveTo.col])
         if (playerIdTurn === playerId) {
           className = 'text-opponent'
-          text = `Opponent just moved ${piece} piece!`
+          text = `${t('opponent')} ${t('justMoved').toLowerCase()} ${t(piece.toLowerCase())}!`
         } else {
           className = 'text-player'
-          text = `You just moved ${piece} piece!`
+          text = `${t('you')} ${t('justMoved').toLowerCase()} ${t(piece.toLowerCase())}!`
         }
       }
       const moveTurn = { text, className }
 
       if (playerIdTurn === playerId) {
         className = 'text-player'
-        text = 'Your turn!'
+        text = t('yourTurn')
       } else {
         className = 'text-opponent'
-        text = `Opponent's turn!`
+        text = t('opponentTurn')
       }
       const turnLog = { text, className }
 
@@ -123,7 +125,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       socket.off('turn')
       socket.off('end')
     }
-  }, [socket, canConnect, onPlayCooldown, onNewTurn, onEndGame])
+  }, [socket, canConnect, onPlayCooldown, onNewTurn, onEndGame, t])
 
   // Disconnect
   useEffect(() => {

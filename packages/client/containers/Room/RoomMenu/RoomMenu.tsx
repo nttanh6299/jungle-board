@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import GameMenu from 'components/BoardMenu'
 import { useGameStore } from 'store/game'
 import Show from 'components/Show'
 
 const RoomMenu: React.FC = () => {
+  const { t } = useTranslation('common')
   const {
     cooldown,
     cooldownMenuVisible,
@@ -43,33 +45,33 @@ const RoomMenu: React.FC = () => {
   const gameStatusLabel = useMemo(() => {
     if (gameStatus === 'tie')
       return {
-        title: 'Tie',
-        subtitle: 'You are going to be amazing',
+        title: t('tie'),
+        subtitle: t('youAreAmazing'),
       }
     if (gameStatus === 'end') {
       return lastTurn === playerId
         ? {
-            title: 'You win',
-            subtitle: 'You played very well',
+            title: t('youWin'),
+            subtitle: t('youPlayWell'),
           }
         : {
-            title: 'You lose',
-            subtitle: 'Better luck next time',
+            title: t('youLose'),
+            subtitle: t('betterLuckNextTime'),
           }
     }
     return {
       title: '',
       subtitle: '',
     }
-  }, [gameStatus, lastTurn, playerId])
+  }, [gameStatus, lastTurn, playerId, t])
 
   return (
     <Show when={cooldownMenuVisible || endVisible || disconnectVisible}>
       <div className="absolute top-0 w-full h-full">
         <GameMenu visible={cooldownMenuVisible}>
-          <h2 className="text-lg mt-10">The match is ready</h2>
+          <h2 className="text-lg mt-10">{t('theMatchReady')}</h2>
           <div className="text-4xl mt-2">{cooldown}</div>
-          <div className="text-base mt-10">Do your best</div>
+          <div className="text-base mt-10">{t('doYourBest')}</div>
         </GameMenu>
         <GameMenu visible={endVisible}>
           <h2 className="text-lg mt-10">{gameStatusLabel.title}</h2>
@@ -80,7 +82,7 @@ const RoomMenu: React.FC = () => {
           </div>
         </GameMenu>
         <GameMenu visible={disconnectVisible}>
-          <h2 className="text-lg mt-10">The opponent has left the room</h2>
+          <h2 className="text-lg mt-10">{t('opponentLeftRoom')}</h2>
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10 invisible">-</div>
           <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onAfterEndGame}>

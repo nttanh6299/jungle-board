@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import useSocket from 'hooks/useSocket'
 import { getPossibleMoves } from 'utils'
 import GameBoard from 'components/Board'
@@ -29,6 +30,7 @@ interface RoomProps {
 const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
   const router = useRouter()
   const [, dispatch] = useAppState()
+  const { t } = useTranslation('common')
 
   useHandleSocketEvent({ roomId, accountId })
 
@@ -101,7 +103,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
 
   const goBack = useCallback(() => {
     if (gameStatus === 'playing') {
-      if (window.confirm('Do you want to go back ?')) {
+      if (window.confirm(t('confirmGoBack'))) {
         // note: error when room has guests
         onDisconnect(true)
         return router.push('/')
@@ -110,7 +112,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
       onDisconnect(true)
       router.push('/')
     }
-  }, [gameStatus, router, onDisconnect])
+  }, [gameStatus, router, onDisconnect, t])
 
   useEffect(() => {
     window.addEventListener('popstate', goBack)
@@ -144,7 +146,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
               <Show when={bothConnected}>
                 <div className="flex flex-col items-end">
                   <Avatar size="md" color="opponent" />
-                  <h5 className="text-sm my-1">Opponent</h5>
+                  <h5 className="text-sm my-1">{t('opponent')}</h5>
                   <div className="mb-2">
                     <AnimalsStatus alive={opponentAnimals} />
                   </div>
@@ -158,13 +160,13 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
                 <PlayerCooldown />
                 <Show when={bothConnected && isHost && cooldown === 0 && gameStatus === 'waiting'}>
                   <Button uppercase rounded variant="secondary" size="sm" onClick={handleStartGame}>
-                    Start
+                    {t('start')}
                   </Button>
                 </Show>
                 <div className="mt-2">
                   <AnimalsStatus alive={playerAnimals} />
                 </div>
-                <h5 className="text-sm my-1">{user?.name || 'Guest'}</h5>
+                <h5 className="text-sm my-1">{user?.name || t('guest')}</h5>
                 <Avatar size="md" />
               </div>
             </div>
@@ -199,7 +201,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
         </div>
       </div>
       <Button iconLeft={<ArrowLeftIcon />} uppercase rounded className="mt-6" onClick={goBack}>
-        Leave
+        {t('leave')}
       </Button>
     </Show>
   )

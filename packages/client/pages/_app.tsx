@@ -2,6 +2,7 @@ import { AppProps } from 'next/app'
 import { NextPage } from 'next'
 import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
+import { appWithTranslation } from 'next-i18next'
 import AppStateProvider from 'contexts/AppStateProvider'
 import Layout from 'components/Layout'
 import 'styles/app.css'
@@ -24,4 +25,4 @@ const App: React.FC<ICustomAppProps> = ({ Component, pageProps: { session, ...pa
   )
 }
 
-export default App
+export default appWithTranslation(App)

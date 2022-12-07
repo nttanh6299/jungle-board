@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useState, useEffect, useRef } from 'react'
 import Input from 'components/Input'
 import useSocket from 'hooks/useSocket'
 import clsx from 'clsx'
+import { useTranslation } from 'react-i18next'
 
 interface Message {
   isOpponentMessage: boolean
@@ -12,6 +13,7 @@ const threshold = 50
 let lastTimeSend = Date.now()
 
 const Chat = () => {
+  const { t } = useTranslation('common')
   const { socket } = useSocket()
   const [messages, setMessages] = useState<Message[]>([])
   const [text, setText] = useState('')
@@ -65,7 +67,7 @@ const Chat = () => {
                   'text-player': !isOpponentMessage,
                 })}
               >
-                {isOpponentMessage ? 'Opponent' : 'You'}:&nbsp;
+                {isOpponentMessage ? t('opponent') : t('you')}:&nbsp;
               </span>
               <span className="font-light inline-block break-all">{message}</span>
             </div>
@@ -76,14 +78,14 @@ const Chat = () => {
       <div className="flex absolute bottom-0 w-full shadow-[inner_0_0_2px] shadow-cardShadow/25 rounded-b-lg overflow-hidden">
         <Input
           className="py-1.5 !px-2 !text-xs font-light border-0"
-          placeholder="Say something to your opponent"
+          placeholder={t('saySomethingToOpponent')}
           value={text}
           onChange={onInputChange}
           onKeyDown={onKeyDown}
         />
       </div>
       <div className="absolute -top-[15px] right-[10px] w-[80px] font-medium text-sm bg-primary text-white text-center py-1 rounded">
-        Chat
+        {t('chat')}
       </div>
     </div>
   )
