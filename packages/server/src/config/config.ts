@@ -5,8 +5,10 @@ const envVarsSchema = Joi.object()
   .keys({
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     PORT: Joi.number().default(3001),
+    SOCKET_PORT: Joi.number().default(65080),
     MONGODB_URI: Joi.string().required(),
     JWT_SECRET: Joi.string().required(),
+    ALLOWLIST_HOSTS: Joi.string().required(),
   })
   .unknown()
 
@@ -19,10 +21,12 @@ if (error) {
 export default {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
+  socketPort: envVars.SOCKET_PORT,
   mongoose: {
     url: envVars.MONGODB_URI,
   },
   jwt: {
     secret: envVars.JWT_SECRET,
   },
+  cors: envVars.ALLOWLIST_HOSTS.split(','),
 }

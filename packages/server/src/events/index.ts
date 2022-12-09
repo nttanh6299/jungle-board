@@ -6,9 +6,13 @@ import move from './move.event'
 import chat from './chat.event'
 import disconnect from './disconnect.event'
 import { ServerToClientEvents, ClientToServerEvents, InterServerEvents, SocketData } from '../types/socket'
+import config from '../config/config'
 
 const initSocketServer = (httpServer: http.Server) => {
-  const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer)
+  const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
+    transports: ['websocket'],
+    cors: config.env === 'development' ? ['http://localhost:3000'] : config.cors,
+  })
   io.on('connection', (socket) => {
     console.log('Socket connected: ', socket.id)
 

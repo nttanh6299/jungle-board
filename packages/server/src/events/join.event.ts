@@ -3,13 +3,15 @@ import { EUserType } from '../models/participant.model'
 import { generateId } from '../utils'
 import roomMap from '../db'
 
+const PLAYER_ID_PREFIX = 'p-'
+
 const join = eventHandler((io, socket) => {
   socket.on('join', async (roomId, accountId) => {
     const roomMapItem = roomMap.get(roomId)!
 
     if (!roomMapItem) return
 
-    const playerId = accountId || `p-${generateId()}`
+    const playerId = accountId || PLAYER_ID_PREFIX + generateId()
     const playerType = accountId ? EUserType.IDENTIFIED : EUserType.ANONYMOUS
 
     if (!roomMapItem.players.get(playerId)) {
@@ -34,11 +36,17 @@ const join = eventHandler((io, socket) => {
   })
 
   socket.on('reconnect', async (roomId, playerId) => {
-    const roomMapItem = roomMap.get(roomId)!
+    const roomMapItem = roomMap.get(roomId)
 
     if (!roomMapItem) return
 
-    const playerType = roomMapItem.players.get(playerId)?.playerType
+    let playerType
+    if (roomMapItem.players.get(playerId)) {
+      playerType = roomMapItem.players.get(playerId)?.playerType
+    } else {
+      playerType = playerId.substring(0, 2) !== PLAYER_ID_PREFIX ? EUserType.IDENTIFIED : EUserType.ANONYMOUS
+      roomMapItem.addPlayer(playerId, playerType)
+    }
 
     socket.join(roomMapItem.id)
     socket.data = {

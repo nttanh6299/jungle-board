@@ -53,8 +53,11 @@ const connectApp = async () => {
 }
 
 const startServer = () => {
-  server.listen(config.port, () => {
+  app.listen(config.port, () => {
     console.log(`App started on port ${config.port}`)
+  })
+  server.listen(config.socketPort, () => {
+    console.log(`Socket started on port ${config.socketPort}`)
   })
 }
 
@@ -71,7 +74,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(compression())
 
 // enable cors
-app.use(cors())
+app.use(cors({ origin: config.env === 'development' ? ['http://localhost:3000'] : config.cors, credentials: true }))
 
 // route
 app.use('/', routes)
