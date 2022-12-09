@@ -53,11 +53,8 @@ const connectApp = async () => {
 }
 
 const startServer = () => {
-  app.listen(config.port, () => {
-    console.log(`App started on port ${config.port}`)
-  })
-  server.listen(config.socketPort, () => {
-    console.log(`Socket started on port ${config.socketPort}`)
+  server.listen(config.port, () => {
+    console.log(`Socket started on port ${config.port}`)
   })
 }
 
