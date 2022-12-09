@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext } from 'react'
-import { SOCKET_ENDPOINT } from 'constants/common'
+import { API_ENDPOINT } from 'constants/common'
 import socketIOClient, { Socket } from 'socket.io-client'
 import { AllPossibleMoves, Board, BoardDelta } from 'jungle-board-service'
 
@@ -39,7 +39,7 @@ const SocketProvider: React.FC = ({ children }) => {
   const [socket, setSocket] = useState<SocketType>()
 
   useEffect(() => {
-    const socket = socketIOClient(SOCKET_ENDPOINT, { transports: ['websocket'], reconnection: false })
+    const socket = socketIOClient(API_ENDPOINT, { transports: ['websocket'], reconnection: false })
     setSocket(socket)
 
     return () => {

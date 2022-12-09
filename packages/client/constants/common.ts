@@ -1,7 +1,6 @@
 import { ERoomStatus } from './enum'
 
 export const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || ''
-export const SOCKET_ENDPOINT = process.env.NEXT_PUBLIC_SOCKET_ENDPOINT || ''
 
 export const ROOM_STATUS = {
   waiting: {
