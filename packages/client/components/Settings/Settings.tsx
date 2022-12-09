@@ -55,8 +55,8 @@ const Settings = ({ label }: SettingsProps) => {
           onClick={toggleMenuSettings}
         />
         <div className="absolute right-0 top-0 bottom-0 z-30">
-          <div className="pointer-events-none overflow-hidden rounded-2xl flex max-w-full h-full">
-            <div className="pointer-events-auto relative w-[300px] max-w-md bg-white">
+          <div className="pointer-events-none flex max-w-full h-full">
+            <div className="pointer-events-auto relative w-[300px] max-w-md bg-white rounded-2xl overflow-hidden">
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between px-4 py-3 bg-primary">
                   <div className="text-lg font-medium text-white">{label}</div>
