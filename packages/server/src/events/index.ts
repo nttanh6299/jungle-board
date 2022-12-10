@@ -12,6 +12,8 @@ const initSocketServer = (httpServer: http.Server) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData>(httpServer, {
     transports: ['websocket'],
     cors: config.env === 'development' ? ['http://localhost:3000'] : config.cors,
+    maxHttpBufferSize: 1e8,
+    pingTimeout: 90000,
   })
   io.on('connection', (socket) => {
     console.log('Socket connected: ', socket.id)
