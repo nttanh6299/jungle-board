@@ -87,10 +87,14 @@ const disconnect = eventHandler((_, socket) => {
           if (room) {
             room.status = ERoomStatus.WAITING
             await room.save()
-
             roomMapItem.reset()
           }
         }
+      }
+
+      if (roomMapItem.players.size === 0 && roomMapItem.type === 'custom') {
+        roomMap.delete(roomId)
+        await Room.findByIdAndDelete(roomId)
       }
     }
   })
