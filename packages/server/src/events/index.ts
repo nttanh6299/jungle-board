@@ -13,6 +13,7 @@ const initSocketServer = (httpServer: http.Server) => {
     transports: ['websocket'],
     cors: config.env === 'development' ? ['http://localhost:3000'] : config.cors,
     maxHttpBufferSize: 1e8,
+    pingInterval: 5000,
     pingTimeout: 90000,
   })
   io.on('connection', (socket) => {
