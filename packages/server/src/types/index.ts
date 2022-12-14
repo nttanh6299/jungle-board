@@ -9,8 +9,11 @@ export interface ResCreateRoom {
 export interface ResGetRoom {
   id: string
   name: string
-  quantity: number
-  max: number
   status: string
   type: string
+  cooldown: number
+  maxMove: number
+  max: number
+  quantity: number
+  theme: string
 }

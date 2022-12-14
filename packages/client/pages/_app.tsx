@@ -2,9 +2,10 @@ import { AppProps } from 'next/app'
 import { NextPage } from 'next'
 import { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
+import { appWithTranslation } from 'next-i18next'
 import AppStateProvider from 'contexts/AppStateProvider'
 import Layout from 'components/Layout'
-import 'styles/_app.css'
+import 'styles/app.css'
 
 type ICustomAppProps = AppProps<{
   session: Session
@@ -14,7 +15,7 @@ type ICustomAppProps = AppProps<{
 
 const App: React.FC<ICustomAppProps> = ({ Component, pageProps: { session, ...pageProps } }) => {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={5 * 60} refetchOnWindowFocus={false}>
       <AppStateProvider>
         <Layout>
           <Component {...pageProps} />
@@ -24,4 +25,4 @@ const App: React.FC<ICustomAppProps> = ({ Component, pageProps: { session, ...pa
   )
 }
 
-export default App
+export default appWithTranslation(App)

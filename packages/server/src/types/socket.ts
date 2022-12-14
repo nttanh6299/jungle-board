@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import { AllPossibleMoves, Board, BoardDelta } from 'jungle-board-service'
+import { NullableType } from 'joi'
 
 export interface ServerToClientEvents {
   checkRoom: (board: Board, bothConnected: boolean) => void
@@ -7,10 +8,17 @@ export interface ServerToClientEvents {
   play: () => void
   playerDisconnect: (isPlayerDisconnected: boolean) => void
   playerJoin: (playerId: string, isHost: boolean) => void
-  turn: (playerTurn: string, board: Board, allMoves: AllPossibleMoves) => void
+  turn: (
+    playerTurn: string,
+    board: Board,
+    allMoves: AllPossibleMoves,
+    moveFrom?: NullableType<BoardDelta>,
+    moveTo?: NullableType<BoardDelta>,
+  ) => void
   playCooldown: (cooldown: number) => void
   end: (playerTurn: string, status: string) => void
   reconnectSuccess: () => void
+  message: (message: string) => void
 }
 
 export interface InterServerEvents {
@@ -23,6 +31,7 @@ export interface ClientToServerEvents {
   disconnect: () => void
   start: () => void
   reconnect: (roomId: string, playerId: string) => void
+  message: (message: string) => void
 }
 
 export interface SocketData {

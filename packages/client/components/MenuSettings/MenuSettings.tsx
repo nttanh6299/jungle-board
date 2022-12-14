@@ -2,7 +2,6 @@ import React from 'react'
 import clsx from 'clsx'
 import useTabs from 'hooks/useTabs'
 import Show from 'components/Show'
-import { useSettingsStore } from 'store/settings'
 import AudioTab from './AudioTab'
 import GameTab from './GameTab'
 import VideoTab from './VideoTab'
@@ -35,20 +34,12 @@ const tabs = [
 ]
 
 const MenuSettings: React.FC = () => {
-  const { onToggleMenu } = useSettingsStore((state) => ({
-    onToggleMenu: state.actions.onToggleMenu,
-  }))
   const { selected, onChange } = useTabs(Tab.GAME)
 
   return (
-    <div className="p-4 fixed top-0 left-0 right-0 bottom-0 bg-black/[.75] text-white uppercase z-[1]">
+    <div className="p-4 absolute top-0 left-0 right-0 bottom-0 bg-black/[.75] text-white uppercase z-[1]">
       <h2 className="text-3xl font-semibold">Settings</h2>
-      <div
-        onClick={onToggleMenu}
-        className="absolute top-[10px] right-[10px] py-2 px-3 cursor-pointer border border-white"
-      >
-        x
-      </div>
+      <div className="absolute top-[10px] right-[10px] py-2 px-3 cursor-pointer border border-white">x</div>
       <ul className="flex mt-4 list-none">
         {tabs.map((tab) => (
           <li

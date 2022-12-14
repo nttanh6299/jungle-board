@@ -4,6 +4,8 @@ export interface ReqCreateRoom {
   name: string
   maxMove: number
   cooldown: number
+  isPrivate: boolean
+  theme: string
 }
 
 export interface ResGetRoom {
@@ -15,6 +17,7 @@ export interface ResGetRoom {
   type: string
   maxMove: number
   cooldown: number
+  theme: string
 }
 
 export interface ReqVerifyRoom {
@@ -24,7 +27,12 @@ export interface ReqVerifyRoom {
 
 export interface ResVerifyRoom {
   status: boolean
+  info: ResGetRoom
   reason?: string
+}
+
+export interface ResAutoJoinRoom {
+  roomId: string
 }
 
 export const getRoom = async (roomId: string) => {
@@ -41,4 +49,8 @@ export const createRoom = async (params: ReqCreateRoom) => {
 
 export const verifyRoom = async (params: ReqVerifyRoom) => {
   return fetchApi<ResVerifyRoom>('/rooms/verify', 'POST', params)
+}
+
+export const autoJoinRoom = async () => {
+  return fetchApi<ResAutoJoinRoom>('/rooms/auto-join')
 }

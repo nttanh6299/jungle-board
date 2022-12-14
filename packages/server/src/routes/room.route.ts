@@ -5,8 +5,10 @@ import roomController from '../controllers/room.controller'
 
 const roomRoute = express.Router()
 roomRoute.get('/', roomController.getRooms)
-roomRoute.get('/:roomId', validate(roomValidation.getRoom), roomController.getRoom)
 roomRoute.post('/', roomController.createRoom)
 roomRoute.post('/verify', validate(roomValidation.verifyRoom), roomController.verifyRoom)
+roomRoute.get('/auto-join', roomController.autoJoin)
+
+roomRoute.get('/:roomId', validate(roomValidation.getRoom), roomController.getRoom)
 
 export default roomRoute

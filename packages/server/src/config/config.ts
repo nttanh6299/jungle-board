@@ -7,6 +7,7 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(3001),
     MONGODB_URI: Joi.string().required(),
     JWT_SECRET: Joi.string().required(),
+    ALLOWLIST_HOSTS: Joi.string().required(),
   })
   .unknown()
 
@@ -25,4 +26,5 @@ export default {
   jwt: {
     secret: envVars.JWT_SECRET,
   },
+  cors: envVars.ALLOWLIST_HOSTS.split(','),
 }

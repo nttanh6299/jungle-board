@@ -20,7 +20,14 @@ const actionNames = [
 ] as const
 export type ActionNames = typeof actionNames[number]
 
-const booleans = ['canConnect', 'bothConnected', 'isHost', 'cooldownMenuVisible', 'endVisible'] as const
+const booleans = [
+  'canConnect',
+  'bothConnected',
+  'isHost',
+  'cooldownMenuVisible',
+  'endVisible',
+  'disconnectVisible',
+] as const
 type Booleans = typeof booleans[number]
 
 type BaseState = {
@@ -60,7 +67,13 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
     },
     onAfterEndGame: () => {
       const { initialBoard } = get()
-      set({ endVisible: false, board: initialBoard.current, gameStatus: ERoomStatus.WAITING, lastTurn: '' })
+      set({
+        endVisible: false,
+        disconnectVisible: false,
+        board: initialBoard.current,
+        gameStatus: ERoomStatus.WAITING,
+        lastTurn: '',
+      })
     },
     onConnect: () => {
       set({ canConnect: true })
@@ -98,12 +111,14 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
       set({ playerTurn: playerIdTurn, possibleMoves: allMoves, selectedSquare: [], board })
     },
     onDisconnect: (force?: boolean) => {
-      const { initialBoard, canConnect } = get()
+      const { initialBoard, canConnect, gameStatus } = get()
+      // force: used to calculate player that leave the room
       set({
         bothConnected: false,
         cooldown: 0,
         cooldownMenuVisible: false,
         isHost: true,
+        disconnectVisible: force ? false : gameStatus === ERoomStatus.PLAYING ? true : false,
         board: initialBoard.current,
         selectedSquare: [],
         playerTurn: '',
@@ -121,6 +136,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
     isHost: false,
     cooldownMenuVisible: false,
     endVisible: false,
+    disconnectVisible: false,
     playerId: '',
     playerTurn: '',
     lastTurn: '',

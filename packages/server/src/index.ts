@@ -39,7 +39,10 @@ const connectApp = async () => {
 
     const rooms = await Room.find({ isActive: true })
     rooms.forEach((room) => {
-      roomMap.set(room.id, new RoomResolver(room.id, room.maxMove, room.cooldown, room.status, room.type))
+      roomMap.set(
+        room.id,
+        new RoomResolver(room.id, room.maxMove, room.cooldown, room.isPrivate, room.status, room.type),
+      )
     })
 
     startServer()
@@ -51,7 +54,7 @@ const connectApp = async () => {
 
 const startServer = () => {
   server.listen(config.port, () => {
-    console.log(`App started on port ${config.port}`)
+    console.log(`Server started on port ${config.port}`)
   })
 }
 
@@ -68,7 +71,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(compression())
 
 // enable cors
-app.use(cors())
+app.use(cors({ origin: config.env === 'development' ? ['http://localhost:3000'] : config.cors, credentials: true }))
 
 // route
 app.use('/', routes)
