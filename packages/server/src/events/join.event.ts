@@ -7,7 +7,7 @@ const PLAYER_ID_PREFIX = 'p-'
 
 const join = eventHandler((io, socket) => {
   socket.on('join', async (roomId, accountId) => {
-    const roomMapItem = roomMap.get(roomId)!
+    const roomMapItem = roomMap.get(roomId)
 
     if (!roomMapItem) return
 

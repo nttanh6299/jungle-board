@@ -51,5 +51,6 @@
   "dog": "Chó",
   "cat": "Mèo",
   "rat": "Chuột",
-  "cannotChangeLanguageWhilePlaying": "Bạn không thể đổi ngôn ngữ trong lúc chơi"
+  "cannotChangeLanguageWhilePlaying": "Bạn không thể đổi ngôn ngữ trong lúc chơi",
+  "reconnecting": "Đang kết nối lại"
 }

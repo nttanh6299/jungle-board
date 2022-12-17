@@ -17,6 +17,7 @@ const actionNames = [
   'onPlayCooldown',
   'onNewTurn',
   'onDisconnect',
+  'onReconnect',
 ] as const
 export type ActionNames = typeof actionNames[number]
 
@@ -27,6 +28,7 @@ const booleans = [
   'cooldownMenuVisible',
   'endVisible',
   'disconnectVisible',
+  'reconnectVisible',
 ] as const
 type Booleans = typeof booleans[number]
 
@@ -127,6 +129,9 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
         canConnect: force ? false : canConnect,
       })
     },
+    onReconnect: (isVisible: boolean) => {
+      set({ reconnectVisible: isVisible })
+    },
   }
 
   return {
@@ -137,6 +142,7 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
     cooldownMenuVisible: false,
     endVisible: false,
     disconnectVisible: false,
+    reconnectVisible: false,
     playerId: '',
     playerTurn: '',
     lastTurn: '',

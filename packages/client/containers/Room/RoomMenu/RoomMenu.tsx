@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import GameMenu from 'components/BoardMenu'
 import { useGameStore } from 'store/game'
 import Show from 'components/Show'
+import Heartbeat from 'components/Heartbeat'
 
 const RoomMenu: React.FC = () => {
   const { t } = useTranslation('common')
@@ -11,6 +12,7 @@ const RoomMenu: React.FC = () => {
     cooldownMenuVisible,
     endVisible,
     disconnectVisible,
+    reconnectVisible,
     gameStatus,
     lastTurn,
     playerId,
@@ -19,6 +21,7 @@ const RoomMenu: React.FC = () => {
     cooldownMenuVisible: state.cooldownMenuVisible,
     endVisible: state.endVisible,
     disconnectVisible: state.disconnectVisible,
+    reconnectVisible: state.reconnectVisible,
     cooldown: state.cooldown,
     gameStatus: state.gameStatus,
     lastTurn: state.lastTurn,
@@ -65,8 +68,10 @@ const RoomMenu: React.FC = () => {
     }
   }, [gameStatus, lastTurn, playerId, t])
 
+  const canShow = cooldownMenuVisible || endVisible || disconnectVisible || reconnectVisible
+
   return (
-    <Show when={cooldownMenuVisible || endVisible || disconnectVisible}>
+    <Show when={canShow}>
       <div className="absolute top-0 w-full h-full">
         <GameMenu visible={cooldownMenuVisible}>
           <h2 className="text-lg mt-10">{t('theMatchReady')}</h2>
@@ -87,6 +92,13 @@ const RoomMenu: React.FC = () => {
           <div className="text-base mt-10 invisible">-</div>
           <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onAfterEndGame}>
             OK
+          </div>
+        </GameMenu>
+        <GameMenu visible={reconnectVisible}>
+          <h2 className="text-lg mt-10">{t('reconnecting')}...</h2>
+          <div className="text-4xl mt-2 invisible">-</div>
+          <div className="text-base mt-10 relative">
+            <Heartbeat />
           </div>
         </GameMenu>
       </div>
