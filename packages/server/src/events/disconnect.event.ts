@@ -21,6 +21,8 @@ const tryReconnect = ({ io, roomId, leftPlayerId }: TryReconnect) => {
   let reconnectAttempt = 0
 
   const intervalId = setInterval(async () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const sockets = await io.in(roomId).fetchSockets<SocketData>()
     const players = sockets.filter((socket) => !roomMapItem.players.get(socket.data.playerId)?.isSpectator)
 
