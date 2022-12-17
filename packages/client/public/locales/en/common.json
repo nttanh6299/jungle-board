@@ -51,5 +51,6 @@
   "dog": "Dog",
   "cat": "Cat",
   "rat": "Rat",
-  "cannotChangeLanguageWhilePlaying": "You cannot change language while playing"
+  "cannotChangeLanguageWhilePlaying": "You cannot change language while playing",
+  "reconnecting": "Reconnecting"
 }

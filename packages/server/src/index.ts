@@ -34,7 +34,7 @@ const connectApp = async () => {
     await mongoose.connect(config.mongoose.url)
 
     if (config.env === 'development') {
-      await Promise.all([Match.deleteMany({}), Participant.deleteMany({})])
+      await Promise.all([Match.deleteMany({}), Participant.deleteMany({}), Room.updateMany({ status: 'waiting' })])
     }
 
     const rooms = await Room.find({ isActive: true })

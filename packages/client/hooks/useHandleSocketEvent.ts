@@ -29,6 +29,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     onEndGame,
     onStartGame,
     onDisconnect,
+    onReconnect,
   } = useGameStore((state) => ({
     playerId: state.playerId,
     canConnect: state.canConnect,
@@ -40,6 +41,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     onEndGame: state.actions.onEndGame,
     onStartGame: state.actions.onStartGame,
     onDisconnect: state.actions.onDisconnect,
+    onReconnect: state.actions.onReconnect,
   }))
 
   // Connect to server
@@ -149,16 +151,19 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
 
     socket.on('disconnect', (reason) => {
       console.log('client disconnect', reason)
-      if (reason === EDisconnectReason.TRANSPORT_ERROR || reason === EDisconnectReason.PING_TIMEOUT) {
+      if (
+        reason === EDisconnectReason.TRANSPORT_CLOSE ||
+        reason === EDisconnectReason.TRANSPORT_ERROR ||
+        reason === EDisconnectReason.PING_TIMEOUT
+      ) {
         console.log(playerId + ' try to reconnect')
+        onReconnect(true)
         socket.connect().emit('reconnect', roomId, playerId)
-      } else {
-        alert('You are disconnected!')
-        window.location.href = '/'
       }
     })
 
     socket.on('reconnectSuccess', () => {
+      onReconnect(false)
       console.log('Reconnect successfully!')
     })
 
@@ -166,7 +171,19 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       socket.off('disconnect')
       socket.off('reconnectSuccess')
     }
-  }, [socket, canConnect, roomId, playerId])
+  }, [socket, canConnect, roomId, playerId, onReconnect])
+
+  useEffect(() => {
+    const offline = () => {
+      alert('You are disconnected!')
+      window.location.href = '/'
+    }
+
+    window.addEventListener('offline', offline)
+    return () => {
+      window.removeEventListener('offline', offline)
+    }
+  }, [])
 }
 
 export default useHandleEventSocket
