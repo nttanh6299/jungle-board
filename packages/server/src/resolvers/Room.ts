@@ -47,8 +47,8 @@ class Room {
   }
 
   getNextTurn(): string {
-    const currentTurnIndex = this.playerIdsCanPlay.findIndex((id) => id === this.playerTurn)
-    this.playerTurn = this.playerIdsCanPlay[(currentTurnIndex + 1) % 2]
+    const nextPlayerTurn = this.playerIdsCanPlay.filter((id) => id !== this.playerTurn)?.[0]
+    this.playerTurn = nextPlayerTurn || ''
     return this.playerTurn
   }
 
