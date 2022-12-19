@@ -159,6 +159,16 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
         console.log(playerId + ' try to reconnect')
         onReconnect(true)
         socket.connect().emit('reconnect', roomId, playerId)
+
+        // if reconnection doesn't happen in 10s, the player will be left the room
+        setTimeout(() => {
+          const { reconnectVisible } = getState()
+          if (reconnectVisible) {
+            console.log(playerId + ' reconnect failed')
+            alert('You are disconnected!')
+            window.location.href = '/'
+          }
+        }, 10000)
       }
     })
 
