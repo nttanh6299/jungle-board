@@ -42,12 +42,25 @@ const join = eventHandler((io, socket) => {
   socket.on('reconnect', async (roomId, playerId) => {
     const roomMapItem = roomMap.get(roomId)
 
+    // --------------------------
+    // ---------- TEST ----------
+    // --------------------------
+    console.log('Reconnect:', roomId, playerId)
+
     if (!roomMapItem) return
 
     let playerType
     if (roomMapItem.players.get(playerId)) {
+      // --------------------------
+      // ---------- TEST ----------
+      // --------------------------
+      console.log('Player exist')
       playerType = roomMapItem.players.get(playerId)?.playerType
     } else {
+      // --------------------------
+      // ---------- TEST ----------
+      // --------------------------
+      console.log('Player does not exist')
       playerType = playerId.substring(0, 2) !== PLAYER_ID_PREFIX ? EUserType.IDENTIFIED : EUserType.ANONYMOUS
       roomMapItem.addPlayer(playerId, playerType)
     }
@@ -61,11 +74,29 @@ const join = eventHandler((io, socket) => {
     }
 
     const shouldRotateBoard = playerId !== roomMapItem.getHost()
+
+    // --------------------------
+    // ---------- TEST ----------
+    // --------------------------
+    console.log('Host:', roomMapItem.getHost())
+    console.log('Should rotate:', shouldRotateBoard)
+
     const currentTurn = roomMapItem.getCurrentTurn()
+
+    // --------------------------
+    // ---------- TEST ----------
+    // --------------------------
+    console.log('Current turn:', currentTurn)
+
     const currentBoard = roomMapItem.board.state.board
     const rotatedBoard = roomMapItem.board.getRotatedBoard()
     const playerSelfBoard = shouldRotateBoard ? rotatedBoard : currentBoard
     const playerSelfPossibleMoves = roomMapItem.board.getAllMoves(playerSelfBoard)
+
+    // --------------------------
+    // ---------- TEST ----------
+    // --------------------------
+    console.log('Player board after reconnecting:', playerSelfBoard)
 
     socket.emit('reconnectSuccess', currentTurn, playerSelfBoard, playerSelfPossibleMoves)
     console.log(`${roomId} ${playerId}: reconnect`)
