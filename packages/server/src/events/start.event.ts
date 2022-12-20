@@ -146,6 +146,12 @@ const start = eventHandler((io, socket) => {
           roomMapItem.clearTimer()
           roomMapItem.start(match.id)
 
+          // --------------------------
+          // ---------- TEST ----------
+          // --------------------------
+          console.log('Room:', roomMapItem.id)
+          console.log('Host:', roomMapItem.getHost())
+
           io.in(roomId).emit(
             'turn',
             roomMapItem.getNextTurn(),
