@@ -172,7 +172,8 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       }
     })
 
-    socket.on('reconnectSuccess', () => {
+    socket.on('reconnectSuccess', (playerIdTurn, board, allMoves) => {
+      onNewTurn(playerIdTurn, board, allMoves)
       onReconnect(false)
       console.log('Reconnect successfully!')
     })
@@ -181,7 +182,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       socket.off('disconnect')
       socket.off('reconnectSuccess')
     }
-  }, [socket, canConnect, roomId, playerId, onReconnect])
+  }, [socket, canConnect, roomId, playerId, onReconnect, onNewTurn])
 
   useEffect(() => {
     const offline = () => {

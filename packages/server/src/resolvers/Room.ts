@@ -1,6 +1,6 @@
 import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS } from '../constants/common'
 import Player from './Player'
-import { Game } from 'jungle-board-service'
+import { BoardDelta, Game } from 'jungle-board-service'
 
 class Room {
   id: string
@@ -11,6 +11,7 @@ class Room {
   type: string
   board: Game
   playerTurn = ''
+  lastPlayerTurn = ''
   playerIdsCanPlay: string[] = []
   cooldownTimer: NodeJS.Timer | null
 
@@ -50,6 +51,15 @@ class Room {
     const nextPlayerTurn = this.playerIdsCanPlay.filter((id) => id !== this.playerTurn)?.[0]
     this.playerTurn = nextPlayerTurn || ''
     return this.playerTurn
+  }
+
+  getCurrentTurn(): string {
+    return this.playerTurn
+  }
+
+  move(moveFrom: BoardDelta, moveTo: BoardDelta, shouldRotateBoard: boolean): void {
+    this.board.move(moveFrom, moveTo, shouldRotateBoard)
+    this.lastPlayerTurn = this.playerTurn
   }
 
   getFirstPlayer(): string {
