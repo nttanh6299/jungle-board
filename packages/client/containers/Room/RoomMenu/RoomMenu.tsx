@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import GameMenu from 'components/BoardMenu'
 import { useGameStore } from 'store/game'
@@ -7,6 +7,7 @@ import Heartbeat from 'components/Heartbeat'
 
 const RoomMenu: React.FC = () => {
   const { t } = useTranslation('common')
+  const [showOkButton, setShowOkButton] = useState(false)
   const {
     cooldown,
     cooldownMenuVisible,
@@ -35,7 +36,8 @@ const RoomMenu: React.FC = () => {
     if (endVisible || disconnectVisible) {
       timeout = setTimeout(() => {
         onAfterEndGame()
-      }, 10000)
+        setShowOkButton(false)
+      }, 12000)
     }
 
     return () => {
@@ -44,6 +46,19 @@ const RoomMenu: React.FC = () => {
       }
     }
   }, [endVisible, disconnectVisible, onAfterEndGame])
+
+  useEffect(() => {
+    if (endVisible || disconnectVisible) {
+      setTimeout(() => {
+        setShowOkButton(true)
+      }, 3000)
+    }
+  }, [endVisible, disconnectVisible])
+
+  const onOk = () => {
+    onAfterEndGame()
+    setShowOkButton(false)
+  }
 
   const gameStatusLabel = useMemo(() => {
     if (gameStatus === 'tie')
@@ -82,17 +97,21 @@ const RoomMenu: React.FC = () => {
           <h2 className="text-lg mt-10">{gameStatusLabel.title}</h2>
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10">{gameStatusLabel.subtitle}</div>
-          <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onAfterEndGame}>
-            OK
-          </div>
+          {showOkButton && (
+            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onOk}>
+              OK
+            </div>
+          )}
         </GameMenu>
         <GameMenu visible={disconnectVisible}>
           <h2 className="text-lg mt-10">{t('opponentLeftRoom')}</h2>
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10 invisible">-</div>
-          <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onAfterEndGame}>
-            OK
-          </div>
+          {showOkButton && (
+            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onOk}>
+              OK
+            </div>
+          )}
         </GameMenu>
         <GameMenu visible={reconnectVisible}>
           <h2 className="text-lg mt-10">{t('reconnecting')}...</h2>

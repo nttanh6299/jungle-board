@@ -31,7 +31,7 @@ const tryReconnect = ({ io, roomId, leftPlayerId }: TryReconnect) => {
       return
     }
 
-    if (reconnectAttempt === 5) {
+    if (reconnectAttempt === 7) {
       clearInterval(intervalId)
 
       const leftPlayer = roomMapItem.players.get(leftPlayerId)

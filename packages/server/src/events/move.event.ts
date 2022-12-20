@@ -14,7 +14,7 @@ const move = eventHandler((io, socket) => {
     if (!roomMapItem) return
 
     const shouldRotateBoard = playerId !== roomMapItem.getHost()
-    roomMapItem.board.move(moveFrom, moveTo, shouldRotateBoard)
+    roomMapItem.move(moveFrom, moveTo, shouldRotateBoard)
 
     const rotatedMoveFrom: BoardDelta = { row: ROWS - moveFrom.row - 1, col: COLS - moveFrom.col - 1 }
     const rotatedMoveTo: BoardDelta = { row: ROWS - moveTo.row - 1, col: COLS - moveTo.col - 1 }
@@ -135,7 +135,7 @@ const move = eventHandler((io, socket) => {
       const match = await Match.findById(roomMapItem.matchId)
       if (match) {
         if (isEnd) {
-          match.winnerId = playerId
+          match.winnerId = roomMapItem.lastPlayerTurn
         } else {
           match.isTie = true
         }

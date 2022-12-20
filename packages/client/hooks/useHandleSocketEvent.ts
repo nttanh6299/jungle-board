@@ -159,10 +159,21 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
         console.log(playerId + ' try to reconnect')
         onReconnect(true)
         socket.connect().emit('reconnect', roomId, playerId)
+
+        // if reconnection doesn't happen in 10s, the player will be left the room
+        setTimeout(() => {
+          const { reconnectVisible } = getState()
+          if (reconnectVisible) {
+            console.log(playerId + ' reconnect failed')
+            alert('You are disconnected!')
+            window.location.href = '/'
+          }
+        }, 10000)
       }
     })
 
-    socket.on('reconnectSuccess', () => {
+    socket.on('reconnectSuccess', (playerIdTurn, board, allMoves) => {
+      onNewTurn(playerIdTurn, board, allMoves)
       onReconnect(false)
       console.log('Reconnect successfully!')
     })
@@ -171,7 +182,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       socket.off('disconnect')
       socket.off('reconnectSuccess')
     }
-  }, [socket, canConnect, roomId, playerId, onReconnect])
+  }, [socket, canConnect, roomId, playerId, onReconnect, onNewTurn])
 
   useEffect(() => {
     const offline = () => {
