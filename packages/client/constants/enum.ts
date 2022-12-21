@@ -18,3 +18,8 @@ export enum Map {
   GRASSLAND = 'grassland',
   TUNDRA = 'tundra',
 }
+
+export enum NotifyEvent {
+  AddLog = 'AddLog',
+  ClearLog = 'ClearLog',
+}

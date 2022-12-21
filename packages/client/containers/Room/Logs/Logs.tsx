@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { NotifyEvent } from 'constants/enum'
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { subscribe, unsubscribe } from 'utils/subscriber'
@@ -12,14 +13,21 @@ const Logs = () => {
     setLogs((prev) => [...prev, ...logs])
   }, [])
 
+  const clearLog = useCallback(() => {
+    setLogs([])
+  }, [])
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView()
   }, [logs])
 
   useEffect(() => {
-    subscribe('addLog', addLog)
+    subscribe(NotifyEvent.AddLog, addLog)
+    subscribe(NotifyEvent.ClearLog, clearLog)
+
     return () => {
-      unsubscribe('addLog', addLog)
+      unsubscribe(NotifyEvent.AddLog, addLog)
+      unsubscribe(NotifyEvent.ClearLog, clearLog)
     }
   })
 
