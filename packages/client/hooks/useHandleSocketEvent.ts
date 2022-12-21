@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameStore, getState } from 'store/game'
 import useSocket from 'hooks/useSocket'
-import { EDisconnectReason } from 'constants/enum'
+import { EDisconnectReason, NotifyEvent } from 'constants/enum'
 import { notify } from 'utils/subscriber'
 import { getPieceKind } from 'jungle-board-service'
 
@@ -115,7 +115,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       }
       const turnLog = { text, className }
 
-      notify<Utils.Log[]>('addLog', [moveTurn, turnLog])
+      notify<Utils.Log[]>(NotifyEvent.AddLog, [moveTurn, turnLog])
     })
 
     socket.on('end', (lastTurn, status) => {
@@ -136,7 +136,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('playerDisconnect', (isPlayerDisconnected) => {
       if (isPlayerDisconnected) {
         onDisconnect()
-        notify<Utils.Log[]>('addLog', [{ text: 'The opponent has left the room' }])
+        notify<Utils.Log[]>(NotifyEvent.AddLog, [{ text: 'The opponent has left the room' }])
       }
     })
 

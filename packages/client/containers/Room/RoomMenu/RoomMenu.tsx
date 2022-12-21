@@ -4,6 +4,8 @@ import GameMenu from 'components/BoardMenu'
 import { useGameStore } from 'store/game'
 import Show from 'components/Show'
 import Heartbeat from 'components/Heartbeat'
+import { notify } from 'utils/subscriber'
+import { NotifyEvent } from 'constants/enum'
 
 const RoomMenu: React.FC = () => {
   const { t } = useTranslation('common')
@@ -58,6 +60,7 @@ const RoomMenu: React.FC = () => {
   const onOk = () => {
     onAfterEndGame()
     setShowOkButton(false)
+    notify(NotifyEvent.ClearLog, null)
   }
 
   const gameStatusLabel = useMemo(() => {
