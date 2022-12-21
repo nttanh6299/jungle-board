@@ -30,6 +30,14 @@ const move = eventHandler((io, socket) => {
     const playerSelfPossibleMoves = roomMapItem.board.getAllMoves(playerSelfBoard)
     const otherPlayersPossibleMoves = roomMapItem.board.getAllMoves(otherPlayersBoard)
 
+    console.log('=================== Move')
+    console.log('Player id:', playerId)
+    console.log('roomMapItem.getHost():', roomMapItem.getHost())
+    console.log('shouldRotateBoard:', shouldRotateBoard)
+    console.log('nextTurn:', nextTurn)
+    console.log('playerSelfBoard:', playerSelfBoard)
+    console.log('Move ===================')
+
     socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves, moveFrom, moveTo)
     socket
       .to(roomId)
@@ -113,6 +121,14 @@ const move = eventHandler((io, socket) => {
           roomMapItem.clearTimer()
 
           const nextTurn = roomMapItem.getNextTurn()
+
+          console.log('Cooldown ===================')
+          console.log('Player id:', playerId)
+          console.log('roomMapItem.getHost():', roomMapItem.getHost())
+          console.log('shouldRotateBoard:', shouldRotateBoard)
+          console.log('nextTurn:', nextTurn)
+          console.log('playerSelfBoard:', playerSelfBoard)
+          console.log('=================== Cooldown')
 
           socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves)
           socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, otherPlayersPossibleMoves)
