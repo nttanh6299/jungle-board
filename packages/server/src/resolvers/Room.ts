@@ -79,6 +79,7 @@ class Room {
   reset() {
     this.status = ROOM_STATUS.waiting.value
     this.playerTurn = ''
+    this.matchId = ''
     this.board.initBoard()
   }
 
