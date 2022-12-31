@@ -42,25 +42,12 @@ const join = eventHandler((io, socket) => {
   socket.on('reconnect', async (roomId, playerId) => {
     const roomMapItem = roomMap.get(roomId)
 
-    // --------------------------
-    // ---------- TEST ----------
-    // --------------------------
-    console.log('Reconnect:', roomId, playerId)
-
     if (!roomMapItem) return
 
     let playerType
     if (roomMapItem.players.get(playerId)) {
-      // --------------------------
-      // ---------- TEST ----------
-      // --------------------------
-      console.log('Player exist')
       playerType = roomMapItem.players.get(playerId)?.playerType
     } else {
-      // --------------------------
-      // ---------- TEST ----------
-      // --------------------------
-      console.log('Player does not exist')
       playerType = playerId.substring(0, 2) !== PLAYER_ID_PREFIX ? EUserType.IDENTIFIED : EUserType.ANONYMOUS
       roomMapItem.addPlayer(playerId, playerType)
     }
@@ -75,28 +62,12 @@ const join = eventHandler((io, socket) => {
 
     const shouldRotateBoard = playerId !== roomMapItem.getHost()
 
-    // --------------------------
-    // ---------- TEST ----------
-    // --------------------------
-    console.log('Host:', roomMapItem.getHost())
-    console.log('Should rotate:', shouldRotateBoard)
-
     const currentTurn = roomMapItem.getCurrentTurn()
-
-    // --------------------------
-    // ---------- TEST ----------
-    // --------------------------
-    console.log('Current turn:', currentTurn)
 
     const currentBoard = roomMapItem.board.state.board
     const rotatedBoard = roomMapItem.board.getRotatedBoard()
     const playerSelfBoard = shouldRotateBoard ? rotatedBoard : currentBoard
     const playerSelfPossibleMoves = roomMapItem.board.getAllMoves(playerSelfBoard)
-
-    // --------------------------
-    // ---------- TEST ----------
-    // --------------------------
-    console.log('Player board after reconnecting:', playerSelfBoard)
 
     socket.emit('reconnectSuccess', currentTurn, playerSelfBoard, playerSelfPossibleMoves)
     console.log(`${roomId} ${playerId}: reconnect`)
@@ -107,99 +78,115 @@ const join = eventHandler((io, socket) => {
     if (isEnd) {
       roomMapItem.clearTimer()
 
-      const match = await Match.findById(roomMapItem.matchId)
-      if (match) {
-        match.winnerId = roomMapItem.lastPlayerTurn
-        match.move = roomMapItem.board.moveCount
-        match.time = roomMapItem.matchTime
-        match.save()
+      if (roomMapItem.matchId) {
+        const match = await Match.findById(roomMapItem.matchId)
+        if (match) {
+          match.winnerId = roomMapItem.lastPlayerTurn
+          match.move = roomMapItem.board.moveCount
+          match.time = roomMapItem.matchTime
+          match.save()
 
-        const players = Array.from(roomMapItem.players, ([_, player]) => player)
-        const identifiedPlayersPlaying = players.filter(
-          (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
-        )
-        const userPromises = identifiedPlayersPlaying.map(async (player) => {
-          const isWinner = isEnd && player.id === playerId
-          return await User.findOneAndUpdate(
-            { _id: player.id },
-            {
-              $inc: {
-                xp: isWinner ? 10 : isTie ? 5 : 2,
-                win: isWinner ? 1 : 0,
-                lose: isWinner ? 0 : isTie ? 0 : 1,
-                coin: isWinner ? 3 : isTie ? 2 : 1,
-                tie: isTie ? 1 : 0,
-              },
-            },
+          const players = Array.from(roomMapItem.players, ([_, player]) => player)
+          const identifiedPlayersPlaying = players.filter(
+            (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
           )
-        })
-        Promise.all(userPromises)
+          const userPromises = identifiedPlayersPlaying.map(async (player) => {
+            const isWinner = isEnd && player.id === playerId
+            return await User.findOneAndUpdate(
+              { _id: player.id },
+              {
+                $inc: {
+                  xp: isWinner ? 10 : isTie ? 5 : 2,
+                  win: isWinner ? 1 : 0,
+                  lose: isWinner ? 0 : isTie ? 0 : 1,
+                  coin: isWinner ? 3 : isTie ? 2 : 1,
+                  tie: isTie ? 1 : 0,
+                },
+              },
+            )
+          })
+          Promise.all(userPromises)
 
-        const participantPromises = players.map(
-          async (player) =>
-            await Participant.create({
-              roomId: roomMapItem.id,
-              matchId: roomMapItem.matchId,
-              userType: player.playerType,
-              isSpectator: player.isSpectator,
-              ...(player.playerType === EUserType.IDENTIFIED ? { userId: player.id } : { anonymousUserId: player.id }),
-            }),
-        )
-        Promise.all(participantPromises)
+          const participantPromises = players.map(
+            async (player) =>
+              await Participant.create({
+                roomId: roomMapItem.id,
+                matchId: roomMapItem.matchId,
+                userType: player.playerType,
+                isSpectator: player.isSpectator,
+                ...(player.playerType === EUserType.IDENTIFIED
+                  ? { userId: player.id }
+                  : { anonymousUserId: player.id }),
+              }),
+          )
+          Promise.all(participantPromises)
+
+          const room = await Room.findById(roomId)
+          if (room?.status === ERoomStatus.PLAYING) {
+            room.status = ERoomStatus.WAITING
+            await room.save()
+          }
+        }
       }
+
+      io.in(roomId).emit('end', roomMapItem.lastPlayerTurn, roomMapItem.status)
+      roomMapItem.reset()
     } else if (isTie || roomMapItem.isTimeOut()) {
       roomMapItem.clearTimer()
       roomMapItem.tie()
 
-      const match = await Match.findById(roomMapItem.matchId)
-      if (match) {
-        match.isTie = true
-        match.move = roomMapItem.board.moveCount
-        match.time = roomMapItem.matchTime
-        match.save()
+      if (roomMapItem.matchId) {
+        const match = await Match.findById(roomMapItem.matchId)
+        if (match) {
+          match.isTie = true
+          match.move = roomMapItem.board.moveCount
+          match.time = roomMapItem.matchTime
+          match.save()
 
-        const players = Array.from(roomMapItem.players, ([_, player]) => player)
-        const identifiedPlayersPlaying = players.filter(
-          (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
-        )
-        const userPromises = identifiedPlayersPlaying.map(async (player) => {
-          return await User.findOneAndUpdate(
-            { _id: player.id },
-            {
-              $inc: {
-                xp: 5,
-                win: 0,
-                lose: 0,
-                tie: 1,
-                coin: 2,
-              },
-            },
+          const players = Array.from(roomMapItem.players, ([_, player]) => player)
+          const identifiedPlayersPlaying = players.filter(
+            (player) => !player.isSpectator && player.playerType === EUserType.IDENTIFIED,
           )
-        })
-        Promise.all(userPromises)
+          const userPromises = identifiedPlayersPlaying.map(async (player) => {
+            return await User.findOneAndUpdate(
+              { _id: player.id },
+              {
+                $inc: {
+                  xp: 5,
+                  win: 0,
+                  lose: 0,
+                  tie: 1,
+                  coin: 2,
+                },
+              },
+            )
+          })
+          Promise.all(userPromises)
 
-        const participantPromises = players.map(
-          async (player) =>
-            await Participant.create({
-              roomId: roomMapItem.id,
-              matchId: roomMapItem.matchId,
-              userType: player.playerType,
-              isSpectator: player.isSpectator,
-              ...(player.playerType === EUserType.IDENTIFIED ? { userId: player.id } : { anonymousUserId: player.id }),
-            }),
-        )
-        Promise.all(participantPromises)
+          const participantPromises = players.map(
+            async (player) =>
+              await Participant.create({
+                roomId: roomMapItem.id,
+                matchId: roomMapItem.matchId,
+                userType: player.playerType,
+                isSpectator: player.isSpectator,
+                ...(player.playerType === EUserType.IDENTIFIED
+                  ? { userId: player.id }
+                  : { anonymousUserId: player.id }),
+              }),
+          )
+          Promise.all(participantPromises)
+
+          const room = await Room.findById(roomId)
+          if (room?.status === ERoomStatus.PLAYING) {
+            room.status = ERoomStatus.WAITING
+            await room.save()
+          }
+        }
       }
 
       io.in(roomId).emit('end', roomMapItem.lastPlayerTurn, roomMapItem.status)
-
-      const room = await Room.findById(roomId)
-      if (room) {
-        room.status = ERoomStatus.WAITING
-        await room.save()
-
-        roomMapItem.reset()
-      }
+      roomMapItem.reset()
     }
   })
 })
