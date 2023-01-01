@@ -88,14 +88,19 @@ const RoomMenu: React.FC = () => {
 
   const canShow = cooldownMenuVisible || endVisible || disconnectVisible || reconnectVisible
 
-  return (
-    <Show when={canShow}>
-      <div className="absolute top-0 w-full h-full">
+  const renderMenu = () => {
+    if (cooldownMenuVisible) {
+      return (
         <GameMenu visible={cooldownMenuVisible}>
           <h2 className="text-lg mt-10">{t('theMatchReady')}</h2>
           <div className="text-4xl mt-2">{cooldown}</div>
           <div className="text-base mt-10">{t('doYourBest')}</div>
         </GameMenu>
+      )
+    }
+
+    if (endVisible) {
+      return (
         <GameMenu visible={endVisible}>
           <h2 className="text-lg mt-10">{gameStatusLabel.title}</h2>
           <div className="text-4xl mt-2 invisible">-</div>
@@ -106,6 +111,11 @@ const RoomMenu: React.FC = () => {
             </div>
           )}
         </GameMenu>
+      )
+    }
+
+    if (disconnectVisible) {
+      return (
         <GameMenu visible={disconnectVisible}>
           <h2 className="text-lg mt-10">{t('opponentLeftRoom')}</h2>
           <div className="text-4xl mt-2 invisible">-</div>
@@ -116,6 +126,11 @@ const RoomMenu: React.FC = () => {
             </div>
           )}
         </GameMenu>
+      )
+    }
+
+    if (reconnectVisible) {
+      return (
         <GameMenu visible={reconnectVisible}>
           <h2 className="text-lg mt-10">{t('reconnecting')}...</h2>
           <div className="text-4xl mt-2 invisible">-</div>
@@ -123,7 +138,13 @@ const RoomMenu: React.FC = () => {
             <Heartbeat />
           </div>
         </GameMenu>
-      </div>
+      )
+    }
+  }
+
+  return (
+    <Show when={canShow}>
+      <div className="absolute top-0 w-full h-full">{renderMenu()}</div>
     </Show>
   )
 }
