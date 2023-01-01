@@ -129,6 +129,7 @@ const join = eventHandler((io, socket) => {
         }
       }
 
+      console.log('End game')
       io.in(roomId).emit('end', roomMapItem.lastPlayerTurn, roomMapItem.status)
       roomMapItem.reset()
     } else if (isTie || roomMapItem.isTimeOut()) {
@@ -184,6 +185,8 @@ const join = eventHandler((io, socket) => {
           }
         }
       }
+
+      console.log('Tie')
 
       io.in(roomId).emit('end', roomMapItem.lastPlayerTurn, roomMapItem.status)
       roomMapItem.reset()

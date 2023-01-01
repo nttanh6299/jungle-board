@@ -80,6 +80,7 @@ class Room {
     this.status = ROOM_STATUS.waiting.value
     this.playerTurn = ''
     this.matchId = ''
+    this.matchTime = 0
     this.board.initBoard()
   }
 
