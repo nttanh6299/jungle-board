@@ -23,10 +23,16 @@ const Logs = () => {
 
   useEffect(() => {
     subscribe(NotifyEvent.AddLog, addLog)
-    subscribe(NotifyEvent.ClearLog, clearLog)
 
     return () => {
       unsubscribe(NotifyEvent.AddLog, addLog)
+    }
+  })
+
+  useEffect(() => {
+    subscribe(NotifyEvent.ClearLog, clearLog)
+
+    return () => {
       unsubscribe(NotifyEvent.ClearLog, clearLog)
     }
   })

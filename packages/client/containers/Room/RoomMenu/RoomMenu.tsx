@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import GameMenu from 'components/BoardMenu'
 import { useGameStore } from 'store/game'
@@ -32,13 +32,18 @@ const RoomMenu: React.FC = () => {
     onAfterEndGame: state.actions.onAfterEndGame,
   }))
 
+  const handleEndGame = useCallback(() => {
+    onAfterEndGame()
+    setShowOkButton(false)
+    notify(NotifyEvent.ClearLog, null)
+  }, [onAfterEndGame])
+
   // End game overlay
   useEffect(() => {
     let timeout
     if (endVisible || disconnectVisible) {
       timeout = setTimeout(() => {
-        onAfterEndGame()
-        setShowOkButton(false)
+        handleEndGame()
       }, 12000)
     }
 
@@ -47,7 +52,7 @@ const RoomMenu: React.FC = () => {
         clearTimeout(timeout)
       }
     }
-  }, [endVisible, disconnectVisible, onAfterEndGame])
+  }, [endVisible, disconnectVisible, handleEndGame])
 
   useEffect(() => {
     if (endVisible || disconnectVisible) {
@@ -56,12 +61,6 @@ const RoomMenu: React.FC = () => {
       }, 3000)
     }
   }, [endVisible, disconnectVisible])
-
-  const onOk = () => {
-    onAfterEndGame()
-    setShowOkButton(false)
-    notify(NotifyEvent.ClearLog, null)
-  }
 
   const gameStatusLabel = useMemo(() => {
     if (gameStatus === 'tie')
@@ -106,7 +105,7 @@ const RoomMenu: React.FC = () => {
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10">{gameStatusLabel.subtitle}</div>
           {showOkButton && (
-            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onOk}>
+            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={handleEndGame}>
               OK
             </div>
           )}
@@ -121,7 +120,7 @@ const RoomMenu: React.FC = () => {
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10 invisible">-</div>
           {showOkButton && (
-            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onOk}>
+            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={handleEndGame}>
               OK
             </div>
           )}
