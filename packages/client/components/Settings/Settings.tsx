@@ -72,9 +72,11 @@ const Settings = ({ label }: SettingsProps) => {
                     disabled={isPlaying}
                     title={isPlaying ? t('cannotChangeLanguageWhilePlaying') : ''}
                   />
-                  <Button size="sm" className="font-normal rounded-md mt-4">
-                    {t('howToPlay')}
-                  </Button>
+                  <a href="https://en.wikipedia.org/wiki/Jungle_(board_game)" target="_blank" rel="noreferrer">
+                    <Button size="sm" className="font-normal rounded-md mt-4">
+                      {t('howToPlay')}
+                    </Button>
+                  </a>
                   {/* <div className="mt-4">
                     <div className="grid grid-cols-4 items-center">
                       <div>Music</div>
