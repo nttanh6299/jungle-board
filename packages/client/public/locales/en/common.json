@@ -52,5 +52,7 @@
   "cat": "Cat",
   "rat": "Rat",
   "cannotChangeLanguageWhilePlaying": "You cannot change language while playing",
-  "reconnecting": "Reconnecting"
+  "reconnecting": "Reconnecting",
+  "logout": "Logout",
+  "stats": "Stats"
 }

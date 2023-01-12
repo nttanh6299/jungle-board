@@ -22,4 +22,5 @@ export enum Map {
 export enum NotifyEvent {
   AddLog = 'AddLog',
   ClearLog = 'ClearLog',
+  AutoJoinRoom = 'AutoJoinRoom',
 }

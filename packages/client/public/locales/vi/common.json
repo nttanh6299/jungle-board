@@ -52,5 +52,7 @@
   "cat": "Mèo",
   "rat": "Chuột",
   "cannotChangeLanguageWhilePlaying": "Bạn không thể đổi ngôn ngữ trong lúc chơi",
-  "reconnecting": "Đang kết nối lại"
+  "reconnecting": "Đang kết nối lại",
+  "logout": "Đăng xuất",
+  "stats": "Số liệu"
 }

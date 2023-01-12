@@ -19,6 +19,9 @@ import ClockIcon from 'icons/Clock'
 import FilmScriptIcon from 'icons/FilmScript'
 import GameControllerIcon from 'icons/GameController'
 import useMe from 'hooks/useMe'
+import { notify } from 'utils/subscriber'
+import { NotifyEvent } from 'constants/enum'
+import RocketLauchIcon from 'icons/RocketLauch'
 
 const RoomsPage = () => {
   const router = useRouter()
@@ -63,6 +66,10 @@ const RoomsPage = () => {
     }
   }
 
+  const onAutoJoinRoom = () => {
+    notify(NotifyEvent.AutoJoinRoom, null)
+  }
+
   useInterval(() => {
     fetch()
   }, 10000)
@@ -70,7 +77,7 @@ const RoomsPage = () => {
   return (
     <>
       <TopBar hideRoomInfo />
-      <div className="bg-primary rounded-lg mt-3 min-h-[422px] max-h-[422px] overflow-auto overflow-x-hidden">
+      <div className="bg-primary rounded-lg mt-2 sm:mt-3 min-h-[422px] md:max-h-[422px] overflow-auto overflow-x-hidden mb-auto">
         <div className="p-2">
           <Show when={fetching || !rooms?.length}>
             <div className="grid gap-2 grid-cols-fill-40">
@@ -156,7 +163,12 @@ const RoomsPage = () => {
           </Show>
         </div>
       </div>
-      <div className="flex justify-center mt-4">
+      <div className="flex sm:hidden justify-center mt-2 sm:mt-0">
+        <Button uppercase rounded iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
+          {t('autoJoin')}
+        </Button>
+      </div>
+      <div className="flex justify-center mt-2 sm:mt-4">
         <Button
           rounded
           uppercase

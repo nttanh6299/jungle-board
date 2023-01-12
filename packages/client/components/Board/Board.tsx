@@ -20,13 +20,6 @@ import { AnimalPath } from 'constants/url'
 const BOARD_ROWS = Array.from(Array(ROWS).keys())
 const BOARD_COLS = Array.from(Array(COLS).keys())
 
-const SQUARE_WIDTH = 50
-const SQUARE_HEIGHT = 50
-
-// plus 4 because of border-2
-const BOARD_WIDTH = SQUARE_WIDTH * BOARD_COLS.length + 4
-const BOARD_HEIGHT = SQUARE_HEIGHT * BOARD_ROWS.length + 4
-
 interface IBoardProps {
   isPlaying: boolean
   board: Board
@@ -37,12 +30,17 @@ interface IBoardProps {
 
 const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquare, possibleMoves, isPlaying }) => {
   return (
-    <div>
+    <div
+      className={clsx(
+        `[--square-width:45px] sm:[--square-width:50px]`,
+        `[--square-height:45px] sm:[--square-height:50px]`,
+      )}
+    >
       <div
         className="relative border-2 border-solid border-green-600"
         style={{
-          width: BOARD_WIDTH,
-          height: BOARD_HEIGHT,
+          width: `calc(var(--square-width) * ${BOARD_COLS.length} + 4px)`,
+          height: `calc(var(--square-width) * ${BOARD_ROWS.length} + 4px)`,
         }}
       >
         {BOARD_ROWS.map((row) =>
@@ -54,10 +52,10 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
               <div
                 key={`${row}|${col}|${board?.[row]?.[col]}`}
                 style={{
-                  width: SQUARE_WIDTH,
-                  height: SQUARE_HEIGHT,
-                  top: row * SQUARE_WIDTH,
-                  left: col * SQUARE_HEIGHT,
+                  width: 'var(--square-width)',
+                  height: 'var(--square-height)',
+                  top: `calc(var(--square-width) * ${row})`,
+                  left: `calc(var(--square-height) * ${col})`,
                 }}
                 className={clsx(
                   'absolute border border-solid border-green-600 select-none',
@@ -70,7 +68,7 @@ const GameBoard: React.FC<IBoardProps> = ({ board, selectedSquare, onSelectSquar
                 <div
                   className={clsx(
                     'grid place-items-center w-full h-full p-1',
-                    { 'cursor-pointer': isPlaying },
+                    { 'md:cursor-pointer': isPlaying },
                     { 'bg-green-500': isLand(cell) },
                     { 'bg-cyan-400': isInRiver(cell) },
                     { 'bg-yellow-700': isInWTrap(cell) || isInBTrap(cell) },
