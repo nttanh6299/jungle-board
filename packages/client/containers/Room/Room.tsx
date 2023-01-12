@@ -19,8 +19,8 @@ import useHandleSocketEvent from 'hooks/useHandleSocketEvent'
 import getPlayerAnimals from 'utils/getPlayerAnimals'
 import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
-import Chat from './Chat'
-import Logs from './Logs'
+import Chat from 'components/Chat'
+import Logs from 'components/Logs'
 
 interface RoomProps {
   roomId: string
@@ -138,10 +138,10 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
 
   return (
     <Show when={canConnect}>
-      <TopBar hideAutoJoin hideInfo />
-      <div className="relative mt-4">
-        <div className="flex">
-          <div className="flex-1 flex flex-col justify-between">
+      <TopBar hideAutoJoin hideInfo hideLogout />
+      <div className="relative md:mt-4 flex-1">
+        <div className="flex flex-col md:flex-row justify-center items-center md:items-stretch">
+          <div className="md:flex-1 hidden md:flex flex-col justify-between">
             <div className="flex flex-col items-end">
               <Show when={bothConnected}>
                 <div className="flex flex-col items-end">
@@ -172,7 +172,19 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
             </div>
           </div>
 
-          <div className="relative mx-3">
+          <div className="w-full flex md:hidden flex-col items-center">
+            <Show when={!bothConnected}>
+              <div className="h-[48px] " />
+            </Show>
+            <Show when={bothConnected}>
+              <h5 className="text-base my-1">{t('opponent')}</h5>
+              <div className="h-[8px] w-full max-w-[150px] mb-2">
+                <PlayerCooldown isOpponent />
+              </div>
+            </Show>
+          </div>
+
+          <div className="md:flex-1 relative md:ml-3 mr-0 md:mr-3 ">
             <GameBoard
               isPlaying={!!playerTurn}
               board={board}
@@ -188,7 +200,19 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
             <RoomMenu />
           </div>
 
-          <div className="flex-1">
+          <div className="w-full flex md:hidden flex-col items-center">
+            <div className="h-[8px] w-full max-w-[150px] mt-2">
+              <PlayerCooldown />
+            </div>
+            <h5 className="text-base my-1">{user?.name || t('guest')}</h5>
+            <Show when={bothConnected && isHost && cooldown === 0 && gameStatus === 'waiting'}>
+              <Button uppercase rounded variant="secondary" size="sm" onClick={handleStartGame}>
+                {t('start')}
+              </Button>
+            </Show>
+          </div>
+
+          <div className="flex-1 hidden md:block">
             <div className="flex flex-col h-full pt-3">
               <div className="flex-1">
                 <Logs />
@@ -200,7 +224,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
           </div>
         </div>
       </div>
-      <Button iconLeft={<ArrowLeftIcon />} uppercase rounded className="mt-6" onClick={goBack}>
+      <Button iconLeft={<ArrowLeftIcon />} uppercase rounded className="self-start" onClick={goBack}>
         {t('leave')}
       </Button>
     </Show>
