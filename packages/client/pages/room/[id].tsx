@@ -11,6 +11,11 @@ import { verifyRoom } from 'apis/room'
 import { UNABLE_PLAY_REASON } from 'constants/common'
 import useAppState from 'hooks/useAppState'
 
+export const getStaticPaths = () => ({
+  paths: [],
+  fallback: 'blocking',
+})
+
 export const getStaticProps: GetStaticProps = async ({ locale }) => ({
   props: {
     ...(await serverSideTranslations(locale ?? 'en', ['common'])),
