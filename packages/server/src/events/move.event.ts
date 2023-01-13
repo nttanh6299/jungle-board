@@ -14,7 +14,12 @@ const move = eventHandler((io, socket) => {
     if (!roomMapItem) return
 
     const shouldRotateBoard = playerId !== roomMapItem.getHost()
-    roomMapItem.move(moveFrom, moveTo, shouldRotateBoard)
+    const moved = roomMapItem.move(moveFrom, moveTo, shouldRotateBoard)
+
+    // move failed
+    if (!moved) {
+      return
+    }
 
     const rotatedMoveFrom: BoardDelta = { row: ROWS - moveFrom.row - 1, col: COLS - moveFrom.col - 1 }
     const rotatedMoveTo: BoardDelta = { row: ROWS - moveTo.row - 1, col: COLS - moveTo.col - 1 }
