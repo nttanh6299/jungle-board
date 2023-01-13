@@ -57,9 +57,12 @@ class Room {
     return this.playerTurn
   }
 
-  move(moveFrom: BoardDelta, moveTo: BoardDelta, shouldRotateBoard: boolean): void {
-    this.board.move(moveFrom, moveTo, shouldRotateBoard)
-    this.lastPlayerTurn = this.playerTurn
+  move(moveFrom: BoardDelta, moveTo: BoardDelta, shouldRotateBoard: boolean): boolean {
+    const moved = this.board.move(moveFrom, moveTo, shouldRotateBoard)
+    if (moved) {
+      this.lastPlayerTurn = this.playerTurn
+    }
+    return moved
   }
 
   getFirstPlayer(): string {
