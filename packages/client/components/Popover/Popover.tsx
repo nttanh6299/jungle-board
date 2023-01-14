@@ -28,7 +28,7 @@ const Popover = ({ children, title, className }: PopoverProps) => {
           leaveFrom="opacity-100 translate-y-0"
           leaveTo="opacity-0 translate-y-1"
         >
-          <HPopover.Panel className="absolute left-0 z-10 mt-3 w-screen max-w-xl">
+          <HPopover.Panel className="absolute left-0 z-10 mt-3 max-w-xl">
             <div className="overflow-hidden rounded-lg bg-white shadow-[0_2px_16px] shadow-cardShadow/25">
               <div className={className}>{children}</div>
             </div>

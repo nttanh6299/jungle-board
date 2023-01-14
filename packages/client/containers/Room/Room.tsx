@@ -79,7 +79,7 @@ const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
       const moveTo = pieceMoves?.find((move) => dequal(move, { row, col }))
       if (moveTo) {
         const moveFrom = { row: selectedSquare[0], col: selectedSquare[1] }
-        socket?.emit('move', moveFrom, moveTo)
+        socket?.emit('move', moveFrom, moveTo, playerId)
         return onSelectSquare([])
       }
     }
