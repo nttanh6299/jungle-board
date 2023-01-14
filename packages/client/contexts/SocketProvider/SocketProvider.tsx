@@ -18,7 +18,7 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
   join: (roomId: string, accountId: string) => void
-  move: (moveFrom: BoardDelta, moveTo: BoardDelta) => void
+  move: (moveFrom: BoardDelta, moveTo: BoardDelta, playerId: string) => void
   disconnect: () => void
   start: () => void
   reconnect: (roomId: string, playerId: string) => void
