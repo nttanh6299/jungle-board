@@ -14,6 +14,7 @@ const move = eventHandler((io, socket) => {
     if (!roomMapItem) return
 
     const shouldRotateBoard = playerId !== roomMapItem.getHost()
+    console.log('move', moveFrom, shouldRotateBoard)
     const moved = roomMapItem.move(moveFrom, moveTo, shouldRotateBoard)
 
     // move failed

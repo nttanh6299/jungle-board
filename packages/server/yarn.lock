@@ -782,10 +782,10 @@ jsonwebtoken@^8.5.1:
     ms "^2.1.1"
     semver "^5.6.0"
 
-jungle-board-service@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/jungle-board-service/-/jungle-board-service-1.0.4.tgz#fcc9c1b72f48b527848571dd4d8f14b7e5eef88f"
-  integrity sha512-5IPFUeW78Iza4Qii8vQWDNVaH7ZvV0BTp2EZpaa08kkqpOWoME4Xg/bfJtH/oQA3R22AXGzKcrBaXZTXHB8b0A==
+jungle-board-service@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/jungle-board-service/-/jungle-board-service-1.0.5.tgz#848b007a4216ff8331701181dd40e3cac31e5c9f"
+  integrity sha512-YwDPZ6gEv76LXsa1a8eXoji8U7yJlhWUKOjtSqu7nEEok7PEQM5OMawbigPcloitF2ML9S99btmsBQF23RB2aw==
   dependencies:
     dequal "^2.0.2"
     klona "^2.0.5"
