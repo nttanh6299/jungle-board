@@ -3,7 +3,6 @@ import type { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import FacebookProvider from 'next-auth/providers/facebook'
 import GitHubProvider from 'next-auth/providers/github'
-import { AUTH_COOKIE_EXPIRE_DEFAULT } from 'constants/auth'
 import { ReqUser, signIn } from 'apis/auth'
 
 export const nextAuthOptions: NextAuthOptions = {
@@ -11,7 +10,7 @@ export const nextAuthOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   jwt: {
-    maxAge: AUTH_COOKIE_EXPIRE_DEFAULT,
+    maxAge: 365 * 24 * 60 * 60 * 1000,
   },
   providers: [
     GoogleProvider({

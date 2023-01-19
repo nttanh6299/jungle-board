@@ -1,17 +1,36 @@
 import { PropsWithChildren, useEffect } from 'react'
+import { useSession, signOut } from 'next-auth/react'
 import useMe from 'hooks/useMe'
 import AppLoading from 'components/AppLoading'
+import { setAccessToken } from 'utils'
+import useIsomorphicLayoutEffect from 'hooks/useIsomorphicLayoutEffect'
+import { notify, subscribe, unsubscribe } from 'utils/subscriber'
+import { NotifyEvent } from 'constants/enum'
 
 const Layout = ({ children }: PropsWithChildren<unknown>) => {
-  const { status, getMe } = useMe()
+  const { getMe, restartFetchUser } = useMe()
+  const { data: session, status } = useSession()
+
+  useIsomorphicLayoutEffect(() => {
+    if (session?.accessToken && status === 'authenticated') {
+      setAccessToken(session.accessToken)
+      signOut({ redirect: false })
+      restartFetchUser()
+      notify(NotifyEvent.RefetchUser, null)
+    }
+  }, [session, status])
+
+  useIsomorphicLayoutEffect(() => {
+    getMe()
+  }, [getMe])
 
   useEffect(() => {
-    if (status === 'authenticated') {
-      getMe()
-    }
-  }, [getMe, status])
+    subscribe(NotifyEvent.RefetchUser, getMe)
 
-  if (status === 'loading') return null
+    return () => {
+      unsubscribe(NotifyEvent.RefetchUser, getMe)
+    }
+  })
 
   return (
     <>

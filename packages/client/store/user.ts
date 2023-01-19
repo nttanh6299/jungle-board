@@ -2,11 +2,13 @@ import { UserInfo } from 'apis/auth'
 import create, { GetState, SetState, StateSelector } from 'zustand'
 import shallow from 'zustand/shallow'
 
-const actionNames = ['onSetUser'] as const
+const actionNames = ['onSetUser', 'onSetLoading', 'onClearUser', 'onSetFetched'] as const
 export type ActionNames = typeof actionNames[number]
 
 interface State {
   actions: Record<ActionNames, (...args) => void>
+  isLoading: boolean
+  isFetched: boolean
   user: UserInfo
 }
 
@@ -20,11 +22,22 @@ const useStoreImpl = create<State>((set: SetState<State>, get: GetState<State>) 
         set({ user })
       }
     },
+    onSetLoading: (isLoading: boolean) => {
+      set({ isLoading })
+    },
+    onSetFetched: (isFetched: boolean) => {
+      set({ isFetched })
+    },
+    onClearUser: () => {
+      set({ user: null })
+    },
   }
 
   return {
     actions,
     user: null,
+    isLoading: false,
+    isFetched: false,
   }
 })
 

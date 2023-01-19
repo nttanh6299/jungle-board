@@ -18,7 +18,6 @@ import HandFistIcon from 'icons/HandFist'
 import ClockIcon from 'icons/Clock'
 import FilmScriptIcon from 'icons/FilmScript'
 import GameControllerIcon from 'icons/GameController'
-import useMe from 'hooks/useMe'
 import { notify } from 'utils/subscriber'
 import { NotifyEvent } from 'constants/enum'
 import RocketLauchIcon from 'icons/RocketLauch'
@@ -28,7 +27,6 @@ const RoomsPage = () => {
   const { t } = useTranslation('common')
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
-  const { user } = useMe()
   const { onVerifyRoom } = useRoomStore((state) => ({
     onVerifyRoom: state.actions.onVerifyRoom,
   }))
@@ -44,7 +42,7 @@ const RoomsPage = () => {
       if (!canJoin(quantity, max, status)) return
 
       dispatch({ type: 'displayLoader', payload: { value: true } })
-      const { data } = await verifyRoom({ roomId: id, accountId: user?.id ? String(user?.id) : '' })
+      const { data } = await verifyRoom({ roomId: id })
 
       let errorLabel = ''
       if (!data) errorLabel = t('error.somethingWrong')

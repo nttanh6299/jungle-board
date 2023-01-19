@@ -9,7 +9,6 @@ const getRoom = {
 const verifyRoom = {
   params: Joi.object().keys({
     roomId: Joi.string(),
-    accountId: Joi.string(),
   }),
 }
 

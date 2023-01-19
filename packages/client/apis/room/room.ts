@@ -22,7 +22,6 @@ export interface ResGetRoom {
 
 export interface ReqVerifyRoom {
   roomId: string
-  accountId: string
 }
 
 export interface ResVerifyRoom {

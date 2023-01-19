@@ -1,6 +1,6 @@
 import express from 'express'
 import authController from '../controllers/auth.controller'
-import authenticateJwt from '../middlewares/auth'
+import { authenticateJwt } from '../middlewares/auth'
 
 const authRoute = express.Router()
 authRoute.post('/signIn', authController.signIn)
