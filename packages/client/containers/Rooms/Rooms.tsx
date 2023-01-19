@@ -21,12 +21,14 @@ import GameControllerIcon from 'icons/GameController'
 import { notify } from 'utils/subscriber'
 import { NotifyEvent } from 'constants/enum'
 import RocketLauchIcon from 'icons/RocketLauch'
+import useMe from 'hooks/useMe'
 
 const RoomsPage = () => {
   const router = useRouter()
   const { t } = useTranslation('common')
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
+  const { isFetched } = useMe()
   const { onVerifyRoom } = useRoomStore((state) => ({
     onVerifyRoom: state.actions.onVerifyRoom,
   }))
@@ -162,7 +164,7 @@ const RoomsPage = () => {
         </div>
       </div>
       <div className="flex sm:hidden justify-center mt-2 sm:mt-0">
-        <Button uppercase rounded iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
+        <Button uppercase rounded disabled={!isFetched} iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
           {t('autoJoin')}
         </Button>
       </div>
@@ -171,6 +173,7 @@ const RoomsPage = () => {
           rounded
           uppercase
           variant="secondary"
+          disabled={!isFetched}
           iconLeft={<FilmScriptIcon />}
           className="w-[120px]"
           onClick={onNewRoom}
@@ -180,7 +183,7 @@ const RoomsPage = () => {
         <Button
           uppercase
           rounded
-          disabled={!selectedRoom?.id}
+          disabled={!selectedRoom?.id || !isFetched}
           iconLeft={<GameControllerIcon />}
           className="w-[120px] ml-2"
           onClick={onJoinRoom}

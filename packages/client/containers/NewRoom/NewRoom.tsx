@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next'
 const NewRoom = () => {
   const router = useRouter()
   const { t } = useTranslation('common')
-  const { user, isLoading } = useMe()
+  const { user, isLoading, isFetched } = useMe()
   const [, dispatch] = useAppState()
   const [name, setName] = useState('')
   const [selectedTurn, setSelectedTurn] = useState(turnOptions[0].value)
@@ -169,6 +169,7 @@ const NewRoom = () => {
           iconLeft={<FilmScriptIcon />}
           rounded
           uppercase
+          disabled={!isFetched}
           variant="secondary"
           className="w-[120px]"
           onClick={onCreateRoom}
