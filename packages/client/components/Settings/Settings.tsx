@@ -9,8 +9,8 @@ import Show from 'components/Show'
 import { useGameStore } from 'store/game'
 import { ERoomStatus } from 'constants/enum'
 import LogoutIcon from 'icons/Logout'
-import { signOut } from 'next-auth/react'
 import useMe from 'hooks/useMe'
+import { clearAccessToken } from 'utils'
 // import RangeSlider from 'components/RangeSlider'
 
 const languages: Utils.IOption[] = [
@@ -34,7 +34,7 @@ const Settings = ({ label, hideLogout }: SettingsProps) => {
   const { locale, defaultLocale } = router
   const [language, setLanguage] = useState(locale || defaultLocale || languages[0].value)
   const [openMenuSettings, setOpenMenu] = useState(false)
-  const { user } = useMe()
+  const { user, clearUser } = useMe()
 
   const isPlaying = useGameStore((state) => state.gameStatus === ERoomStatus.PLAYING)
 
@@ -47,6 +47,12 @@ const Settings = ({ label, hideLogout }: SettingsProps) => {
 
     const { pathname, asPath, query } = router
     router.push({ pathname, query }, asPath, { locale: language })
+  }
+
+  const onLogout = () => {
+    clearAccessToken()
+    clearUser()
+    toggleMenuSettings()
   }
 
   return (
@@ -94,7 +100,7 @@ const Settings = ({ label, hideLogout }: SettingsProps) => {
                       size="sm"
                       className="self-end"
                       iconLeft={<LogoutIcon />}
-                      onClick={() => signOut()}
+                      onClick={onLogout}
                     >
                       {t('logout')}
                     </Button>

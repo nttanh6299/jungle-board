@@ -23,4 +23,5 @@ export enum NotifyEvent {
   AddLog = 'AddLog',
   ClearLog = 'ClearLog',
   AutoJoinRoom = 'AutoJoinRoom',
+  RefetchUser = 'RefetchUser',
 }

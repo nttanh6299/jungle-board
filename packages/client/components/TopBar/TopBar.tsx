@@ -36,7 +36,7 @@ interface TopBarProps {
 const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProps) => {
   const router = useRouter()
   const { t } = useTranslation('common')
-  const { user, isLoading } = useMe()
+  const { user, isFetched } = useMe()
   const [, dispatch] = useAppState()
   const { room } = useRoomStore((state) => ({
     room: state.room,
@@ -112,7 +112,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
           <div className="block sm:hidden">
             <Avatar size="md" />
           </div>
-          <Show when={!isLoading}>
+          <Show when={isFetched}>
             <div className="ml-2 sm:ml-3">
               <Show when={!user}>
                 <h5 className="text-sm sm:text-base">{t('guest')}</h5>
@@ -156,7 +156,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
                     <div
                       style={{ width: `${(exp / expNextLevelNeeded) * 100}%` }}
                       className="absolute top-0 left-0 h-full rounded-full bg-primary"
-                    ></div>
+                    />
                     <div className="absolute left-[8px] top-0 h-full text-white text-xs flex items-center">
                       {exp}/{expNextLevelNeeded}
                     </div>
@@ -167,6 +167,15 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
                   <p className="text-base ml-1.5">{formatCoin(user?.coin || 0)}</p>
                 </div>
               </Show>
+            </div>
+          </Show>
+          <Show when={!isFetched}>
+            <div className="ml-2 sm:ml-3">
+              <div className="animate-pulse">
+                <div className="bg-gray-200 w-[150px] h-[20px]"></div>
+                <div className="bg-gray-200 w-[120px] h-[20px] my-1 sm:my-2"></div>
+                <div className="bg-gray-200 w-[90px] h-[20px]"></div>
+              </div>
             </div>
           </Show>
         </Show>

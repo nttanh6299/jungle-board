@@ -2,7 +2,7 @@ import httpStatus from 'http-status'
 import jwt from 'jsonwebtoken'
 import config from '../config/config'
 
-const authenticateJwt = (req, res, next) => {
+export const authenticateJwt = (req, res, next) => {
   const authorization = String(req.headers.authorization)
   const authorizationParts = authorization?.split(' ')
 
@@ -19,4 +19,14 @@ const authenticateJwt = (req, res, next) => {
   })
 }
 
-export default authenticateJwt
+export const getUserFromJwt = (req, _, next) => {
+  const authorization = String(req.headers.authorization)
+  const authorizationParts = authorization?.split(' ')
+
+  jwt.verify(authorizationParts?.[1], config.jwt.secret, (_, user) => {
+    if (user?.id) {
+      req.userId = user.id
+    }
+    next()
+  })
+}

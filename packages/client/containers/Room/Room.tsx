@@ -24,17 +24,18 @@ import Logs from 'components/Logs'
 
 interface RoomProps {
   roomId: string
-  accountId: string
 }
 
-const Room: React.FC<RoomProps> = ({ roomId, accountId }) => {
+const Room: React.FC<RoomProps> = ({ roomId }) => {
   const router = useRouter()
   const [, dispatch] = useAppState()
   const { t } = useTranslation('common')
 
-  useHandleSocketEvent({ roomId, accountId })
-
   const { user } = useMe()
+  const { id } = user ?? {}
+
+  useHandleSocketEvent({ roomId, accountId: id || '' })
+
   const {
     board,
     possibleMoves,

@@ -1,14 +1,10 @@
-import { Request } from 'express'
 import jwt from 'jsonwebtoken'
 import httpStatus from 'http-status'
 import catchAsync from '../utils/catchAsync'
 import User, { IUser } from '../models/user.model'
 import config from '../config/config'
 import { AUTH_COOKIE_EXPIRE_DEFAULT } from '../constants/auth'
-
-const hasUserId = (request: Request): request is Request & { userId: string } => {
-  return 'userId' in request && typeof request['userId'] === 'string'
-}
+import { hasUserId } from '../utils'
 
 const generateToken = (payload: any) => {
   return jwt.sign(payload, config.jwt.secret, { expiresIn: AUTH_COOKIE_EXPIRE_DEFAULT })
