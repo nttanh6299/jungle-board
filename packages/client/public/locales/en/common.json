@@ -54,5 +54,6 @@
   "cannotChangeLanguageWhilePlaying": "You cannot change language while playing",
   "reconnecting": "Reconnecting",
   "logout": "Logout",
-  "stats": "Stats"
+  "stats": "Stats",
+  "connectionAlert": "Because of using a web server for free, data is fetched very slowly at the first time, please wait a little patiently."
 }

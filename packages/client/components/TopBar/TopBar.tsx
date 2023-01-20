@@ -209,7 +209,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
         </div>
         <Show when={!hideAutoJoin}>
           <div className="hidden sm:block">
-            <Button uppercase rounded iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
+            <Button uppercase rounded iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom} disabled={!isFetched}>
               {t('autoJoin')}
             </Button>
           </div>
