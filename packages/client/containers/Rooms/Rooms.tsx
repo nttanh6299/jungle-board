@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import useInterval from 'hooks/useInterval'
@@ -73,6 +73,19 @@ const RoomsPage = () => {
   useInterval(() => {
     fetch()
   }, 10000)
+
+  useEffect(() => {
+    if (rooms?.length) return
+
+    // if rooms is very slowly to be fetched, open connection alert up
+    const timer = setTimeout(() => {
+      notify(NotifyEvent.ShowConnectionAlert, null)
+    }, 7000)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [rooms])
 
   return (
     <>

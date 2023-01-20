@@ -24,4 +24,5 @@ export enum NotifyEvent {
   ClearLog = 'ClearLog',
   AutoJoinRoom = 'AutoJoinRoom',
   RefetchUser = 'RefetchUser',
+  ShowConnectionAlert = 'ShowConnectionAlert',
 }
