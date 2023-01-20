@@ -6949,10 +6949,10 @@ jsonfile@^6.0.1:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jungle-board-service@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/jungle-board-service/-/jungle-board-service-1.0.1.tgz#a675551d2467f5cc3f77de6eb40c62db33165d8d"
-  integrity sha512-8zQ0S7hHnoDZCcVBJYVjHiI8EcbM4dApSHIU/KNTPOh1Ug9KdEc5nstlLA6nJZa2vfU/lgyjznIVnW/+b6BgOg==
+jungle-board-service@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/jungle-board-service/-/jungle-board-service-1.0.4.tgz#fcc9c1b72f48b527848571dd4d8f14b7e5eef88f"
+  integrity sha512-5IPFUeW78Iza4Qii8vQWDNVaH7ZvV0BTp2EZpaa08kkqpOWoME4Xg/bfJtH/oQA3R22AXGzKcrBaXZTXHB8b0A==
   dependencies:
     dequal "^2.0.2"
     klona "^2.0.5"

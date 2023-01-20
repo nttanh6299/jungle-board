@@ -7,14 +7,20 @@ import Room, { ERoomStatus } from '../models/room.model'
 import Participant, { EUserType } from '../models/participant.model'
 
 const move = eventHandler((io, socket) => {
-  socket.on('move', async (moveFrom, moveTo) => {
-    const { roomId = '', playerId = '' } = socket.data ?? {}
+  socket.on('move', async (moveFrom, moveTo, playerId) => {
+    const { roomId = '' } = socket.data ?? {}
     const roomMapItem = roomMap.get(roomId)
 
     if (!roomMapItem) return
 
     const shouldRotateBoard = playerId !== roomMapItem.getHost()
-    roomMapItem.board.move(moveFrom, moveTo, shouldRotateBoard)
+    console.log('move', moveFrom, shouldRotateBoard)
+    const moved = roomMapItem.move(moveFrom, moveTo, shouldRotateBoard)
+
+    // move failed
+    if (!moved) {
+      return
+    }
 
     const rotatedMoveFrom: BoardDelta = { row: ROWS - moveFrom.row - 1, col: COLS - moveFrom.col - 1 }
     const rotatedMoveTo: BoardDelta = { row: ROWS - moveTo.row - 1, col: COLS - moveTo.col - 1 }
@@ -29,6 +35,14 @@ const move = eventHandler((io, socket) => {
 
     const playerSelfPossibleMoves = roomMapItem.board.getAllMoves(playerSelfBoard)
     const otherPlayersPossibleMoves = roomMapItem.board.getAllMoves(otherPlayersBoard)
+
+    // console.log('=================== Move')
+    // console.log('Player id:', playerId)
+    // console.log('roomMapItem.getHost():', roomMapItem.getHost())
+    // console.log('shouldRotateBoard:', shouldRotateBoard)
+    // console.log('nextTurn:', nextTurn)
+    // console.log('playerSelfBoard:', playerSelfBoard)
+    // console.log('Move ===================')
 
     socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves, moveFrom, moveTo)
     socket
@@ -114,6 +128,14 @@ const move = eventHandler((io, socket) => {
 
           const nextTurn = roomMapItem.getNextTurn()
 
+          // console.log('Cooldown ===================')
+          // console.log('Player id:', playerId)
+          // console.log('roomMapItem.getHost():', roomMapItem.getHost())
+          // console.log('shouldRotateBoard:', shouldRotateBoard)
+          // console.log('nextTurn:', nextTurn)
+          // console.log('playerSelfBoard:', playerSelfBoard)
+          // console.log('=================== Cooldown')
+
           socket.emit('turn', nextTurn, playerSelfBoard, playerSelfPossibleMoves)
           socket.to(roomId).emit('turn', nextTurn, otherPlayersBoard, otherPlayersPossibleMoves)
 
@@ -135,7 +157,7 @@ const move = eventHandler((io, socket) => {
       const match = await Match.findById(roomMapItem.matchId)
       if (match) {
         if (isEnd) {
-          match.winnerId = playerId
+          match.winnerId = roomMapItem.lastPlayerTurn
         } else {
           match.isTie = true
         }

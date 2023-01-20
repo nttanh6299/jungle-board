@@ -1,18 +1,22 @@
 import axios, { AxiosPromise, CancelToken, Method } from 'axios'
-import { getSession, signOut } from 'next-auth/react'
 import { API_ENDPOINT } from 'constants/common'
+import { clearAccessToken, getAccessToken } from 'utils'
 
 const instanceNext = axios.create({
   baseURL: API_ENDPOINT,
-  timeout: 10000,
+  timeout: 30000,
 })
 
 instanceNext.interceptors.request.use(
-  async (config) => {
+  (config) => {
     if (!config.headers.Authorization) {
-      const session = await getSession()
-      if (session?.accessToken) {
-        config.headers.Authorization = `Bearer ${session.accessToken}`
+      try {
+        const token = getAccessToken()
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`
+        }
+      } catch (error) {
+        console.log('Axios error:', error)
       }
     }
     return config
@@ -24,7 +28,7 @@ instanceNext.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if ((error.response && error.response.status === 401) || (error.response && error.response.status === 403)) {
-      signOut({ redirect: false })
+      clearAccessToken()
     }
 
     if (error.response) {

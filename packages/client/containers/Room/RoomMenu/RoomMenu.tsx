@@ -1,16 +1,21 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import GameMenu from 'components/BoardMenu'
 import { useGameStore } from 'store/game'
 import Show from 'components/Show'
+import Heartbeat from 'components/Heartbeat'
+import { notify } from 'utils/subscriber'
+import { NotifyEvent } from 'constants/enum'
 
 const RoomMenu: React.FC = () => {
   const { t } = useTranslation('common')
+  const [showOkButton, setShowOkButton] = useState(false)
   const {
     cooldown,
     cooldownMenuVisible,
     endVisible,
     disconnectVisible,
+    reconnectVisible,
     gameStatus,
     lastTurn,
     playerId,
@@ -19,6 +24,7 @@ const RoomMenu: React.FC = () => {
     cooldownMenuVisible: state.cooldownMenuVisible,
     endVisible: state.endVisible,
     disconnectVisible: state.disconnectVisible,
+    reconnectVisible: state.reconnectVisible,
     cooldown: state.cooldown,
     gameStatus: state.gameStatus,
     lastTurn: state.lastTurn,
@@ -26,13 +32,19 @@ const RoomMenu: React.FC = () => {
     onAfterEndGame: state.actions.onAfterEndGame,
   }))
 
+  const handleEndGame = useCallback(() => {
+    onAfterEndGame()
+    setShowOkButton(false)
+    notify(NotifyEvent.ClearLog, null)
+  }, [onAfterEndGame])
+
   // End game overlay
   useEffect(() => {
     let timeout
     if (endVisible || disconnectVisible) {
       timeout = setTimeout(() => {
-        onAfterEndGame()
-      }, 10000)
+        handleEndGame()
+      }, 12000)
     }
 
     return () => {
@@ -40,7 +52,15 @@ const RoomMenu: React.FC = () => {
         clearTimeout(timeout)
       }
     }
-  }, [endVisible, disconnectVisible, onAfterEndGame])
+  }, [endVisible, disconnectVisible, handleEndGame])
+
+  useEffect(() => {
+    if (endVisible || disconnectVisible) {
+      setTimeout(() => {
+        setShowOkButton(true)
+      }, 3000)
+    }
+  }, [endVisible, disconnectVisible])
 
   const gameStatusLabel = useMemo(() => {
     if (gameStatus === 'tie')
@@ -65,31 +85,65 @@ const RoomMenu: React.FC = () => {
     }
   }, [gameStatus, lastTurn, playerId, t])
 
-  return (
-    <Show when={cooldownMenuVisible || endVisible || disconnectVisible}>
-      <div className="absolute top-0 w-full h-full">
+  const canShow = cooldownMenuVisible || endVisible || disconnectVisible || reconnectVisible
+
+  const renderMenu = () => {
+    if (cooldownMenuVisible) {
+      return (
         <GameMenu visible={cooldownMenuVisible}>
           <h2 className="text-lg mt-10">{t('theMatchReady')}</h2>
           <div className="text-4xl mt-2">{cooldown}</div>
           <div className="text-base mt-10">{t('doYourBest')}</div>
         </GameMenu>
+      )
+    }
+
+    if (endVisible) {
+      return (
         <GameMenu visible={endVisible}>
           <h2 className="text-lg mt-10">{gameStatusLabel.title}</h2>
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10">{gameStatusLabel.subtitle}</div>
-          <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onAfterEndGame}>
-            OK
-          </div>
+          {showOkButton && (
+            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={handleEndGame}>
+              OK
+            </div>
+          )}
         </GameMenu>
+      )
+    }
+
+    if (disconnectVisible) {
+      return (
         <GameMenu visible={disconnectVisible}>
           <h2 className="text-lg mt-10">{t('opponentLeftRoom')}</h2>
           <div className="text-4xl mt-2 invisible">-</div>
           <div className="text-base mt-10 invisible">-</div>
-          <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={onAfterEndGame}>
-            OK
+          {showOkButton && (
+            <div className="text-xl mt-10 cursor-pointer border px-3 py-1" onClick={handleEndGame}>
+              OK
+            </div>
+          )}
+        </GameMenu>
+      )
+    }
+
+    if (reconnectVisible) {
+      return (
+        <GameMenu visible={reconnectVisible}>
+          <h2 className="text-lg mt-10">{t('reconnecting')}...</h2>
+          <div className="text-4xl mt-2 invisible">-</div>
+          <div className="text-base mt-10 relative">
+            <Heartbeat />
           </div>
         </GameMenu>
-      </div>
+      )
+    }
+  }
+
+  return (
+    <Show when={canShow}>
+      <div className="absolute top-0 w-full h-full">{renderMenu()}</div>
     </Show>
   )
 }

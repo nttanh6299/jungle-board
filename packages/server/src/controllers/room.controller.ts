@@ -6,7 +6,7 @@ import RoomResolver from '../resolvers/Room'
 import roomMap from '../db'
 import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS, UNABLE_PLAY_REASON } from '../constants/common'
 import { ResGetRoom } from '../types'
-import { shuffle } from '../utils'
+import { hasUserId, shuffle } from '../utils'
 
 const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove, theme }): ResGetRoom => ({
   id,
@@ -83,7 +83,7 @@ const createRoom = catchAsync(async (req, res) => {
 })
 
 const verifyRoom = catchAsync(async (req, res) => {
-  const { roomId, accountId } = req.body ?? {}
+  const { roomId } = req.body ?? {}
   const room = await Room.findById(roomId)
   if (!room) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
@@ -95,9 +95,9 @@ const verifyRoom = catchAsync(async (req, res) => {
     return res.status(httpStatus.OK).send({ data: { status: false, reason: UNABLE_PLAY_REASON.roomFull } })
   }
 
-  if (accountId) {
+  if (hasUserId(req)) {
     for (const room of roomMap.values()) {
-      if (room.players.get(accountId)) {
+      if (room.players.get(req.userId)) {
         return res.status(httpStatus.OK).send({ data: { status: false, reason: UNABLE_PLAY_REASON.playing } })
       }
     }

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import useInterval from 'hooks/useInterval'
@@ -18,6 +18,9 @@ import HandFistIcon from 'icons/HandFist'
 import ClockIcon from 'icons/Clock'
 import FilmScriptIcon from 'icons/FilmScript'
 import GameControllerIcon from 'icons/GameController'
+import { notify } from 'utils/subscriber'
+import { NotifyEvent } from 'constants/enum'
+import RocketLauchIcon from 'icons/RocketLauch'
 import useMe from 'hooks/useMe'
 
 const RoomsPage = () => {
@@ -25,7 +28,7 @@ const RoomsPage = () => {
   const { t } = useTranslation('common')
   const [, dispatch] = useAppState()
   const { rooms, fetching, fetch } = useRooms()
-  const { user } = useMe()
+  const { isFetched } = useMe()
   const { onVerifyRoom } = useRoomStore((state) => ({
     onVerifyRoom: state.actions.onVerifyRoom,
   }))
@@ -41,7 +44,7 @@ const RoomsPage = () => {
       if (!canJoin(quantity, max, status)) return
 
       dispatch({ type: 'displayLoader', payload: { value: true } })
-      const { data } = await verifyRoom({ roomId: id, accountId: user?.id ? String(user?.id) : '' })
+      const { data } = await verifyRoom({ roomId: id })
 
       let errorLabel = ''
       if (!data) errorLabel = t('error.somethingWrong')
@@ -63,14 +66,31 @@ const RoomsPage = () => {
     }
   }
 
+  const onAutoJoinRoom = () => {
+    notify(NotifyEvent.AutoJoinRoom, null)
+  }
+
   useInterval(() => {
     fetch()
   }, 10000)
 
+  useEffect(() => {
+    if (rooms?.length) return
+
+    // if rooms is very slowly to be fetched, open connection alert up
+    const timer = setTimeout(() => {
+      notify(NotifyEvent.ShowConnectionAlert, null)
+    }, 7000)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [rooms])
+
   return (
     <>
       <TopBar hideRoomInfo />
-      <div className="bg-primary rounded-lg mt-3 min-h-[422px] max-h-[422px] overflow-auto overflow-x-hidden">
+      <div className="bg-primary rounded-lg mt-2 sm:mt-3 min-h-[422px] md:max-h-[422px] overflow-auto overflow-x-hidden mb-auto">
         <div className="p-2">
           <Show when={fetching || !rooms?.length}>
             <div className="grid gap-2 grid-cols-fill-40">
@@ -156,11 +176,17 @@ const RoomsPage = () => {
           </Show>
         </div>
       </div>
-      <div className="flex justify-center mt-4">
+      <div className="flex sm:hidden justify-center mt-2 sm:mt-0">
+        <Button uppercase rounded disabled={!isFetched} iconLeft={<RocketLauchIcon />} onClick={onAutoJoinRoom}>
+          {t('autoJoin')}
+        </Button>
+      </div>
+      <div className="flex justify-center mt-2 sm:mt-4">
         <Button
           rounded
           uppercase
           variant="secondary"
+          disabled={!isFetched}
           iconLeft={<FilmScriptIcon />}
           className="w-[120px]"
           onClick={onNewRoom}
@@ -170,7 +196,7 @@ const RoomsPage = () => {
         <Button
           uppercase
           rounded
-          disabled={!selectedRoom?.id}
+          disabled={!selectedRoom?.id || !isFetched}
           iconLeft={<GameControllerIcon />}
           className="w-[120px] ml-2"
           onClick={onJoinRoom}

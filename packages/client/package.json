@@ -21,7 +21,7 @@
     "dequal": "^2.0.2",
     "i18next": "^22.0.8",
     "immer": "^9.0.12",
-    "jungle-board-service": "^1.0.1",
+    "jungle-board-service": "^1.0.4",
     "next": "^12.3.0",
     "next-auth": "^4.10.3",
     "next-i18next": "^13.0.0",

@@ -1,3 +1,5 @@
+import { Request } from 'express'
+
 export const generateId = () => {
   return Date.now().toString(36) + Math.random().toString(36).substring(2)
 }
@@ -26,4 +28,8 @@ export const shuffle = <T>(array: T[]) => {
   }
 
   return array
+}
+
+export const hasUserId = (request: Request): request is Request & { userId: string } => {
+  return 'userId' in request && typeof request['userId'] === 'string'
 }

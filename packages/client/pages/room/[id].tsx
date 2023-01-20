@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect } from 'react'
-import { useSession } from 'next-auth/react'
 import { GetStaticProps } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +9,7 @@ import { useRoomStore } from 'store/room'
 import { verifyRoom } from 'apis/room'
 import { UNABLE_PLAY_REASON } from 'constants/common'
 import useAppState from 'hooks/useAppState'
+import useMe from 'hooks/useMe'
 
 export const getStaticPaths = () => ({
   paths: [],
@@ -25,12 +25,11 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => ({
 const RoomPage = () => {
   const router = useRouter()
   const { query } = router
-  const { data: session } = useSession()
   const [, dispatch] = useAppState()
+  const { isFetched } = useMe()
   const { t } = useTranslation('common')
 
   const roomId = query?.id ? String(query.id) : ''
-  const accountId = session?.id ? String(session.id) : ''
 
   const { onResetVerification, onVerifyRoom, valid } = useRoomStore((state) => ({
     valid: state.valid,
@@ -41,7 +40,7 @@ const RoomPage = () => {
   useLayoutEffect(() => {
     const verify = async () => {
       dispatch({ type: 'displayLoader', payload: { value: true } })
-      const { data } = await verifyRoom({ roomId, accountId })
+      const { data } = await verifyRoom({ roomId })
       let errorLabel = ''
       if (!data) errorLabel = t('error.somethingWrong')
       if (data.reason === UNABLE_PLAY_REASON.roomFull) {
@@ -61,7 +60,7 @@ const RoomPage = () => {
     if (!valid) {
       verify()
     }
-  }, [roomId, accountId, valid, onVerifyRoom, dispatch, t])
+  }, [roomId, valid, onVerifyRoom, dispatch, t])
 
   useEffect(() => {
     return () => {
@@ -69,13 +68,13 @@ const RoomPage = () => {
     }
   }, [onResetVerification])
 
-  if (!valid) {
+  if (!valid || !isFetched) {
     return null
   }
 
   return (
     <SocketProvider>
-      <Room roomId={roomId} accountId={accountId} />
+      <Room roomId={roomId} />
     </SocketProvider>
   )
 }

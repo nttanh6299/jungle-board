@@ -42,7 +42,7 @@
   "opponentLeftRoom": "Đối thủ đã thoát",
   "yourTurn": "Lượt bạn!",
   "opponentTurn": "Lượt đối thủ!",
-  "justMoved": "Vừa mới di chuyển",
+  "justMoved": "Vừa di chuyển",
   "elephant": "Voi",
   "lion": "Sư tử",
   "tiger": "Hổ",
@@ -51,5 +51,9 @@
   "dog": "Chó",
   "cat": "Mèo",
   "rat": "Chuột",
-  "cannotChangeLanguageWhilePlaying": "Bạn không thể đổi ngôn ngữ trong lúc chơi"
+  "cannotChangeLanguageWhilePlaying": "Bạn không thể đổi ngôn ngữ trong lúc chơi",
+  "reconnecting": "Đang kết nối lại",
+  "logout": "Đăng xuất",
+  "stats": "Số liệu",
+  "connectionAlert": "Do sử dụng máy chủ web miễn phí nên dữ liệu lần đầu load rất chậm, mong các bạn kiên nhẫn chờ đợi một chút."
 }

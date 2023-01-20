@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGameStore, getState } from 'store/game'
 import useSocket from 'hooks/useSocket'
-import { EDisconnectReason } from 'constants/enum'
+import { EDisconnectReason, NotifyEvent } from 'constants/enum'
 import { notify } from 'utils/subscriber'
 import { getPieceKind } from 'jungle-board-service'
 
@@ -29,6 +29,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     onEndGame,
     onStartGame,
     onDisconnect,
+    onReconnect,
   } = useGameStore((state) => ({
     playerId: state.playerId,
     canConnect: state.canConnect,
@@ -40,6 +41,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     onEndGame: state.actions.onEndGame,
     onStartGame: state.actions.onStartGame,
     onDisconnect: state.actions.onDisconnect,
+    onReconnect: state.actions.onReconnect,
   }))
 
   // Connect to server
@@ -113,7 +115,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       }
       const turnLog = { text, className }
 
-      notify<Utils.Log[]>('addLog', [moveTurn, turnLog])
+      notify<Utils.Log[]>(NotifyEvent.AddLog, [moveTurn, turnLog])
     })
 
     socket.on('end', (lastTurn, status) => {
@@ -134,7 +136,7 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
     socket.on('playerDisconnect', (isPlayerDisconnected) => {
       if (isPlayerDisconnected) {
         onDisconnect()
-        notify<Utils.Log[]>('addLog', [{ text: 'The opponent has left the room' }])
+        notify<Utils.Log[]>(NotifyEvent.AddLog, [{ text: 'The opponent has left the room' }])
       }
     })
 
@@ -149,16 +151,30 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
 
     socket.on('disconnect', (reason) => {
       console.log('client disconnect', reason)
-      if (reason === EDisconnectReason.TRANSPORT_ERROR || reason === EDisconnectReason.PING_TIMEOUT) {
+      if (
+        reason === EDisconnectReason.TRANSPORT_CLOSE ||
+        reason === EDisconnectReason.TRANSPORT_ERROR ||
+        reason === EDisconnectReason.PING_TIMEOUT
+      ) {
         console.log(playerId + ' try to reconnect')
+        onReconnect(true)
         socket.connect().emit('reconnect', roomId, playerId)
-      } else {
-        alert('You are disconnected!')
-        window.location.href = '/'
+
+        // if reconnection doesn't happen in 10s, the player will be left the room
+        setTimeout(() => {
+          const { reconnectVisible } = getState()
+          if (reconnectVisible) {
+            console.log(playerId + ' reconnect failed')
+            alert('You are disconnected!')
+            window.location.href = '/'
+          }
+        }, 10000)
       }
     })
 
-    socket.on('reconnectSuccess', () => {
+    socket.on('reconnectSuccess', (playerIdTurn, board, allMoves) => {
+      onNewTurn(playerIdTurn, board, allMoves)
+      onReconnect(false)
       console.log('Reconnect successfully!')
     })
 
@@ -166,7 +182,19 @@ const useHandleEventSocket: IHook = ({ roomId, accountId }) => {
       socket.off('disconnect')
       socket.off('reconnectSuccess')
     }
-  }, [socket, canConnect, roomId, playerId])
+  }, [socket, canConnect, roomId, playerId, onReconnect, onNewTurn])
+
+  useEffect(() => {
+    const offline = () => {
+      alert('You are disconnected!')
+      window.location.href = '/'
+    }
+
+    window.addEventListener('offline', offline)
+    return () => {
+      window.removeEventListener('offline', offline)
+    }
+  }, [])
 }
 
 export default useHandleEventSocket
