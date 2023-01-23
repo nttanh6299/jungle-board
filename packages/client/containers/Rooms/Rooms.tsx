@@ -80,7 +80,7 @@ const RoomsPage = () => {
     // if rooms is very slowly to be fetched, open connection alert up
     const timer = setTimeout(() => {
       notify(NotifyEvent.ShowConnectionAlert, null)
-    }, 7000)
+    }, 5000)
 
     return () => {
       clearInterval(timer)
