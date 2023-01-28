@@ -24,7 +24,7 @@ const ThemeItem = ({ image, price, isLocked, isChecked, canBuy, onClick }: Theme
 
   return (
     <div className="relative bg-black/75 md:w-auto md:h-[166px]" onClick={handleClick}>
-      <Image src={image} layout="fill" priority />
+      <Image src={image} layout="fill" priority unoptimized={true} />
       <div
         className={clsx('absolute inset-0 flex justify-center items-center cursor-pointer transition-[background]', {
           'bg-black/75': isChecked || canBuy || (!isChecked && isLocked),

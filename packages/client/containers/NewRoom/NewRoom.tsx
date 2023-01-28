@@ -104,19 +104,16 @@ const NewRoom = () => {
   }
 
   useIsomorphicLayoutEffect(() => {
-    getThemes().then((themes) => {
+    if (themes?.length) {
       const defaultTheme = themes?.find((theme) => theme.isDefault)
       if (defaultTheme) {
         setSelectedTheme(defaultTheme)
       }
-    })
-  }, [getThemes])
-
-  useIsomorphicLayoutEffect(() => {
-    if (!user?.id) {
-      setSelectedTheme(null)
+      return
     }
-  }, [user?.id])
+
+    getThemes()
+  }, [user?.id, themes, getThemes])
 
   return (
     <>

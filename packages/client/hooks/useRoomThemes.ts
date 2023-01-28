@@ -1,9 +1,13 @@
 import { useCallback, useState } from 'react'
-import { getThemes as getThemesAPI, ResGetTheme } from 'apis/item'
+import { getThemes as getThemesAPI } from 'apis/item'
 import { buyTheme as buyThemeAPI } from 'apis/user'
+import { useThemeStore } from 'store/theme'
 
 const useRoomThemes = () => {
-  const [themes, setThemes] = useState<ResGetTheme[]>([])
+  const { themes, onSetThemes } = useThemeStore((state) => ({
+    themes: state.themes,
+    onSetThemes: state.actions.onSetThemes,
+  }))
   const [isFetchingThemes, setIsFetchingTheme] = useState(false)
   const [isBuyingTheme, setIsBuyingTheme] = useState(false)
 
@@ -11,14 +15,14 @@ const useRoomThemes = () => {
     try {
       setIsFetchingTheme(true)
       const { data: themes = [] } = await getThemesAPI()
-      setThemes(themes)
+      onSetThemes(themes)
       return themes
     } catch (_) {
       console.error('Fetch themes error!')
     } finally {
       setIsFetchingTheme(false)
     }
-  }, [])
+  }, [onSetThemes])
 
   const buyTheme = async (themeId: string, onSuccess?: () => void) => {
     try {
