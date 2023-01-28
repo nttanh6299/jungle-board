@@ -142,7 +142,7 @@ const NewRoom = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-between md:block">
+                <div className="grid gap-2 grid-cols-3 md:block">
                   <div className="mt-2 md:mt-6 flex justify-between items-center">
                     <div className="hidden md:flex items-center">
                       <HandFistIcon />
@@ -209,6 +209,7 @@ const NewRoom = () => {
                       return (
                         <ThemeItem
                           key={theme.id}
+                          id={theme.id}
                           image={theme.image}
                           price={theme.price}
                           isChecked={isDefaultChecked || isChecked}

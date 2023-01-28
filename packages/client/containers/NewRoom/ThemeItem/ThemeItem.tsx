@@ -1,10 +1,10 @@
-import Image from 'next/image'
 import CheckIcon from 'icons/Check'
 import CoinsIcon from 'icons/Coins'
 import LockIcon from 'icons/Lock'
 import clsx from 'clsx'
 
 interface ThemeItemProps {
+  id: string
   image: string
   price: number
   isChecked: boolean
@@ -13,7 +13,7 @@ interface ThemeItemProps {
   onClick: () => void
 }
 
-const ThemeItem = ({ image, price, isLocked, isChecked, canBuy, onClick }: ThemeItemProps) => {
+const ThemeItem = ({ id, image, price, isLocked, isChecked, canBuy, onClick }: ThemeItemProps) => {
   const handleClick = () => {
     if (isLocked || isChecked) {
       return
@@ -23,8 +23,8 @@ const ThemeItem = ({ image, price, isLocked, isChecked, canBuy, onClick }: Theme
   }
 
   return (
-    <div className="relative bg-black/75 md:w-auto md:h-[166px]" onClick={handleClick}>
-      <Image src={image} layout="fill" priority unoptimized={true} />
+    <div className="relative bg-black/75 md:w-auto max-h-[166px]" onClick={handleClick}>
+      <img src={image} alt={id} loading="lazy" className="z-0 inline-block h-full w-full" />
       <div
         className={clsx('absolute inset-0 flex justify-center items-center cursor-pointer transition-[background]', {
           'bg-black/75': isChecked || canBuy || (!isChecked && isLocked),
