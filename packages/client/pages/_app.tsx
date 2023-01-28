@@ -20,7 +20,7 @@ const App: React.FC<ICustomAppProps> = ({ Component, pageProps: { session, ...pa
   return (
     <SessionProvider session={session} refetchInterval={5 * 60} refetchOnWindowFocus={false}>
       <AppStateProvider>
-        <RouterLoading height={4} color="#3EC333" />
+        <RouterLoading height={4} color="#3EC333" options={{ showSpinner: false }} />
         <ConnectionAlert />
         <AppLoading />
         <Layout>
