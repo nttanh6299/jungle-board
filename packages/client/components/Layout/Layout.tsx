@@ -20,14 +20,14 @@ const Layout = ({ children }: PropsWithChildren<unknown>) => {
   }, [session, status])
 
   useIsomorphicLayoutEffect(() => {
-    getMe()
+    getMe(true)
   }, [getMe])
 
   useEffect(() => {
-    subscribe(NotifyEvent.RefetchUser, getMe)
+    subscribe(NotifyEvent.RefetchUser, () => getMe(true))
 
     return () => {
-      unsubscribe(NotifyEvent.RefetchUser, getMe)
+      unsubscribe(NotifyEvent.RefetchUser, () => getMe(true))
     }
   })
 

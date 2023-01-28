@@ -4,8 +4,7 @@ const { i18n } = require('./next-i18next.config')
 const moduleExports = {
   i18n,
   images: {
-    dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    domains: process.env.IMAGE_DOMAINS.split(',')
   },
   webpack: (config, options) => {
     config.module.rules.push({

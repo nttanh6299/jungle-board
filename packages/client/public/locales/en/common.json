@@ -55,5 +55,10 @@
   "reconnecting": "Reconnecting",
   "logout": "Logout",
   "stats": "Stats",
-  "connectionAlert": "Because of using a web server for free, data is fetched very slowly at the first time, please wait a little patiently."
+  "connectionAlert": "Because of using a web server for free, data is fetched very slowly at the first time, please wait a little patiently.",
+  "buyTheme": "Buy theme",
+  "makeMoneyIsHard": "Making money is hard, so make sure you want to buy it!",
+  "loading": "Loading",
+  "confirm": "Confirm",
+  "cancel": "Cancel"
 }

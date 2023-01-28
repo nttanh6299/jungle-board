@@ -21,4 +21,5 @@ export type UserInfo = {
   lose: number
   tie: number
   coin: number
+  themeIds: string[]
 }

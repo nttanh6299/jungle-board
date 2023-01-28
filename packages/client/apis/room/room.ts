@@ -34,10 +34,6 @@ export interface ResAutoJoinRoom {
   roomId: string
 }
 
-export const getRoom = async (roomId: string) => {
-  return fetchApi<ResGetRoom>(`/rooms/${roomId}`)
-}
-
 export const getRooms = async () => {
   return fetchApi<ResGetRoom[]>(`/rooms`)
 }

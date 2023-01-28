@@ -186,7 +186,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
             <div className="mr-2">
               <Tooltip
                 title={
-                  <div>
+                  <div className="md:text-sm">
                     <div>
                       {t('maxTurns')}: {room?.maxMove}
                     </div>

@@ -22,23 +22,28 @@ const useMe = () => {
     onSetFetched(false)
   }
 
-  const getMe = useCallback(async () => {
-    if (!getAccessToken()) {
-      onSetFetched(true)
-      return
-    }
+  const getMe = useCallback(
+    async (forceLoading?: boolean) => {
+      if (!getAccessToken()) {
+        onSetFetched(true)
+        return
+      }
 
-    try {
-      onSetLoading(true)
-      const { data } = await getMeAPI()
-      onSetUser(data)
-      onSetFetched(true)
-    } catch (error) {
-      console.log('Get me error: ', error)
-    } finally {
-      onSetLoading(false)
-    }
-  }, [onSetUser, onSetLoading, onSetFetched])
+      try {
+        if (forceLoading) {
+          onSetLoading(true)
+        }
+        const { data } = await getMeAPI()
+        onSetUser(data)
+        onSetFetched(true)
+      } catch (error) {
+        console.log('Get me error: ', error)
+      } finally {
+        onSetLoading(false)
+      }
+    },
+    [onSetUser, onSetLoading, onSetFetched],
+  )
 
   return {
     isLoading,

@@ -10,6 +10,4 @@ roomRoute.post('/', roomController.createRoom)
 roomRoute.post('/verify', getUserFromJwt, validate(roomValidation.verifyRoom), roomController.verifyRoom)
 roomRoute.get('/auto-join', roomController.autoJoin)
 
-roomRoute.get('/:roomId', validate(roomValidation.getRoom), roomController.getRoom)
-
 export default roomRoute

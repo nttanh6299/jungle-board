@@ -15,6 +15,7 @@
   "author": "Tuan Anh Nguyen <nttanh6299@gmail.com> (https://github.com/nttanh6299)",
   "license": "MIT",
   "dependencies": {
+    "cloudinary": "1.33.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
