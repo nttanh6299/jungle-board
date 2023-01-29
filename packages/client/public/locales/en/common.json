@@ -60,5 +60,7 @@
   "makeMoneyIsHard": "Making money is hard, so make sure you want to buy it!",
   "loading": "Loading",
   "confirm": "Confirm",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "buyThemeFailed": "Buy theme failed",
+  "notEnoughCoin": "Not enough coins to buy"
 }

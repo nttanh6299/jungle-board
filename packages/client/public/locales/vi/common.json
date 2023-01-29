@@ -60,5 +60,7 @@
   "makeMoneyIsHard": "Kiếm tiền khó lắm, bởi vậy hãy chắc chắn bạn muốn mua nó nhé!",
   "loading": "Đang tải",
   "confirm": "Xác nhận",
-  "cancel": "Hủy bỏ"
+  "cancel": "Hủy bỏ",
+  "buyThemeFailed": "Mua thất bại",
+  "notEnoughCoin": "Không đủ tiền để mua"
 }

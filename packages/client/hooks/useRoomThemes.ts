@@ -31,8 +31,8 @@ const useRoomThemes = () => {
       if (isSuccessful) {
         onSuccess && onSuccess()
       }
-    } catch (_) {
-      console.error('Buy theme error!')
+    } catch (error) {
+      return Promise.reject(error?.data)
     } finally {
       setIsBuyingTheme(false)
     }

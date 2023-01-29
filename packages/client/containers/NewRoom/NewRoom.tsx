@@ -22,6 +22,7 @@ import Show from 'components/Show'
 import ThemeItem from './ThemeItem'
 import Modal from 'components/Modal'
 import { ResGetTheme } from 'apis/item'
+import useBoolean from 'hooks/useBoolean'
 
 const NewRoom = () => {
   const router = useRouter()
@@ -36,11 +37,11 @@ const NewRoom = () => {
 
   const { themes, isFetchingThemes, getThemes, buyTheme, isBuyingTheme } = useRoomThemes()
   const [selectedTheme, setSelectedTheme] = useState<ResGetTheme>()
+
   const themeSelectedToBuy = useRef('')
 
-  const [isOpenModal, setIsOpenModal] = useState(false)
-
-  const toggleModal = () => setIsOpenModal((prev) => !prev)
+  const openBuyModalState = useBoolean()
+  const openErrorModalState = useBoolean()
 
   const onNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.trim()
@@ -51,24 +52,28 @@ const NewRoom = () => {
 
   const onBuyTheme = async () => {
     try {
-      await buyTheme(themeSelectedToBuy.current, async () => {
-        await getMe()
-        toggleModal()
-        themeSelectedToBuy.current = ''
-      })
-    } catch (_) {
-      console.log(_)
+      const foundTheme = themes?.find((theme) => theme.id === themeSelectedToBuy.current)
+      if (user?.coin >= foundTheme?.price) {
+        await buyTheme(themeSelectedToBuy.current, async () => {
+          await getMe()
+          openBuyModalState.off()
+          themeSelectedToBuy.current = ''
+        })
+      } else {
+        openBuyModalState.off()
+        openErrorModalState.on()
+      }
+    } catch (error) {
+      openBuyModalState.off()
+      openErrorModalState.on()
     }
   }
 
   const onThemeClick = (theme: ResGetTheme, canBuy: boolean) => {
     if (canBuy) {
       themeSelectedToBuy.current = theme.id
-      toggleModal()
-      return
-    }
-
-    if (user?.coin >= theme.price) {
+      openBuyModalState.on()
+    } else {
       setSelectedTheme(theme)
     }
   }
@@ -244,14 +249,22 @@ const NewRoom = () => {
         <div className="hidden sm:block sm:invisible w-[120px]"></div>
       </div>
       <Modal
-        isOpen={isOpenModal}
-        onClose={toggleModal}
+        isOpen={openBuyModalState.value}
+        onClose={openBuyModalState.off}
         onOk={onBuyTheme}
         isOkLoading={isBuyingTheme}
         title={t('buyTheme')}
         description={t('makeMoneyIsHard')}
         okButtonTitle={isBuyingTheme ? t('loading') : t('confirm')}
         cancelButtonTitle={t('cancel')}
+      />
+      <Modal
+        isOpen={openErrorModalState.value}
+        onClose={openErrorModalState.off}
+        onOk={openErrorModalState.off}
+        title={t('buyThemeFailed')}
+        description={t(`notEnoughCoin`)}
+        okButtonTitle={t('confirm')}
       />
     </>
   )

@@ -4,7 +4,7 @@ import User from '../models/user.model'
 import Item from '../models/item.model'
 import UserItem from '../models/userItem.model'
 import { hasUserId } from '../utils'
-import ApiError from '../utils/ApiError'
+import { ERROR_TYPE } from '../constants/errorType'
 
 const buyTheme = catchAsync(async (req, res) => {
   if (hasUserId(req)) {
@@ -16,12 +16,16 @@ const buyTheme = catchAsync(async (req, res) => {
     const { themeId = '' } = req.body ?? {}
     const theme = await Item.findById(themeId)
     if (!theme) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Theme not found')
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .send({ data: null, status: httpStatus.BAD_REQUEST, type: ERROR_TYPE.themeNotFound })
     }
 
     const canBuyTheme = user.coin >= theme.price
     if (!canBuyTheme) {
-      throw new ApiError(httpStatus.BAD_REQUEST, `You don't have enough coins to buy that item`)
+      return res
+        .status(httpStatus.BAD_REQUEST)
+        .send({ data: null, status: httpStatus.BAD_REQUEST, type: ERROR_TYPE.notEnoughCoin })
     }
 
     await Promise.all([

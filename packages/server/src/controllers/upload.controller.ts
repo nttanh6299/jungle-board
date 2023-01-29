@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from 'cloudinary'
 import httpStatus from 'http-status'
 import config from '../config/config'
-import ApiError from '../utils/ApiError'
+import { ERROR_TYPE } from '../constants/errorType'
 import catchAsync from '../utils/catchAsync'
 
 cloudinary.config({
@@ -14,7 +14,9 @@ const upload = catchAsync(async (req, res) => {
   const files = req.body
 
   if (!files) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Files not found')
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .send({ data: null, status: httpStatus.BAD_REQUEST, type: ERROR_TYPE.fileNotFound })
   }
 
   const uploadedImages: { publicId: string; preview: string }[] = []

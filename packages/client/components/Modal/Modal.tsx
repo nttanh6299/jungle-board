@@ -61,13 +61,15 @@ const Modal = ({
                 </div>
 
                 <div className="mt-4 flex justify-end">
-                  <button
-                    type="button"
-                    className="mr-2 rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-cgray text-white focus-visible:outline-none"
-                    onClick={onClose}
-                  >
-                    {cancelButtonTitle}
-                  </button>
+                  {cancelButtonTitle && (
+                    <button
+                      type="button"
+                      className="mr-2 rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-cgray text-white focus-visible:outline-none"
+                      onClick={onClose}
+                    >
+                      {cancelButtonTitle}
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="rounded-md border border-transparent px-4 py-2 text-sm font-medium bg-primary text-white disabled:opacity-75 focus-visible:outline-none"

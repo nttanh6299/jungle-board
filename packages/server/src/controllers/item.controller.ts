@@ -1,13 +1,15 @@
 import httpStatus from 'http-status'
+import { ERROR_TYPE } from '../constants/errorType'
 import Item from '../models/item.model'
-import ApiError from '../utils/ApiError'
 import catchAsync from '../utils/catchAsync'
 
 const createItem = catchAsync(async (req, res) => {
   const newItem = await Item.create(req.body)
 
   if (!newItem) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot create item')
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .send({ data: null, status: httpStatus.BAD_REQUEST, type: ERROR_TYPE.createItemFailed })
   }
 
   return res.status(httpStatus.OK).send({ data: newItem })
