@@ -21,12 +21,14 @@ import RoomMenu from './RoomMenu'
 import PlayerCooldown from './PlayerCooldown'
 import Chat from 'components/Chat'
 import Logs from 'components/Logs'
+import { ThemeConfig } from 'apis/item'
 
 interface RoomProps {
   roomId: string
+  themeConfig?: ThemeConfig
 }
 
-const Room: React.FC<RoomProps> = ({ roomId }) => {
+const Room: React.FC<RoomProps> = ({ roomId, themeConfig }) => {
   const router = useRouter()
   const [, dispatch] = useAppState()
   const { t } = useTranslation('common')
@@ -213,6 +215,7 @@ const Room: React.FC<RoomProps> = ({ roomId }) => {
                 selectedSquare?.[0] ?? -1,
                 selectedSquare?.[1] ?? -1,
               )}
+              config={themeConfig}
             />
             <RoomMenu />
           </div>

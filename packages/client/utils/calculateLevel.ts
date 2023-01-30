@@ -1,26 +1,22 @@
-const MAX_LEVEL = 25
-const THRESHOLD = 25
-
-/**
- * XP = ((Level^2 - Level) x threshold) / 2
- */
-const levels = Array.from({ length: MAX_LEVEL }, (_, i) => i + 1).map((level) => ((level ** 2 - level) * THRESHOLD) / 2)
+const levelExpList = [0, 11, 44, 100, 177, 277, 400, 544, 711, 900, 1111, 999999]
 
 const calculateLevel = (playerExp: number) => {
-  let expLeft = playerExp
-  let level = 1
-  while (level < MAX_LEVEL && expLeft >= 0) {
-    expLeft = expLeft - levels[level - 1]
-    level = level + 1
-  }
+  let gainedLevelIndex = 0
+  let totalExp = 0
 
-  if (expLeft < 0) {
-    level = level - 1
+  for (const exp in levelExpList) {
+    if (playerExp < totalExp + levelExpList[exp]) {
+      gainedLevelIndex = Number(exp)
+      break
+    } else {
+      totalExp += levelExpList[exp]
+    }
   }
 
   return {
-    level,
-    expNextLevelNeeded: levels[level + 1],
+    level: gainedLevelIndex,
+    expNext: levelExpList[gainedLevelIndex],
+    expAfterCalculated: gainedLevelIndex > 1 ? playerExp - totalExp : playerExp,
   }
 }
 

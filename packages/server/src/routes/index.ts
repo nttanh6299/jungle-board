@@ -1,6 +1,9 @@
 import express, { Router } from 'express'
 import roomRoute from './room.route'
 import authRoute from './auth.route'
+import uploadRoute from './upload.route'
+import itemRoute from './item.route'
+import userRoute from './user.route'
 
 interface Route {
   path: string
@@ -16,7 +19,7 @@ router.get('/health', (_, res) => {
     date: new Date(),
   }
 
-  res.status(200).send({ data })
+  return res.status(200).send({ data })
 })
 
 const routes: Route[] = [
@@ -27,6 +30,18 @@ const routes: Route[] = [
   {
     path: '/auth',
     route: authRoute,
+  },
+  {
+    path: '/upload',
+    route: uploadRoute,
+  },
+  {
+    path: '/items',
+    route: itemRoute,
+  },
+  {
+    path: '/users',
+    route: userRoute,
   },
 ]
 

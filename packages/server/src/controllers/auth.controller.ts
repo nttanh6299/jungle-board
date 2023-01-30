@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken'
 import httpStatus from 'http-status'
 import catchAsync from '../utils/catchAsync'
 import User, { IUser } from '../models/user.model'
+import UserItem from '../models/userItem.model'
 import config from '../config/config'
 import { AUTH_COOKIE_EXPIRE_DEFAULT } from '../constants/auth'
 import { hasUserId } from '../utils'
@@ -38,11 +39,21 @@ const getUserStats = catchAsync(async (req, res) => {
       return res.status(httpStatus.UNAUTHORIZED).send({ error: 'Unauthorized' })
     }
     const { id, name, xp, win, lose, tie, coin } = user ?? {}
-    return res.status(httpStatus.OK).send({ data: { id, name, xp, win, lose, tie, coin } })
+
+    const userItems = await UserItem.find({ userId: id })
+    const themeIds = userItems?.map((item) => item.itemId) || []
+
+    return res.status(httpStatus.OK).send({ data: { id, name, xp, win, lose, tie, coin, themeIds } })
   }
+})
+
+const signInAdmin = catchAsync(async (req, res) => {
+  const passcode = req.body?.passcode || ''
+  return res.status(httpStatus.OK).send({ data: passcode === config.adminPasscode })
 })
 
 export default {
   signIn,
   getUserStats,
+  signInAdmin,
 }

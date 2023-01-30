@@ -1,5 +1,4 @@
 import httpStatus from 'http-status'
-import ApiError from '../utils/ApiError'
 import catchAsync from '../utils/catchAsync'
 import Room, { ERoomStatus } from '../models/room.model'
 import RoomResolver from '../resolvers/Room'
@@ -7,8 +6,10 @@ import roomMap from '../db'
 import { DEFAULT_MAX_MOVE, PLAY_COOLDOWN, ROOM_STATUS, UNABLE_PLAY_REASON } from '../constants/common'
 import { ResGetRoom } from '../types'
 import { hasUserId, shuffle } from '../utils'
+import { IItem } from '../models/item.model'
+import { ERROR_TYPE } from '../constants/errorType'
 
-const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove, theme }): ResGetRoom => ({
+const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove, theme, config }): ResGetRoom => ({
   id,
   name,
   status,
@@ -16,12 +17,13 @@ const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove,
   cooldown,
   maxMove,
   theme,
+  config,
   max: maxPlayer,
   quantity: players,
 })
 
 const getRooms = catchAsync(async (_, res) => {
-  const rooms = await Room.find({ isPrivate: false })
+  const rooms = await Room.find({ isPrivate: false }).populate<{ theme: IItem }>({ path: 'theme', select: 'name' })
   return res.status(httpStatus.OK).send({
     data: rooms.map(({ id, name, status, type, maxMove, cooldown, theme }) =>
       toRoom({
@@ -31,34 +33,13 @@ const getRooms = catchAsync(async (_, res) => {
         type,
         maxMove,
         cooldown,
-        theme,
+        theme: theme?.name || '',
         players: roomMap.get(id)?.playerIdsCanPlay?.length || 0,
         maxPlayer: 2,
+        config: null,
       }),
     ),
   })
-})
-
-const getRoom = catchAsync(async (req, res) => {
-  const { roomId } = req.params
-  const room = await Room.findById(roomId)
-  if (!room) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
-  }
-
-  const { id, name, status, type, maxMove, cooldown, theme } = room
-  const roomRes = toRoom({
-    id,
-    name,
-    status,
-    type,
-    maxMove,
-    cooldown,
-    theme,
-    players: roomMap.get(id)?.playerIdsCanPlay?.length,
-    maxPlayer: 2,
-  })
-  return res.status(httpStatus.OK).send({ data: roomRes })
 })
 
 const createRoom = catchAsync(async (req, res) => {
@@ -72,7 +53,9 @@ const createRoom = catchAsync(async (req, res) => {
     type: 'custom',
   })
   if (!newRoom) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot create room')
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .send({ data: null, status: httpStatus.BAD_REQUEST, type: ERROR_TYPE.createRoomFailed })
   }
 
   roomMap.set(
@@ -84,9 +67,18 @@ const createRoom = catchAsync(async (req, res) => {
 
 const verifyRoom = catchAsync(async (req, res) => {
   const { roomId } = req.body ?? {}
-  const room = await Room.findById(roomId)
+  const room = await Room.findById(roomId).populate<{ theme: IItem }>({
+    path: 'theme',
+    select: 'name',
+    populate: {
+      path: 'config',
+    },
+  })
+
   if (!room) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Room not found')
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .send({ data: null, status: httpStatus.BAD_REQUEST, type: ERROR_TYPE.roomNotFound })
   }
   const roomMapItem = roomMap.get(roomId)
   const isWaiting = room.status === ROOM_STATUS.waiting.value
@@ -115,9 +107,10 @@ const verifyRoom = catchAsync(async (req, res) => {
         type,
         maxMove,
         cooldown,
-        theme,
+        theme: theme?.name || '',
         players: roomMap.get(id)?.playerIdsCanPlay?.length,
         maxPlayer: 2,
+        config: theme?.config,
       }),
     },
   })
@@ -139,12 +132,13 @@ const autoJoin = catchAsync(async (req, res) => {
     }
   }
 
-  throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot join automatically')
+  return res
+    .status(httpStatus.BAD_REQUEST)
+    .send({ data: null, status: httpStatus.BAD_REQUEST, type: ERROR_TYPE.joinFailed })
 })
 
 const roomController = {
   getRooms,
-  getRoom,
   createRoom,
   verifyRoom,
   autoJoin,

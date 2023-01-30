@@ -55,5 +55,12 @@
   "reconnecting": "Đang kết nối lại",
   "logout": "Đăng xuất",
   "stats": "Số liệu",
-  "connectionAlert": "Do sử dụng máy chủ web miễn phí nên dữ liệu lần đầu load rất chậm, mong các bạn kiên nhẫn chờ đợi một chút."
+  "connectionAlert": "Do sử dụng máy chủ web miễn phí nên dữ liệu lần đầu load rất chậm, mong các bạn kiên nhẫn chờ đợi một chút.",
+  "buyTheme": "Mua chủ đề",
+  "makeMoneyIsHard": "Kiếm tiền khó lắm, bởi vậy hãy chắc chắn bạn muốn mua nó nhé!",
+  "loading": "Đang tải",
+  "confirm": "Xác nhận",
+  "cancel": "Hủy bỏ",
+  "buyThemeFailed": "Mua thất bại",
+  "notEnoughCoin": "Không đủ tiền để mua"
 }

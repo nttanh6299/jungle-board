@@ -1,4 +1,5 @@
 import { fetchApi } from 'apis/apiCaller'
+import { ThemeConfig } from 'apis/item'
 
 export interface ReqCreateRoom {
   name: string
@@ -18,6 +19,7 @@ export interface ResGetRoom {
   maxMove: number
   cooldown: number
   theme: string
+  config: ThemeConfig
 }
 
 export interface ReqVerifyRoom {
@@ -32,10 +34,6 @@ export interface ResVerifyRoom {
 
 export interface ResAutoJoinRoom {
   roomId: string
-}
-
-export const getRoom = async (roomId: string) => {
-  return fetchApi<ResGetRoom>(`/rooms/${roomId}`)
 }
 
 export const getRooms = async () => {

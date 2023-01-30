@@ -12,13 +12,6 @@ export enum EDisconnectReason {
   PING_TIMEOUT = 'ping timeout',
 }
 
-export enum Map {
-  RAINFOREST = 'rainforest',
-  DESERT = 'desert',
-  GRASSLAND = 'grassland',
-  TUNDRA = 'tundra',
-}
-
 export enum NotifyEvent {
   AddLog = 'AddLog',
   ClearLog = 'ClearLog',

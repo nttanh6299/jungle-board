@@ -1,5 +1,3 @@
-import { Map } from 'constants/enum'
-
 export const turnOptions: Utils.IOption[] = [
   {
     label: '100',
@@ -27,24 +25,5 @@ export const cooldownOptions: Utils.IOption[] = [
   {
     label: '30',
     value: '30',
-  },
-]
-
-export const mapOptions = [
-  {
-    name: Map.RAINFOREST,
-    src: '/images/rainforest.png',
-  },
-  {
-    name: Map.DESERT,
-    src: '/images/desert.png',
-  },
-  {
-    name: Map.GRASSLAND,
-    src: '/images/grassland.png',
-  },
-  {
-    name: Map.TUNDRA,
-    src: '/images/tundra.png',
   },
 ]

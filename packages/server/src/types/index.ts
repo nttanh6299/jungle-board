@@ -1,3 +1,5 @@
+import { ITheme } from '../models/theme.model'
+
 export interface ReqCreateRoom {
   name: string
 }
@@ -16,4 +18,5 @@ export interface ResGetRoom {
   max: number
   quantity: number
   theme: string
+  config?: ITheme
 }

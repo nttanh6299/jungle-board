@@ -31,7 +31,8 @@ const RoomPage = () => {
 
   const roomId = query?.id ? String(query.id) : ''
 
-  const { onResetVerification, onVerifyRoom, valid } = useRoomStore((state) => ({
+  const { room, onResetVerification, onVerifyRoom, valid } = useRoomStore((state) => ({
+    room: state.room,
     valid: state.valid,
     onResetVerification: state.actions.onResetVerification,
     onVerifyRoom: state.actions.onVerifyRoom,
@@ -74,7 +75,7 @@ const RoomPage = () => {
 
   return (
     <SocketProvider>
-      <Room roomId={roomId} />
+      <Room roomId={roomId} themeConfig={room?.config} />
     </SocketProvider>
   )
 }

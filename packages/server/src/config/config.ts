@@ -8,6 +8,10 @@ const envVarsSchema = Joi.object()
     MONGODB_URI: Joi.string().required(),
     JWT_SECRET: Joi.string().required(),
     ALLOWLIST_HOSTS: Joi.string().required(),
+    CLOUDINARY_NAME: Joi.string().required(),
+    CLOUDINARY_API_KEY: Joi.string().required(),
+    CLOUDINARY_SECRET_KEY: Joi.string().required(),
+    ADMIN_PASSCODE: Joi.string().required(),
   })
   .unknown()
 
@@ -27,4 +31,10 @@ export default {
     secret: envVars.JWT_SECRET,
   },
   cors: envVars.ALLOWLIST_HOSTS.split(','),
+  cloudinary: {
+    name: envVars.CLOUDINARY_NAME,
+    apiKey: envVars.CLOUDINARY_API_KEY,
+    secretKey: envVars.CLOUDINARY_SECRET_KEY,
+  },
+  adminPasscode: envVars.ADMIN_PASSCODE,
 }

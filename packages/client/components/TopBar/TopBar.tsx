@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, memo, useMemo } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
@@ -42,7 +42,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
     room: state.room,
   }))
   const exp = user?.xp || 0
-  const { level, expNextLevelNeeded } = calculateLevel(exp)
+  const { level, expNext, expAfterCalculated } = useMemo(() => calculateLevel(exp), [exp])
 
   const { board, bothConnected } = useGameStore((state) => ({
     board: state.board,
@@ -154,11 +154,11 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
                   </div>
                   <div className="relative w-[140px] sm:w-[180px] h-[16px] bg-[#f5f5f5] rounded-full overflow-hidden ml-1.5">
                     <div
-                      style={{ width: `${(exp / expNextLevelNeeded) * 100}%` }}
+                      style={{ width: `${(expAfterCalculated / expNext) * 100}%` }}
                       className="absolute top-0 left-0 h-full rounded-full bg-primary"
                     />
                     <div className="absolute left-[8px] top-0 h-full text-white text-xs flex items-center">
-                      {exp}/{expNextLevelNeeded}
+                      {expAfterCalculated}/{expNext}
                     </div>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
             <div className="mr-2">
               <Tooltip
                 title={
-                  <div>
+                  <div className="md:text-sm">
                     <div>
                       {t('maxTurns')}: {room?.maxMove}
                     </div>
@@ -219,4 +219,4 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
   )
 }
 
-export default TopBar
+export default memo(TopBar)
