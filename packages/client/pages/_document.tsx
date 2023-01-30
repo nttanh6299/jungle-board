@@ -6,7 +6,38 @@ export default class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <meta name="theme-color" content="#f00" />
+          <meta
+            name="description"
+            content="Play live for free in seconds! Challenge a friend online or find a random opponent with one simple click."
+          />
+          <meta property="og:url" content="https://jungle-board.vercel.app/" />
+          <meta property="og:type" content="website" />
+          <meta property="og:title" content="Jungle board - Play online for FREE with friends" />
+          <meta
+            property="og:description"
+            content="Play live for free in seconds! Challenge a friend online or find a random opponent with one simple click."
+          />
+          <meta
+            property="og:image"
+            content="https://res.cloudinary.com/dkktseuwb/image/upload/v1675094734/elephant-op.png"
+          />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta property="twitter:domain" content="jungle-board.vercel.app" />
+          <meta property="twitter:url" content="https://jungle-board.vercel.app/" />
+          <meta name="twitter:title" content="Jungle board - Play online for FREE with friends" />
+          <meta
+            name="twitter:description"
+            content="Play live for free in seconds! Challenge a friend online or find a random opponent with one simple click."
+          />
+          <meta
+            name="twitter:image"
+            content="https://res.cloudinary.com/dkktseuwb/image/upload/v1675094734/elephant-op.png"
+          />
+          <meta name="theme-color" content="#fff" />
+          <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+          <link rel="manifest" href="/assets/site.webmanifest" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
           <link
