@@ -47,7 +47,13 @@ const getUserStats = catchAsync(async (req, res) => {
   }
 })
 
+const signInAdmin = catchAsync(async (req, res) => {
+  const passcode = req.body?.passcode || ''
+  return res.status(httpStatus.OK).send({ data: passcode === config.adminPasscode })
+})
+
 export default {
   signIn,
   getUserStats,
+  signInAdmin,
 }

@@ -11,6 +11,7 @@ const envVarsSchema = Joi.object()
     CLOUDINARY_NAME: Joi.string().required(),
     CLOUDINARY_API_KEY: Joi.string().required(),
     CLOUDINARY_SECRET_KEY: Joi.string().required(),
+    ADMIN_PASSCODE: Joi.string().required(),
   })
   .unknown()
 
@@ -35,4 +36,5 @@ export default {
     apiKey: envVars.CLOUDINARY_API_KEY,
     secretKey: envVars.CLOUDINARY_SECRET_KEY,
   },
+  adminPasscode: envVars.ADMIN_PASSCODE,
 }

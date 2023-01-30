@@ -149,8 +149,8 @@ const start = eventHandler((io, socket) => {
           // --------------------------
           // ---------- TEST ----------
           // --------------------------
-          console.log('Room:', roomMapItem.id)
-          console.log('Host:', roomMapItem.getHost())
+          // console.log('Room:', roomMapItem.id)
+          // console.log('Host:', roomMapItem.getHost())
 
           io.in(roomId).emit(
             'turn',

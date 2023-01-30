@@ -52,12 +52,14 @@ const NewRoom = () => {
 
   const onBuyTheme = async () => {
     try {
+      if (!themeSelectedToBuy.current) return
+
       const foundTheme = themes?.find((theme) => theme.id === themeSelectedToBuy.current)
       if (user?.coin >= foundTheme?.price) {
         await buyTheme(themeSelectedToBuy.current, async () => {
+          themeSelectedToBuy.current = ''
           await getMe()
           openBuyModalState.off()
-          themeSelectedToBuy.current = ''
         })
       } else {
         openBuyModalState.off()
@@ -116,9 +118,12 @@ const NewRoom = () => {
       }
       return
     }
+  }, [user?.id, themes])
 
+  useIsomorphicLayoutEffect(() => {
+    if (themes?.length) return
     getThemes()
-  }, [user?.id, themes, getThemes])
+  }, [themes, getThemes])
 
   return (
     <>

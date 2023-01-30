@@ -9,7 +9,7 @@ import { hasUserId, shuffle } from '../utils'
 import { IItem } from '../models/item.model'
 import { ERROR_TYPE } from '../constants/errorType'
 
-const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove, theme }): ResGetRoom => ({
+const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove, theme, config }): ResGetRoom => ({
   id,
   name,
   status,
@@ -17,6 +17,7 @@ const toRoom = ({ id, name, status, type, maxPlayer, players, cooldown, maxMove,
   cooldown,
   maxMove,
   theme,
+  config,
   max: maxPlayer,
   quantity: players,
 })
@@ -35,6 +36,7 @@ const getRooms = catchAsync(async (_, res) => {
         theme: theme?.name || '',
         players: roomMap.get(id)?.playerIdsCanPlay?.length || 0,
         maxPlayer: 2,
+        config: null,
       }),
     ),
   })
@@ -65,7 +67,14 @@ const createRoom = catchAsync(async (req, res) => {
 
 const verifyRoom = catchAsync(async (req, res) => {
   const { roomId } = req.body ?? {}
-  const room = await Room.findById(roomId).populate<{ theme: IItem }>({ path: 'theme', select: 'name' })
+  const room = await Room.findById(roomId).populate<{ theme: IItem }>({
+    path: 'theme',
+    select: 'name',
+    populate: {
+      path: 'config',
+    },
+  })
+
   if (!room) {
     return res
       .status(httpStatus.BAD_REQUEST)
@@ -101,6 +110,7 @@ const verifyRoom = catchAsync(async (req, res) => {
         theme: theme?.name || '',
         players: roomMap.get(id)?.playerIdsCanPlay?.length,
         maxPlayer: 2,
+        config: theme?.config,
       }),
     },
   })
