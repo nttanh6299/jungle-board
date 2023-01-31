@@ -19,7 +19,7 @@ export default class MyDocument extends Document {
           />
           <meta
             property="og:image"
-            content="https://res.cloudinary.com/dkktseuwb/image/upload/v1675094734/elephant-op.png"
+            content="https://res.cloudinary.com/dkktseuwb/image/upload/v1675172877/elephant-op.png"
           />
           <meta name="twitter:card" content="summary_large_image" />
           <meta property="twitter:domain" content="jungle-board.vercel.app" />
@@ -31,7 +31,7 @@ export default class MyDocument extends Document {
           />
           <meta
             name="twitter:image"
-            content="https://res.cloudinary.com/dkktseuwb/image/upload/v1675094734/elephant-op.png"
+            content="https://res.cloudinary.com/dkktseuwb/image/upload/v1675172877/elephant-op.png"
           />
           <meta name="theme-color" content="#fff" />
           <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
