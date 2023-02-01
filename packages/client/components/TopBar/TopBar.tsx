@@ -1,15 +1,11 @@
 import { useEffect, memo, useMemo } from 'react'
-import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import Button from 'components/Button'
 import Popover from 'components/Popover'
 import Show from 'components/Show'
 import useMe from 'hooks/useMe'
-import FacebookIcon from 'icons/Facebook'
 import InfoIcon from 'icons/Info'
-import GithubIcon from 'icons/Github'
-import GoogleIcon from 'icons/Google'
 import CoinsIcon from 'icons/Coins'
 import formatCoin from 'utils/formatCoin'
 import calculateLevel from 'utils/calculateLevel'
@@ -25,6 +21,7 @@ import { NotifyEvent } from 'constants/enum'
 import { useGameStore } from 'store/game'
 import getPlayerAnimals from 'utils/getPlayerAnimals'
 import AnimalsStatus from 'components/AnimalsStatus'
+import SocialLogin from './SocialLogin'
 
 interface TopBarProps {
   hideAutoJoin?: boolean
@@ -116,35 +113,7 @@ const TopBar = ({ hideAutoJoin, hideInfo, hideRoomInfo, hideLogout }: TopBarProp
             <div className="ml-2 sm:ml-3">
               <Show when={!user}>
                 <h5 className="text-sm sm:text-base">{t('guest')}</h5>
-                <Popover title={t('loginInHere')} className="p-4">
-                  <p className="text-sm sm:text-base">{t('unlockFeatures')}</p>
-                  <div className="mt-3 block sm:flex">
-                    <Button
-                      className="font-medium min-w-[140px] bg-google border-google shadow-google/25"
-                      rounded
-                      iconLeft={<GoogleIcon />}
-                      onClick={() => signIn('google')}
-                    >
-                      Google
-                    </Button>
-                    <Button
-                      className="font-medium min-w-[140px] ml-0 sm:ml-4 mt-4 sm:mt-0 bg-facebook border-facebook shadow-facebook/25"
-                      rounded
-                      iconLeft={<FacebookIcon />}
-                      onClick={() => signIn('facebook')}
-                    >
-                      Facebook
-                    </Button>
-                    <Button
-                      className="font-medium min-w-[140px] ml-0 sm:ml-4 mt-4 sm:mt-0 bg-github border-github shadow-github/25"
-                      rounded
-                      iconLeft={<GithubIcon />}
-                      onClick={() => signIn('github')}
-                    >
-                      Github
-                    </Button>
-                  </div>
-                </Popover>
+                <SocialLogin />
               </Show>
               <Show when={!!user}>
                 <h5 className="text-sm sm:text-base">{user?.name}</h5>
