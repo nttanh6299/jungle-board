@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { AppProps } from 'next/app'
 import { NextPage } from 'next'
 import { Session } from 'next-auth'
@@ -18,6 +19,21 @@ type ICustomAppProps = AppProps<{
 }
 
 const App: React.FC<ICustomAppProps> = ({ Component, pageProps: { session, ...pageProps } }) => {
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js', { scope: '.' }).then(
+          function (registration) {
+            console.log('Service Worker registration successful with scope: ', registration.scope)
+          },
+          function (err) {
+            console.log('Service Worker registration failed: ', err)
+          },
+        )
+      })
+    }
+  }, [])
+
   return (
     <>
       <Head>
