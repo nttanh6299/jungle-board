@@ -22,6 +22,7 @@
     "express": "4.17.2",
     "helmet": "^5.0.2",
     "http-status": "^1.5.0",
+    "isomorphic-unfetch": "4.0.2",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "jungle-board-service": "^1.0.7",

@@ -14,7 +14,7 @@ export const authenticateJwt = (req, res, next) => {
     if (err) {
       return res.status(httpStatus.UNAUTHORIZED).send({ error: 'Unauthorized' })
     }
-    req.userId = user.id
+    req.userId = user.sub
     next()
   })
 }
@@ -25,7 +25,7 @@ export const getUserFromJwt = (req, _, next) => {
 
   jwt.verify(authorizationParts?.[1], config.jwt.secret, (_, user) => {
     if (user?.id) {
-      req.userId = user.id
+      req.userId = user.sub
     }
     next()
   })
